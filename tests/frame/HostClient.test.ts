@@ -22,7 +22,7 @@ function handshake(): HostHandshake {
     protocol: IFRAME_PROTOCOL_NAME,
     protocolVersion: IFRAME_PROTOCOL_VERSION,
     ...identity,
-    theme: 'game',
+    theme: 'bridge-debug',
     knownActions: ALL_NATIVE_ACTIONS,
     registeredActions: ALL_NATIVE_ACTIONS.filter((action: NativeAction) => action !== 'newChat'),
   }
@@ -48,7 +48,7 @@ describe('HostClient', () => {
 
   it('accepts an opaque srcdoc origin after source and bootstrap validation', async () => {
     const channel = new MessageChannel()
-    const client = new HostClient('https://host.example', identity.bootstrapId, 'game')
+    const client = new HostClient('https://host.example', identity.bootstrapId, 'bridge-debug')
     const connection = client.connect()
     expect(install(client, channel.port2, 'null')).toBe(true)
     client.destroy()
@@ -57,7 +57,7 @@ describe('HostClient', () => {
 
   it('does not become ready until the first snapshot arrives', async () => {
     const channel = new MessageChannel()
-    const client = new HostClient('https://host.example', identity.bootstrapId, 'game')
+    const client = new HostClient('https://host.example', identity.bootstrapId, 'bridge-debug')
     channel.port1.start()
     expect(install(client, channel.port2)).toBe(true)
     expect(client.connection.value.status).toBe('waiting-snapshot')
@@ -82,7 +82,7 @@ describe('HostClient', () => {
 
   it('associates invoke responses with request id and action', async () => {
     const channel = new MessageChannel()
-    const client = new HostClient('https://host.example', identity.bootstrapId, 'game')
+    const client = new HostClient('https://host.example', identity.bootstrapId, 'bridge-debug')
     channel.port1.start()
     expect(install(client, channel.port2)).toBe(true)
     channel.port1.postMessage({
@@ -114,7 +114,7 @@ describe('HostClient', () => {
 
   it('ignores stale responses from another channel', async () => {
     const channel = new MessageChannel()
-    const client = new HostClient('https://host.example', identity.bootstrapId, 'game')
+    const client = new HostClient('https://host.example', identity.bootstrapId, 'bridge-debug')
     channel.port1.start()
     expect(install(client, channel.port2)).toBe(true)
     channel.port1.postMessage({

@@ -10,21 +10,15 @@
 
 一个可选择的 HUD 通常就是一个 Theme。新增实例一般不需要复制 Host、Bridge 或 Protocol。
 
-### 修改 game 还是新增 Theme
+### 当前发布 Theme
 
-如果项目只保留一个正式业务 HUD，直接改造：
-
-```text
-src/hud/themes/game/
-```
-
-如果需要同时保留多个可选 HUD，则新增：
+当前发布分支只保留：
 
 ```text
-src/hud/themes/my-hud/
+src/hud/themes/bridge-debug/
 ```
 
-Theme ID 会进入 bootstrap、handshake 和 runtime decoder，因此新增可选 Theme 不是普通前端路由。
+如需新增其他 Theme，应先确认它是否属于独立发布目标。Theme ID 会进入 bootstrap、handshake 和 runtime decoder，因此新增可选 Theme 不是普通前端路由，也不能只在运行时隐藏。
 
 ### 最小目录
 
@@ -58,7 +52,7 @@ export const myHudTheme: HudThemeDefinition = {
 2. `src/protocol/guards.ts`：加入 runtime Theme 白名单；
 3. `src/protocol/frameBootstrap.ts`：扩展 bootstrap type/decoder；
 4. `src/frame/main.ts`：导入并加入 Theme registry；
-5. `host-dev/src/main.ts`：识别 `?theme=my-hud`。
+5. `host-dev/src/main.ts`：配置开发环境使用新的 Theme。
 
 同时更新 bootstrap/handshake、Theme registry、Mock 和发布 manifest。
 

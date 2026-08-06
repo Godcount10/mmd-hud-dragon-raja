@@ -24,7 +24,7 @@ describe('iframe protocol decoders', () => {
       buildId: 'test-build',
       bootstrapId: 'bootstrap-test',
       channelId: 'channel-test',
-      theme: 'game',
+      theme: 'bridge-debug',
       knownActions: ALL_NATIVE_ACTIONS,
       registeredActions: ALL_NATIVE_ACTIONS.filter((action) => action !== 'newChat'),
     })
@@ -39,7 +39,7 @@ describe('iframe protocol decoders', () => {
       buildId: 'test-build',
       bootstrapId: 'bootstrap-test',
       channelId: 'channel-test',
-      theme: 'game',
+      theme: 'bridge-debug',
       knownActions: [...ALL_NATIVE_ACTIONS.slice(1), ALL_NATIVE_ACTIONS[1]],
       registeredActions: [],
     })

@@ -51,7 +51,7 @@ MMD DOM Adapter
 - document visibility 不被 HUD hide/show 业务代码手动覆盖；
 - ActionResult.data 只用于过渡，最终回归 Snapshot。
 
-这些要求已纳入 `THEME_IMPLEMENTATION_GUIDE.md`，后续实例应优先通过实现规范和测试解决。
+这些要求已纳入 [Theme 实例开发指南](THEME_DEVELOPMENT.md)，后续实例应优先通过实现规范和测试解决。
 
 ---
 
@@ -93,7 +93,7 @@ Host 与 Frame 必须来自同一次构建，但当前发布仍依赖人工：
 - 手动选择 Build ID；
 - 手动复制两个产物；
 - 手动更新 manifest；
-- 手动提交 release 仓库；
+- 手动提交发布分支（是否推送远程仓库由发布者明确决定）；
 - 构建不会阻止 `dev` Build ID 发布。
 
 错误配对会在握手时失败，但用户拿到的是不可用 HUD，而不是发布阶段失败。
@@ -109,8 +109,8 @@ Host 与 Frame 必须来自同一次构建，但当前发布仍依赖人工：
 5. 验证两个 bundle 包含相同 Build ID；
 6. 验证 Frame 目录只有一个 JS；
 7. 生成 manifest 和 checksum；
-8. 复制到 release 仓库；
-9. 显示 diff，提交和 push 仍由明确命令触发。
+8. 生成正式发布附件（当前主要是 inline JSON）；
+9. 显示 diff，提交和推送仍由明确命令触发。
 
 ### 4.3 验收标准
 
@@ -118,7 +118,7 @@ Host 与 Frame 必须来自同一次构建，但当前发布仍依赖人工：
 - Host/Frame Build ID 不同则脚本失败；
 - manifest 自动生成，不允许手工漂移；
 - release commit 中两个产物来自同一源码 commit；
-- CI 对 release 仓库验证 checksum 和 manifest。
+- CI 对正式发布附件验证 checksum 和 manifest。
 
 ---
 
@@ -511,7 +511,7 @@ harness.pushSnapshot(nextSnapshot)
 - 不通过 `any` 绕过 HudContext 类型；
 - fake invoke 与真实 ActionResult contract 一致；
 - 测试可精确控制异步顺序；
-- bridge-debug 与 game 的关键镜像面板至少各有一条根挂载测试。
+- bridge-debug 的关键镜像面板至少各有一条根挂载测试。
 
 ---
 

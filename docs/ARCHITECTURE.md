@@ -66,7 +66,7 @@ Theme 只拥有事务、表现和本地玩法
 ┌────────────────────────────────────────────────────────────────────┐
 │ opaque sandbox srcdoc iframe                                      │
 │ HostClient → HudContext → Vue Theme                                │
-│ game / bridge-debug / 后续实例                                     │
+│ bridge-debug 调控台                                               │
 └────────────────────────────────────────────────────────────────────┘
 ```
 
@@ -430,7 +430,7 @@ IFRAME_PROTOCOL_VERSION = 2
 Theme ID：
 
 ```ts
-type HudThemeId = 'game' | 'bridge-debug'
+type HudThemeId = 'bridge-debug'
 ```
 
 HUD control：
@@ -558,7 +558,7 @@ refresh 当前是 eventual 语义，refresh-result 可能仍是旧 revision，�
 
 ### 原生 HTML
 
-message.html 在 Frame 使用 v-html 前必须经过 `src/hud/shared/sanitizeHtml.ts`。它删除脚本、样式、iframe、表单、事件属性、任意链接/style 等，只保留受控文本排版和验证过的文字颜色。
+message.html 当前只作为纯数据 Snapshot 传递，bridge-debug 以文本/JSON 形式展示，不在 Frame 使用 v-html。若未来新增富文本 Theme，必须先在 Frame 内引入等价的 HTML 白名单清洗层；不得直接渲染原生 HTML。
 
 ---
 

@@ -1,6 +1,6 @@
 # MMD HUD iframe
 
-一个覆盖在 MMD（魅魔岛）聊天页面之上的全屏游戏 HUD，以及一套将 MMD 原生能力安全投影到 sandbox iframe 的 Host / Bridge / Protocol 基础设施。
+一个覆盖在 MMD（魅魔岛）聊天页面之上的 Bridge 调控台 HUD，以及一套将 MMD 原生能力安全投影到 sandbox iframe 的 Host / Bridge / Protocol 基础设施。
 
 本项目不重写 MMD 的登录、会话、AI 请求、流式生成、消息持久化、模型或设置。MMD 始终是原生状态源和执行引擎；Vue HUD 通过纯数据 Snapshot、Capability 和经过验证的 NativeAction 与父页面协作。
 
@@ -10,7 +10,7 @@ MMD 原生页面
   → HostApp / FrameController / HostSession
   ║  MessagePort Protocol v2
   → HostClient / HudContext
-  → Vue Theme：game / bridge-debug / 后续实例
+  → Vue Theme：bridge-debug 调控台
 ```
 
 ---
@@ -20,11 +20,11 @@ MMD 原生页面
 - 协议版本：v2；
 - NativeAction 契约：67 项；
 - 已注册原生 handler：61 项；
-- Theme：`game`、`bridge-debug`；
+- Theme：仅发布 `bridge-debug` 调控台；
 - Host 与 Frame 分别构建为独立 IIFE；
 - Frame SFC CSS 注入单一 Frame JS，不需要发布独立 CSS；
 - 自动化测试覆盖协议、Host、Frame、Wire、构建注入及部分模型/调试状态；
-- 真实 MMD 的完整 handler 回归、移动端、CSP、BFCache 和发布自动化仍需持续验收。
+- 核心 bridge-debug 真实 MMD 冒烟已通过；完整 handler 回归、移动端、CSP、BFCache 和发布自动化仍需持续验收。
 
 当前行为以源码、测试和本项目文档为准。
 
@@ -131,17 +131,13 @@ node scripts/serve-cors.mjs dist/frame 5273
 npm run dev:host
 ```
 
-打开：
+打开本地 Mock 页面：
 
 ```text
-正式 game：
 http://127.0.0.1:5174/
-
-Bridge Debug：
-http://127.0.0.1:5174/?theme=bridge-debug
 ```
 
-> `npm run dev` 只启动 Frame Vite 页面。直接访问它没有父页面 bootstrap、Host、MessagePort 和首 Snapshot，因此会显示连接错误页。完整功能开发请使用上述 5273 + 5174 流程。
+本发布版本只启动 `bridge-debug` 调控台，不提供其他 Theme。
 
 更多命令、Build ID、单文件 CSS、浏览器检查和发布步骤见 [开发、测试与发布](docs/DEVELOPMENT_AND_RELEASE.md)。
 
@@ -157,6 +153,8 @@ mmd-hud-iframe/
 │  ├─ ARCHITECTURE_RATIONALE.md     # 为什么这样设计
 │  ├─ THEME_DEVELOPMENT.md          # 如何写具体 HUD 实例
 │  ├─ BRIDGE_DEVELOPMENT.md         # 如何扩展 MMD 原生能力
+│  ├─ HUD_BRIDGE_CONSTRAINTS.md     # HUD 与 Bridge 约束提醒
+│  ├─ INLINE_INJECTION.md            # 内嵌正则 JSON 构建与导入
 │  ├─ DEVELOPMENT_AND_RELEASE.md    # 本地开发、测试、构建、发布
 │  └─ ROADMAP.md                    # 后续架构优化交接
 ├─ src/
@@ -171,7 +169,7 @@ mmd-hud-iframe/
 ├─ frame/                           # Frame Vite 开发入口
 ├─ build/                           # Frame CSS 单文件注入
 ├─ tests/                           # 协议、Host、Frame 和构建测试
-├─ scripts/                         # 本地静态服务等脚本
+├─ scripts/                         # 构建与本地静态服务脚本
 └─ dist/
    ├─ host/mmd-hud-iframe-host.js
    └─ frame/mmd-hud-iframe-frame.js
@@ -181,10 +179,11 @@ mmd-hud-iframe/
 
 ## Theme 与三类界面
 
-当前可选 Theme：
+### Bridge 调控台 Theme
 
-- `game`：正式游戏 HUD；
-- `bridge-debug`：完整 Bridge 实验室和消息流调试界面。
+当前发布版本只包含 `bridge-debug` 调控台。它显示 Bridge Snapshot、Capability、ActionResult、BridgeEvent、请求历史和数据差异，并通过 Host/Frame 协议执行经过 Bridge 验证的 NativeAction。
+
+Theme 内的数据处理层位于 `src/hud/themes/bridge-debug/composables/` 与 `src/hud/themes/bridge-debug/utils/`，负责 Snapshot 历史、事件流、Action 执行、确认 token、Proxy 脱离、差异计算和导出脱敏。
 
 Theme 内的功能必须区分：
 
@@ -209,20 +208,26 @@ Theme 内的功能必须区分：
 ```bash
 npm run typecheck
 npm test
-npm run build:host
-npm run build:frame
-npm run build
 ```
 
-正式发布必须为 Host 与 Frame 使用同一个非 `dev` Build ID：
+正式内嵌构建会自动执行完整检查、Host 构建、仅含 `bridge-debug` 的 Frame 构建、正则 JSON 生成和发布产物验证：
 
 ```bash
-MMD_HUD_BUILD_ID=<version-or-commit-sha> npm run build
+MMD_HUD_BUILD_ID=<version-or-commit-sha> npm run build:inline
 ```
 
----
+PowerShell：
 
-## 父页面调试 API
+```powershell
+$env:MMD_HUD_BUILD_ID="<version-or-commit-sha>"
+npm run build:inline
+```
+
+生成的导入文件位于 `dist/inline/mmd-hud-iframe-inline.json`。它已将第一条占位符写入 `statusbar`，后续片段通过规则末尾的占位符链式注入。
+
+## 发布维护
+
+发布者应先阅读[开发、测试与发布](docs/DEVELOPMENT_AND_RELEASE.md)，完成检查、构建和真实 MMD 冒烟后，再由维护者明确决定是否向目标仓库推送。推送脚本不会自动配置 `git remote`、提交文件或使用未知仓库地址；它只接受命令行显式传入的仓库，并在正式推送前要求干净工作树。
 
 注入成功后可用：
 

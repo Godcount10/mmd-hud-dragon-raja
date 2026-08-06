@@ -1,6 +1,6 @@
 # 内嵌正则注入构建
 
-项目支持生成适配 MMD 正则导入格式的内嵌注入 JSON，不依赖 GitHub/CDN 链接。
+项目支持生成适配 MMD 正则导入格式的内嵌注入 JSON，不依赖 GitHub/CDN 链接。当前发布方式只需要导入生成的 JSON，不需要配置或推送外链资源。
 
 ## 构建
 
@@ -20,7 +20,7 @@ npm run build:inline
 脚本会依次：
 
 ```text
-typecheck → build:host → build:frame → build:inline:rules
+typecheck + tests → build:host → build:frame → build:inline:rules → verify:release
 ```
 
 ## 输出文件

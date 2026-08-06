@@ -1,13 +1,12 @@
 import { createApp, h, type App } from 'vue'
 import { HUD_CONTEXT_KEY, type HudContext } from '../hud/context'
 import { bridgeDebugTheme } from '../hud/themes/bridge-debug'
-import { gameTheme } from '../hud/themes/game'
 import type { HudThemeDefinition } from '../hud/themes/types'
 import { decodeFrameBootstrap, type HudThemeId } from '../protocol'
 import { HostClient } from './connection/HostClient'
 
 const bootstrap = decodeFrameBootstrap(window.name)
-const themeId: HudThemeId = bootstrap?.theme ?? 'game'
+const themeId: HudThemeId = bootstrap?.theme ?? 'bridge-debug'
 
 const mountPoint = document.querySelector<HTMLDivElement>('#app')
 if (!mountPoint) throw new Error('缺少 iframe HUD 挂载节点')
@@ -26,11 +25,7 @@ if (!bootstrap || bootstrap.buildId !== __MMD_HUD_BUILD_ID__) {
 
   const mountTheme = async (host: HostClient): Promise<void> => {
     await host.connect()
-    const themes: Record<HudThemeId, HudThemeDefinition> = {
-      game: gameTheme,
-      'bridge-debug': bridgeDebugTheme,
-    }
-    const theme = themes[themeId]
+    const theme: HudThemeDefinition = bridgeDebugTheme
     if (theme.styles) {
       const style = document.createElement('style')
       style.dataset.mmdHudTheme = theme.id

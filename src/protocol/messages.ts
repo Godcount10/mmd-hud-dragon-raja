@@ -9,7 +9,7 @@ import type {
 export const IFRAME_PROTOCOL_NAME = 'mmd-hud-iframe' as const
 export const IFRAME_PROTOCOL_VERSION = 2 as const
 
-export type HudThemeId = 'game' | 'bridge-debug'
+export type HudThemeId = 'bridge-debug'
 export type HudControlCommand = 'hide' | 'destroy' | 'reload-frame'
 export type HostClosingReason = 'destroy' | 'reload' | 'navigation'
 

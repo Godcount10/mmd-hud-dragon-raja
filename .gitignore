@@ -6,3 +6,5 @@ coverage/
 *.tsbuildinfo
 .tmp/
 .claude/worktrees/
+测试结果/
+*.log

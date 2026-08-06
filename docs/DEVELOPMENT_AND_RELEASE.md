@@ -53,22 +53,14 @@ npm run dev:host
 打开：
 
 ```text
-game：
 http://127.0.0.1:5174/
-
-bridge-debug：
-http://127.0.0.1:5174/?theme=bridge-debug
 ```
 
-Host 页面在 5174，Frame 脚本来自 5273，Frame document 本身是 opaque sandbox srcdoc。这比两个普通跨 origin 页面更接近生产架构。
+Host 页面在 5174，Frame 脚本来自 5273，Frame document 本身是 opaque sandbox srcdoc。这比两个普通跨 origin 页面更接近生产架构。当前发布分支固定加载 `bridge-debug` 调控台。
 
-### 2.2 npm run dev 的用途
+### 2.2 Frame 连接错误页
 
-```bash
-npm run dev
-```
-
-在 127.0.0.1:5173 启动 `frame/index.html`，但直接访问没有：
+直接打开 `frame/index.html` 没有：
 
 - iframe.name bootstrap；
 - 父页面 Host；
@@ -152,15 +144,14 @@ npm run dev
 npm run typecheck
 npm test
 npm run test:watch
-npm run build:host
-npm run build:frame
-npm run build
+npm run check
+MMD_HUD_BUILD_ID=<version-or-commit-sha> npm run build:inline
 ```
 
-`npm run build` 执行：
+`npm run check` 执行类型检查和完整测试。`npm run build:inline` 执行：
 
 ```text
-typecheck → build:host → build:frame
+typecheck + tests → build:host → build:frame → build:inline:rules → verify:release
 ```
 
 测试覆盖持续以测试目录和 Vitest 输出为准，不在文档中固定易过时的测试数量。
@@ -192,16 +183,16 @@ PowerShell：
 
 ```powershell
 $env:MMD_HUD_BUILD_ID="<version-or-commit-sha>"
-npm run build
+npm run build:inline
 ```
 
 Git Bash：
 
 ```bash
-MMD_HUD_BUILD_ID=<version-or-commit-sha> npm run build
+MMD_HUD_BUILD_ID=<version-or-commit-sha> npm run build:inline
 ```
 
-开发缺省值为 dev。正式发布禁止使用 dev；当前自动门禁仍属于路线图 P0，发布人员必须人工检查。
+开发缺省值为 dev；正式内嵌构建脚本会拒绝 `dev` Build ID，并在完成后验证规则链和 `bridge-debug`-only Frame 产物。
 
 ---
 
@@ -238,66 +229,54 @@ dist/frame/ 仅包含 mmd-hud-iframe-frame.js
 
 ---
 
-## 8. 发布仓库
+## 8. 发布产物
 
-当前相邻 release 仓库：
+正式内嵌发布使用：
 
 ```text
-../mmd-hud-iframe-release/
-├─ host/mmd-hud-iframe-host.js
-├─ frame/mmd-hud-iframe-frame.js
-├─ manifest.json
-└─ README.md
+dist/inline/mmd-hud-iframe-inline.json
 ```
 
-Host 与 Frame 必须来自：
+辅助检查文件：
 
-- 同一次源码状态；
-- 同一次构建；
-- 同一个 Build ID；
-- 同一个不可变 release commit。
+```text
+dist/inline/mmd-hud-iframe-inline-manifest.json
+dist/inline/mmd-hud-iframe-inline.txt
+```
+
+Host 与 Frame 必须来自同一次源码状态、同一次构建和同一个 Build ID。正式 Release 建议只上传导入 JSON、公开 README 与校验和，不要上传整个工作目录或 `测试结果/`。
 
 ---
 
 ## 9. 发布前流程
 
-1. 确认源码 Git 工作树和目标 commit；
+1. 确认当前位于干净的目标发布分支或独立发布 Worktree；
 2. 选择唯一非 dev Build ID（版本或源码 commit）；
 3. 如需要，更新 package version/lockfile；
-4. npm ci；
-5. npm run typecheck；
-6. npm test；
-7. 用同一 MMD_HUD_BUILD_ID 执行 npm run build；
-8. 检查 Host/Frame 中 Build ID；
-9. 验证 dist/frame 只有 Frame JS；
-10. 确认第三方库和资产已打入 bundle，不依赖运行时组件 CDN；
-11. 复制两个产物到 release 仓库；
-12. 更新 manifest buildId、version、themes；
-13. 更新 release README；
-14. 检查 release diff；
-15. 提交并 push release 仓库；
-16. 使用 release commit 完整 SHA 的 jsDelivr URL；
-17. 在真实 MMD 执行 bridge-debug 和目标 Theme 冒烟。
+4. 执行 `npm ci`；
+5. 执行 `npm run check`；
+6. 用同一 Build ID 执行 `npm run build:inline`；
+7. 确认 `verify:release` 通过；
+8. 确认 Frame 产物仅包含本发布版本的 `bridge-debug` Theme；
+9. 确认第三方库和资产已打入 bundle；
+10. 检查 release diff；
+11. 在真实 MMD 执行 bridge-debug 冒烟；
+12. 审核后提交发布分支；是否推送远程仓库或创建 GitHub Release，应作为独立人工步骤明确执行。
 
-当前 release copy、manifest、checksum 和 CI 仍是人工流程；自动化方案见 [架构优化路线图](ROADMAP.md)。
+指定远程仓库推送（维护者专用）：
+
+```bash
+npm run push:release -- --repo https://github.com/<user>/<repository>.git --dry-run
+npm run push:release -- --repo https://github.com/<user>/<repository>.git
+```
+
+脚本要求当前分支为项目配置的发布分支且工作树干净，默认推送同名远程分支。它不会自动 commit，也不会修改 `git remote` 配置；`--dry-run` 会调用 Git 的远程 dry-run，不写入远程仓库。
 
 ---
 
-## 10. MMD 注入
+## 10. MMD 外链注入（可选）
 
-### game
-
-```html
-<script>
-window.__MMD_HUD_IFRAME_CONFIG__ = {
-  frameScriptUrl: 'https://cdn.jsdelivr.net/gh/<user>/<release-repo>@<immutable-commit-sha>/frame/mmd-hud-iframe-frame.js',
-  theme: 'game'
-}
-</script>
-<script src="https://cdn.jsdelivr.net/gh/<user>/<release-repo>@<immutable-commit-sha>/host/mmd-hud-iframe-host.js"></script>
-```
-
-### bridge-debug
+内嵌 JSON 是当前主要发布方式。如需使用外链 Host/Frame：
 
 ```html
 <script>
@@ -370,7 +349,8 @@ __MMD_HUD_IFRAME__.destroy()
 - [ ] Frame 目录只有单 JS；
 - [ ] manifest 与产物一致；
 - [ ] release 工作树只包含预期文件；
-- [ ] release commit 已 push；
+- [ ] 发布分支是否需要推送远程仓库已明确；
+- [ ] 如需推送，远程分支和目标仓库已确认；
 - [ ] 注入 URL 使用完整不可变 SHA；
 - [ ] bridge-debug 冒烟通过；
 - [ ] 目标 Theme 实际依赖动作在真实 MMD 通过。

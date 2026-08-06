@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { mkdir, readFile, writeFile } from 'node:fs/promises'
+import { mkdir, readFile, rm, writeFile } from 'node:fs/promises'
 import { join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
@@ -17,6 +17,9 @@ function requiredBuildId() {
   const value = process.env.MMD_HUD_BUILD_ID
   if (!value || value === 'dev') {
     throw new Error('请使用非 dev Build ID，例如 MMD_HUD_BUILD_ID=inline-20260806 npm run build:inline')
+  }
+  if (!/^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$/.test(value)) {
+    throw new Error('Build ID 只能包含 1-128 个字母、数字、点、下划线或连字符，且必须以字母或数字开头')
   }
   return value
 }
@@ -52,7 +55,7 @@ function placeholder(index) {
 }
 
 function startReplacement(buildId) {
-  const source = `<script>(()=>{const s=globalThis.${STATE_KEY};if(!s||!s.h||!s.f)throw new Error('MMD HUD inline bundle incomplete');globalThis.__MMD_HUD_IFRAME_CONFIG__={theme:'bridge-debug',frameScriptSource:s.f};const e=document.createElement('script');e.dataset.mmdHudInline='${buildId}';e.textContent=s.h;(document.head||document.documentElement).appendChild(e);})()</script>`
+  const source = `<script>(()=>{const s=globalThis.${STATE_KEY};if(!s||!s.h||!s.f)throw new Error('MMD HUD inline bundle incomplete');globalThis.__MMD_HUD_IFRAME_CONFIG__={theme:'bridge-debug',frameScriptSource:s.f};const e=document.createElement('script');e.dataset.mmdHudInline=${JSON.stringify(buildId)};e.textContent=s.h;(document.head||document.documentElement).appendChild(e);})()</script>`
   if (source.length > MAX_REPLACEMENT_LENGTH) throw new Error('内嵌启动片段超过字符限制')
   return source
 }
@@ -127,6 +130,7 @@ const manifest = {
   },
 }
 
+await rm(OUTPUT_DIR, { recursive: true, force: true })
 await mkdir(OUTPUT_DIR, { recursive: true })
 await Promise.all([
   writeFile(join(OUTPUT_DIR, 'mmd-hud-iframe-inline.json'), `${JSON.stringify(importData, null, 2)}\n`, 'utf8'),

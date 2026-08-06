@@ -5,21 +5,20 @@
   "type": "module",
   "description": "MMD Parent Bridge Host 与独立 iframe Vue HUD",
   "scripts": {
-    "dev": "vite --config vite.frame.config.ts",
     "dev:host": "vite --config vite.host-dev.config.ts",
     "test": "vitest run",
     "test:watch": "vitest",
     "typecheck": "vue-tsc --noEmit -p tsconfig.app.json && vue-tsc --noEmit -p tsconfig.node.json",
+    "check": "npm run typecheck && npm test",
     "build:host": "vite build --config vite.host.config.ts",
     "build:frame": "vite build --config vite.frame.config.ts",
     "build:inline:rules": "node scripts/build-inline.mjs",
-    "build:inline": "npm run typecheck && npm run build:host && npm run build:frame && npm run build:inline:rules",
-    "build": "npm run typecheck && npm run build:host && npm run build:frame"
+    "verify:release": "node scripts/verify-release.mjs",
+    "push:release": "node scripts/push-release.mjs",
+    "build:inline": "npm run check && npm run build:host && npm run build:frame && npm run build:inline:rules && npm run verify:release"
   },
   "dependencies": {
     "gsap": "^3.15.0",
-    "motion": "^12.43.0",
-    "ogl": "^1.0.11",
     "postprocessing": "^6.39.4",
     "three": "^0.178.0",
     "vue": "^3.5.13"

@@ -95,7 +95,7 @@ export function resolveFrameScriptUrl(config: IframeHostConfig | undefined): URL
 }
 
 export function resolveTheme(config: IframeHostConfig | undefined): HudThemeId {
-  return isHudThemeId(config?.theme) ? config.theme : 'game'
+  return isHudThemeId(config?.theme) ? config.theme : 'bridge-debug'
 }
 
 export function assertFrameScriptUrlAllowed(frameScriptUrl: URL): void {

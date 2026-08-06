@@ -89,7 +89,7 @@ const targetSnapshot = computed(() => snapshots.value.find((item) => item.revisi
 const snapshotDiff = computed(() => baseSnapshot.value ? diffJson(baseSnapshot.value, targetSnapshot.value) : [])
 const eventRows = computed(() => [...events.value].reverse())
 const availableCount = computed(() => ALL_NATIVE_ACTIONS.filter((action) => context.snapshot.value.capabilities[action].available).length)
-const currentModelName = computed(() => cachedModelName.value || context.snapshot.value.modelPanel.models.find(model => model.selected)?.name || '选择模型')
+const currentModelName = computed(() => context.snapshot.value.modelPanel.models.find(model => model.selected)?.name || cachedModelName.value || '选择模型')
 const hyperspeedEnabled = computed(() => !booting.value && surfaceMode.value === 'effects' && effects.canRun.value && !hyperspeedFallback.value)
 const effectsRuntimeState = computed<EffectsRuntimeState>(() => {
   if (hyperspeedFallback.value) return 'fallback'
