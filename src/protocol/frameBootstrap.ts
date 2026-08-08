@@ -3,7 +3,7 @@ export interface FrameBootstrapConfig {
   buildId: string
   bootstrapId: string
   parentOrigin: string
-  theme: 'bridge-debug'
+  theme: 'bridge-debug' | 'dragon-raja'
 }
 
 export function encodeFrameBootstrap(config: FrameBootstrapConfig): string {
@@ -19,7 +19,7 @@ export function decodeFrameBootstrap(value: string): FrameBootstrapConfig | null
     if (record.protocol !== 'mmd-hud-iframe-bootstrap') return null
     if (!isNonEmptyString(record.buildId) || !isNonEmptyString(record.bootstrapId)) return null
     if (!isHttpOrigin(record.parentOrigin)) return null
-    if (record.theme !== 'bridge-debug') return null
+    if (record.theme !== 'bridge-debug' && record.theme !== 'dragon-raja') return null
     return {
       protocol: 'mmd-hud-iframe-bootstrap',
       buildId: record.buildId,

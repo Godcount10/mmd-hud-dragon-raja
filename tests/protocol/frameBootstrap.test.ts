@@ -14,9 +14,18 @@ const bootstrap: FrameBootstrapConfig = {
   theme: 'bridge-debug',
 }
 
+const dragonRajaBootstrap: FrameBootstrapConfig = {
+  ...bootstrap,
+  theme: 'dragon-raja',
+}
+
 describe('srcdoc Frame bootstrap', () => {
   it('round-trips the window.name bootstrap without URL query parameters', () => {
     expect(decodeFrameBootstrap(encodeFrameBootstrap(bootstrap))).toEqual(bootstrap)
+  })
+
+  it('round-trips the window.name bootstrap for the private Dragon Raja theme', () => {
+    expect(decodeFrameBootstrap(encodeFrameBootstrap(dragonRajaBootstrap))).toEqual(dragonRajaBootstrap)
   })
 
   it('rejects malformed bootstrap values and non-origin parent URLs', () => {

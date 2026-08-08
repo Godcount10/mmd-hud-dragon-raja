@@ -31,7 +31,7 @@ export type DecodeResult<T> = DecodeSuccess<T> | DecodeFailure
 
 const ACTIONS = new Set<string>(ALL_NATIVE_ACTIONS)
 const HUD_CONTROLS = new Set<string>(['hide', 'destroy', 'reload-frame'] satisfies HudControlCommand[])
-const THEMES = new Set<string>(['bridge-debug'] satisfies HudThemeId[])
+const THEMES = new Set<string>(['bridge-debug', 'dragon-raja'] satisfies HudThemeId[])
 const BRIDGE_EVENT_TYPES = new Set<string>([
   'ready',
   'snapshot',

@@ -31,6 +31,21 @@ describe('iframe protocol decoders', () => {
     expect(decoded.ok).toBe(true)
   })
 
+  it('accepts the private Dragon Raja handshake theme', () => {
+    const decoded = decodeHostHandshake({
+      type: 'host-handshake',
+      protocol: IFRAME_PROTOCOL_NAME,
+      protocolVersion: IFRAME_PROTOCOL_VERSION,
+      buildId: 'test-build',
+      bootstrapId: 'bootstrap-test',
+      channelId: 'channel-test',
+      theme: 'dragon-raja',
+      knownActions: ALL_NATIVE_ACTIONS,
+      registeredActions: ALL_NATIVE_ACTIONS,
+    })
+    expect(decoded.ok).toBe(true)
+  })
+
   it('rejects incomplete or duplicated handshake action sets', () => {
     const decoded = decodeHostHandshake({
       type: 'host-handshake',
