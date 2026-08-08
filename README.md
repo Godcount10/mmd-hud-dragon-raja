@@ -137,7 +137,7 @@ npm run dev:host
 http://127.0.0.1:5174/
 ```
 
-本发布版本只启动 `bridge-debug` 调控台，不提供其他 Theme。
+本私有测试分支默认启动 `dragon-raja` Theme；可通过 `?theme=bridge-debug` 切换到 Bridge 调控台。
 
 更多命令、Build ID、单文件 CSS、浏览器检查和发布步骤见 [开发、测试与发布](docs/DEVELOPMENT_AND_RELEASE.md)。
 
@@ -181,7 +181,7 @@ mmd-hud-iframe/
 
 ### Bridge 调控台 Theme
 
-当前发布版本只包含 `bridge-debug` 调控台。它显示 Bridge Snapshot、Capability、ActionResult、BridgeEvent、请求历史和数据差异，并通过 Host/Frame 协议执行经过 Bridge 验证的 NativeAction。
+当前私有测试分支包含 `dragon-raja` Theme，以及用于协议和 Bridge 验证的 `bridge-debug` 调控台。Dragon Raja 的原生镜像由 Snapshot 驱动，地图、图鉴和 AI 派生状态属于 Theme 私有边界。
 
 Theme 内的数据处理层位于 `src/hud/themes/bridge-debug/composables/` 与 `src/hud/themes/bridge-debug/utils/`，负责 Snapshot 历史、事件流、Action 执行、确认 token、Proxy 脱离、差异计算和导出脱敏。
 
@@ -210,7 +210,7 @@ npm run typecheck
 npm test
 ```
 
-正式内嵌构建会自动执行完整检查、Host 构建、仅含 `bridge-debug` 的 Frame 构建、正则 JSON 生成和发布产物验证：
+私有测试分支的内嵌构建会自动执行完整检查、Host 构建、包含 Dragon Raja 的 Frame 构建、正则 JSON 生成和发布产物验证：
 
 ```bash
 MMD_HUD_BUILD_ID=<version-or-commit-sha> npm run build:inline

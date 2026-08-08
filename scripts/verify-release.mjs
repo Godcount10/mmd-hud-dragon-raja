@@ -20,13 +20,7 @@ const EXPECTED_INLINE_FILES = [
   'mmd-hud-iframe-inline.json',
   'mmd-hud-iframe-inline.txt',
 ]
-const GAME_MARKERS = [
-  '../hud/themes/game',
-  'gameTheme',
-  '正式游戏 HUD',
-  'game-hud__debug-trigger',
-  'createGameStore',
-]
+const DRAGON_RAJA_MARKER = 'dragon-raja'
 
 function requiredBuildId() {
   const value = process.env.MMD_HUD_BUILD_ID
@@ -86,8 +80,7 @@ if (manifest.version !== 1 || manifest.buildId !== buildId || manifest.totalRule
   || manifest.generatedFiles?.importJson !== 'mmd-hud-iframe-inline.json'
   || manifest.generatedFiles?.placeholders !== 'mmd-hud-iframe-inline.txt') throw new Error('inline manifest 与本次构建产物不一致')
 
-const foundMarkers = GAME_MARKERS.filter((marker) => frameSource.includes(marker) || hostSource.includes(marker))
-if (foundMarkers.length > 0) throw new Error(`发布产物仍包含 game Theme：${foundMarkers.join(', ')}`)
+if (!frameSource.includes(DRAGON_RAJA_MARKER)) throw new Error('发布产物未包含 Dragon Raja Theme 配置')
 if (/from\s+['"][^'"]*themes\/game|import\s*\([^)]*themes\/game/.test(frameEntrySource)) throw new Error('Frame 入口仍引用 game Theme')
 
-console.log(`Release verification passed: ${rules.length} inline rules; Build ID ${buildId}; bridge-debug only`)
+console.log(`Release verification passed: ${rules.length} inline rules; Build ID ${buildId}; dragon-raja`)

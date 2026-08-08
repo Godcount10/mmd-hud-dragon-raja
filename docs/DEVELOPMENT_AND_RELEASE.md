@@ -56,7 +56,7 @@ npm run dev:host
 http://127.0.0.1:5174/
 ```
 
-Host 页面在 5174，Frame 脚本来自 5273，Frame document 本身是 opaque sandbox srcdoc。这比两个普通跨 origin 页面更接近生产架构。当前发布分支固定加载 `bridge-debug` 调控台。
+Host 页面在 5174，Frame 脚本来自 5273，Frame document 本身是 opaque sandbox srcdoc。这比两个普通跨 origin 页面更接近生产架构。当前私有测试分支默认加载 `dragon-raja` Theme；需要调试基础设施时可通过 `?theme=bridge-debug` 切换。
 
 ### 2.2 Frame 连接错误页
 
@@ -282,7 +282,7 @@ npm run push:release -- --repo https://github.com/<user>/<repository>.git
 <script>
 window.__MMD_HUD_IFRAME_CONFIG__ = {
   frameScriptUrl: 'https://cdn.jsdelivr.net/gh/<user>/<release-repo>@<immutable-commit-sha>/frame/mmd-hud-iframe-frame.js',
-  theme: 'bridge-debug'
+  theme: 'dragon-raja'
 }
 </script>
 <script src="https://cdn.jsdelivr.net/gh/<user>/<release-repo>@<immutable-commit-sha>/host/mmd-hud-iframe-host.js"></script>
@@ -352,5 +352,5 @@ __MMD_HUD_IFRAME__.destroy()
 - [ ] 发布分支是否需要推送远程仓库已明确；
 - [ ] 如需推送，远程分支和目标仓库已确认；
 - [ ] 注入 URL 使用完整不可变 SHA；
-- [ ] bridge-debug 冒烟通过；
+- [ ] Dragon Raja 基础冒烟通过；
 - [ ] 目标 Theme 实际依赖动作在真实 MMD 通过。
