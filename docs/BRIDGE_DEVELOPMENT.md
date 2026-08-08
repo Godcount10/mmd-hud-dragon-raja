@@ -86,15 +86,15 @@ TypeScript 不能验证跨窗口输入。
 - 支持 timeout 和 AbortSignal；
 - 将错误转成 ActionResult。
 
-### 6. Debug manifest
+### 6. 动作契约与测试清单
 
-更新 bridge-debug：
+新增或修改动作时同步检查：
 
-- actionDebugManifest；
-- payload form；
-- guided workflow；
-- dangerous/confirm 标记；
-- 导出脱敏规则（如包含敏感数据）。
+- `src/contracts` 中的 action、payload、result 类型；
+- `src/protocol/guards.ts` 的 payload runtime decoder；
+- capability reader 与 action handler 是否共用 resolver；
+- Mock、协议测试和真实 MMD 回归记录；
+- 破坏性动作是否保留两阶段确认和过期 token。
 
 ### 7. Mock
 
@@ -428,21 +428,17 @@ handler 内所有 wait 必须：
 
 ---
 
-## 13. bridge-debug 验证
+## 13. 真实 MMD 验证
 
-新增动作后在 bridge-debug 检查：
+新增动作后在真实 MMD 检查：
 
-- action 是否出现在正确分组；
-- registered/contract-only 标记；
+- action 是否被正确注册；
 - capability 和 reason；
 - payload 是否来自最新 Snapshot；
 - ActionResult data/error；
-- Snapshot revision/diff；
-- BridgeEvent；
-- 确认 token；
-- 默认导出是否脱敏。
-
-完整导出可能包含聊天、人设、设定和链接，不应公开上传。
+- Snapshot revision 与 BridgeEvent；
+- 确认 token 和过期行为；
+- 失败时是否 fail closed。
 
 ---
 
@@ -478,7 +474,6 @@ payload 来源
 - [ ] stable reference 不只依赖下标或文字；
 - [ ] destructive flow 不绕过两阶段确认；
 - [ ] Snapshot/disconnected/helper 已更新；
-- [ ] bridge-debug manifest/payload/export 已更新；
 - [ ] Mock 覆盖真实层级和异步时序；
 - [ ] typecheck/tests/build 通过；
 - [ ] 真实 MMD 已回归该动作的成功和失败路径。

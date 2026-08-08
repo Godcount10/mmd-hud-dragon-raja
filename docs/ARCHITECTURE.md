@@ -66,7 +66,7 @@ Theme 只拥有事务、表现和本地玩法
 ┌────────────────────────────────────────────────────────────────────┐
 │ opaque sandbox srcdoc iframe                                      │
 │ HostClient → HudContext → Vue Theme                                │
-│ bridge-debug 调控台                                               │
+│ Dragon Raja Theme                                                │
 └────────────────────────────────────────────────────────────────────┘
 ```
 
@@ -211,7 +211,6 @@ interface HudContext {
     action: A,
     payload?: NativeActionPayload<A>,
   ): Promise<ActionResult>
-  invokeDynamic(action: NativeAction, payload?: unknown): Promise<ActionResult>
   refresh(): Promise<ChatSnapshot>
   subscribe(listener: (event: BridgeEvent) => void): () => void
   hideHud(): Promise<void>
@@ -219,7 +218,7 @@ interface HudContext {
 }
 ```
 
-业务 Theme 优先使用类型化 invoke；invokeDynamic 仅适用于 bridge-debug 等动作实验室。
+Theme 通过类型化 `invoke` 调用 NativeAction，运行时 payload 仍由 Protocol decoder 进行 fail-closed 校验。
 
 `src/protocol/transport.ts` 的 HostTransport 是未使用的历史接口，现行路径是 HostClient + HudContext。
 
@@ -430,7 +429,7 @@ IFRAME_PROTOCOL_VERSION = 2
 Theme ID：
 
 ```ts
-type HudThemeId = 'bridge-debug'
+type HudThemeId = 'dragon-raja'
 ```
 
 HUD control：
@@ -558,7 +557,7 @@ refresh 当前是 eventual 语义，refresh-result 可能仍是旧 revision，�
 
 ### 原生 HTML
 
-message.html 当前只作为纯数据 Snapshot 传递，bridge-debug 以文本/JSON 形式展示，不在 Frame 使用 v-html。若未来新增富文本 Theme，必须先在 Frame 内引入等价的 HTML 白名单清洗层；不得直接渲染原生 HTML。
+message.html 作为纯数据 Snapshot 传递。Dragon Raja 在 Frame 内通过 HTML 白名单清洗层处理后才渲染，禁止直接信任原生 HTML。
 
 ---
 

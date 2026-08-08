@@ -15,7 +15,7 @@
 当前发布分支只保留：
 
 ```text
-src/hud/themes/bridge-debug/
+src/hud/themes/dragon-raja/
 ```
 
 如需新增其他 Theme，应先确认它是否属于独立发布目标。Theme ID 会进入 bootstrap、handshake 和 runtime decoder，因此新增可选 Theme 不是普通前端路由，也不能只在运行时隐藏。
@@ -93,7 +93,7 @@ async function send(): Promise<void> {
 </script>
 ```
 
-业务 Theme 优先使用类型化 invoke；invokeDynamic 只适合 bridge-debug 一类运行时选择任意 action 的工具。
+Theme 使用类型化 `invoke` 请求原生动作；不得为了运行时任意动作选择绕过 payload 类型。
 
 禁止：
 

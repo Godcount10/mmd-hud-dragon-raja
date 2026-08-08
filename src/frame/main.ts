@@ -1,6 +1,5 @@
 import { createApp, h, type App } from 'vue'
 import { HUD_CONTEXT_KEY, type HudContext } from '../hud/context'
-import { bridgeDebugTheme } from '../hud/themes/bridge-debug'
 import { dragonRajaTheme } from '../hud/themes/dragon-raja'
 import type { HudThemeDefinition } from '../hud/themes/types'
 import { decodeFrameBootstrap, type HudThemeId } from '../protocol'
@@ -27,7 +26,6 @@ if (!bootstrap || bootstrap.buildId !== __MMD_HUD_BUILD_ID__) {
   const mountTheme = async (host: HostClient): Promise<void> => {
     await host.connect()
     const themes: Record<HudThemeId, HudThemeDefinition> = {
-      'bridge-debug': bridgeDebugTheme,
       'dragon-raja': dragonRajaTheme,
     }
     const theme = themes[themeId]
@@ -42,7 +40,6 @@ if (!bootstrap || bootstrap.buildId !== __MMD_HUD_BUILD_ID__) {
       snapshot: host.snapshot,
       connection: host.connection,
       invoke: (action, payload) => host.invoke(action, payload),
-      invokeDynamic: (action, payload) => host.invokeDynamic(action, payload),
       refresh: () => host.refresh(),
       subscribe: (listener) => host.subscribe(listener),
       hideHud: () => host.hide(),

@@ -16,7 +16,6 @@ export interface HudContext {
   snapshot: Readonly<Ref<ChatSnapshot>>
   connection: Readonly<Ref<HudConnectionState>>
   invoke<A extends NativeAction, T = unknown>(action: A, payload?: NativeActionPayload<A>): Promise<ActionResult<T>>
-  invokeDynamic<T = unknown>(action: NativeAction, payload?: unknown): Promise<ActionResult<T>>
   refresh(): Promise<ChatSnapshot>
   subscribe(listener: (event: BridgeEvent) => void): () => void
   hideHud(): Promise<void>

@@ -119,10 +119,6 @@ export class HostClient {
     return this.sendInvoke<A, T>(action, payload)
   }
 
-  invokeDynamic<T = unknown>(action: NativeAction, payload?: unknown): Promise<ActionResult<T>> {
-    return this.sendInvoke(action, payload as NativeActionPayload<NativeAction>)
-  }
-
   hide(): Promise<void> {
     return this.control('hide')
   }

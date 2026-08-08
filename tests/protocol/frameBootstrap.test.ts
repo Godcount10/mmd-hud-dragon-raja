@@ -11,11 +11,6 @@ const bootstrap: FrameBootstrapConfig = {
   buildId: 'build-test',
   bootstrapId: 'bootstrap-test',
   parentOrigin: 'https://mmd.example',
-  theme: 'bridge-debug',
-}
-
-const dragonRajaBootstrap: FrameBootstrapConfig = {
-  ...bootstrap,
   theme: 'dragon-raja',
 }
 
@@ -24,13 +19,10 @@ describe('srcdoc Frame bootstrap', () => {
     expect(decodeFrameBootstrap(encodeFrameBootstrap(bootstrap))).toEqual(bootstrap)
   })
 
-  it('round-trips the window.name bootstrap for the private Dragon Raja theme', () => {
-    expect(decodeFrameBootstrap(encodeFrameBootstrap(dragonRajaBootstrap))).toEqual(dragonRajaBootstrap)
-  })
-
   it('rejects malformed bootstrap values and non-origin parent URLs', () => {
     expect(decodeFrameBootstrap('not-json')).toBeNull()
     expect(decodeFrameBootstrap(JSON.stringify({ ...bootstrap, parentOrigin: 'https://mmd.example/path' }))).toBeNull()
+    expect(decodeFrameBootstrap(JSON.stringify({ ...bootstrap, theme: 'bridge-debug' }))).toBeNull()
     expect(decodeFrameBootstrap(JSON.stringify({ ...bootstrap, theme: 'unknown' }))).toBeNull()
   })
 

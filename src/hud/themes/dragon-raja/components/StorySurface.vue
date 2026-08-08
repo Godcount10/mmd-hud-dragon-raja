@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { computed, nextTick, onBeforeUnmount, ref, watch } from 'vue'
-import { gsap } from 'gsap'
+import { computed, nextTick, ref, watch } from 'vue'
 import type { ChatMessage } from '../../../../contracts'
 import { useHudContext } from '../../../context'
+import { useMotionScope } from '../../../shared/motion'
 import { sanitizeMessageHtml } from '../sanitizeMessageHtml'
 
 const props = withDefaults(defineProps<{ initialDraft?: string; editPending?: boolean }>(), { initialDraft: '', editPending: false })
@@ -16,9 +16,15 @@ const emit = defineEmits<{
 const { snapshot, invoke } = useHudContext()
 const draft = ref('')
 const sending = ref(false)
+const root = ref<HTMLElement | null>(null)
 const list = ref<HTMLElement | null>(null)
+const motion = useMotionScope({ root })
 const sanitizedCache = new Map<string, { source: string; output: string }>()
-let entrance: gsap.core.Timeline | null = null
+const seenMessageIds = new Set<string>()
+const completedMessageIds = new Set<string>()
+const freshMessageIds = ref(new Set<string>())
+let freshGeneration = 0
+let seeded = false
 
 const currentModel = computed(() => snapshot.value.modelPanel.models.find((model) => model.selected)?.name || '选择模型')
 
@@ -49,33 +55,100 @@ function editMessage(messageId: string): void {
   emit('edit', messageId)
 }
 
+function nearBottom(): boolean {
+  const node = list.value
+  return !node || node.scrollHeight - node.scrollTop - node.clientHeight < 120
+}
+
+function messageSelector(id: string): string {
+  const escaped = typeof CSS !== 'undefined' && typeof CSS.escape === 'function'
+    ? CSS.escape(id)
+    : id.replace(/["\\]/g, '\\$&')
+  return `[data-message-id="${escaped}"]`
+}
+
+function scrollToBottom(behavior: ScrollBehavior): void {
+  const node = list.value
+  if (!node) return
+  if (typeof node.scrollTo === 'function') node.scrollTo({ top: node.scrollHeight, behavior })
+  else node.scrollTop = node.scrollHeight
+}
+
+function animateNewMessages(messages: readonly ChatMessage[], ids: readonly string[]): void {
+  if (motion.reducedMotion.value || !ids.length) return
+  motion.timeline(undefined, (timeline) => {
+    ids.forEach((id, index) => {
+      const message = messages.find((candidate) => candidate.id === id)
+      const target = list.value?.querySelector<HTMLElement>(messageSelector(id))
+      if (!message || !target) return
+      const x = message.role === 'user' ? 28 : -28
+      const at = index * .08
+      timeline
+        .fromTo(target, { autoAlpha: 0, x, clipPath: 'inset(0 0 100% 0)' }, { autoAlpha: 1, x: 0, clipPath: 'inset(0)', duration: .48, ease: 'expo.out' }, at)
+        .fromTo(target.querySelectorAll('header, .dr-message__body, footer'), { autoAlpha: 0, y: 8 }, { autoAlpha: 1, y: 0, duration: .3, stagger: .04, ease: 'power2.out' }, at + .14)
+    })
+  })
+}
+
 watch(() => props.initialDraft, (value) => {
   if (!value) return
   draft.value = value
   emit('draftConsumed')
 }, { immediate: true })
 
-watch(() => snapshot.value.messages, async (messages, previous) => {
+watch(() => snapshot.value.messages, async (messages) => {
   sanitizedCache.forEach((_value, id) => {
     if (!messages.some((message) => message.id === id)) sanitizedCache.delete(id)
   })
-  const appended = previous && messages.length > previous.length
-  const nearBottom = !list.value || list.value.scrollHeight - list.value.scrollTop - list.value.clientHeight < 120
-  await nextTick()
-  if (appended && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-    entrance?.kill()
-    const nodes = list.value?.querySelectorAll<HTMLElement>('.dr-message')
-    const target = nodes?.[nodes.length - 1]
-    if (target) entrance = gsap.timeline().fromTo(target, { autoAlpha: 0, y: 22, clipPath: 'inset(0 0 100% 0)' }, { autoAlpha: 1, y: 0, clipPath: 'inset(0 0 0% 0)', duration: .52, ease: 'expo.out' })
+  const nextIds = new Set(messages.map((message) => message.id))
+  for (const id of seenMessageIds) {
+    if (!nextIds.has(id)) {
+      seenMessageIds.delete(id)
+      completedMessageIds.delete(id)
+    }
   }
-  if (!previous || nearBottom) list.value?.scrollTo({ top: list.value.scrollHeight, behavior: previous ? 'smooth' : 'auto' })
+  if (!seeded) {
+    messages.forEach((message) => seenMessageIds.add(message.id))
+    seeded = true
+    await nextTick()
+    scrollToBottom('auto')
+    return
+  }
+
+  const added = messages.filter((message) => !seenMessageIds.has(message.id)).map((message) => message.id)
+  added.forEach((id) => seenMessageIds.add(id))
+  freshMessageIds.value = new Set(added)
+  const shouldFollow = nearBottom()
+  await nextTick()
+  animateNewMessages(messages, added)
+  if (added.length) {
+    freshGeneration += 1
+    const token = freshGeneration
+    void motion.delay(620).then((completed) => {
+      if (completed && token === freshGeneration) freshMessageIds.value = new Set()
+    })
+  }
+  if (shouldFollow) scrollToBottom(motion.reducedMotion.value ? 'auto' : 'smooth')
 }, { immediate: true })
 
-onBeforeUnmount(() => entrance?.kill())
+watch(() => snapshot.value.generation, async (generation, previous) => {
+  if (!previous || previous.status === 'idle' || generation.status !== 'idle' || !previous.messageId) return
+  if (completedMessageIds.has(previous.messageId)) return
+  completedMessageIds.add(previous.messageId)
+  await nextTick()
+  if (motion.reducedMotion.value) return
+  const target = list.value?.querySelector<HTMLElement>(messageSelector(previous.messageId))
+  if (!target) return
+  motion.timeline(undefined, (timeline) => {
+    timeline
+      .fromTo(target, { filter: 'brightness(1.45)' }, { filter: 'brightness(1)', duration: .42, ease: 'power2.out' })
+      .fromTo(target.querySelector('.dr-message__body'), { x: -5 }, { x: 0, duration: .3, ease: 'power2.out' }, 0)
+  })
+})
 </script>
 
 <template>
-  <section class="dr-story" aria-label="Dragon Raja 对话频道">
+  <section ref="root" class="dr-story" aria-label="Dragon Raja 对话频道">
     <header class="dr-story__header">
       <div>
         <h1>{{ snapshot.character.name || '未知角色' }}</h1>
@@ -86,7 +159,7 @@ onBeforeUnmount(() => entrance?.kill())
 
     <div ref="list" class="dr-story__messages" aria-live="polite">
       <div v-if="!snapshot.messages.length" class="dr-story__empty"><strong>频道静默</strong><span>第一条角色消息抵达后，叙事会在这里展开。</span></div>
-      <article v-for="message in snapshot.messages" :key="message.id" class="dr-message" :class="`dr-message--${message.role}`">
+      <article v-for="message in snapshot.messages" :key="message.id" class="dr-message" :class="[`dr-message--${message.role}`, { 'dr-message--fresh': freshMessageIds.has(message.id) }]" :data-message-id="message.id">
         <header><span>{{ message.role === 'assistant' ? snapshot.character.name : message.role === 'user' ? '你' : '系统记录' }}</span><time>{{ String(message.index + 1).padStart(3, '0') }}</time></header>
         <div class="dr-message__body" v-html="html(message)" />
         <footer v-if="message.capabilities.edit || message.capabilities.rollback">

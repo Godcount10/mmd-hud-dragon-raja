@@ -24,26 +24,26 @@ describe('iframe protocol decoders', () => {
       buildId: 'test-build',
       bootstrapId: 'bootstrap-test',
       channelId: 'channel-test',
-      theme: 'bridge-debug',
+      theme: 'dragon-raja',
       knownActions: ALL_NATIVE_ACTIONS,
       registeredActions: ALL_NATIVE_ACTIONS.filter((action) => action !== 'newChat'),
     })
     expect(decoded.ok).toBe(true)
   })
 
-  it('accepts the private Dragon Raja handshake theme', () => {
-    const decoded = decodeHostHandshake({
+  it('rejects removed and unknown handshake themes', () => {
+    const handshake = {
       type: 'host-handshake',
       protocol: IFRAME_PROTOCOL_NAME,
       protocolVersion: IFRAME_PROTOCOL_VERSION,
       buildId: 'test-build',
       bootstrapId: 'bootstrap-test',
       channelId: 'channel-test',
-      theme: 'dragon-raja',
       knownActions: ALL_NATIVE_ACTIONS,
       registeredActions: ALL_NATIVE_ACTIONS,
-    })
-    expect(decoded.ok).toBe(true)
+    }
+    expect(decodeHostHandshake({ ...handshake, theme: 'bridge-debug' }).ok).toBe(false)
+    expect(decodeHostHandshake({ ...handshake, theme: 'unknown' }).ok).toBe(false)
   })
 
   it('rejects incomplete or duplicated handshake action sets', () => {
@@ -54,7 +54,7 @@ describe('iframe protocol decoders', () => {
       buildId: 'test-build',
       bootstrapId: 'bootstrap-test',
       channelId: 'channel-test',
-      theme: 'bridge-debug',
+      theme: 'dragon-raja',
       knownActions: [...ALL_NATIVE_ACTIONS.slice(1), ALL_NATIVE_ACTIONS[1]],
       registeredActions: [],
     })

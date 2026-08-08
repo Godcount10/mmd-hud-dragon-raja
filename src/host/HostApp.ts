@@ -95,7 +95,11 @@ export function resolveFrameScriptUrl(config: IframeHostConfig | undefined): URL
 }
 
 export function resolveTheme(config: IframeHostConfig | undefined): HudThemeId {
-  return isHudThemeId(config?.theme) ? config.theme : 'dragon-raja'
+  if (config?.theme === undefined) return 'dragon-raja'
+  if (!isHudThemeId(config.theme)) {
+    throw new Error(`不支持的 HUD Theme：${String(config.theme)}`)
+  }
+  return config.theme
 }
 
 export function assertFrameScriptUrlAllowed(frameScriptUrl: URL): void {

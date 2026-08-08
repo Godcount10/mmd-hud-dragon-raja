@@ -56,7 +56,7 @@ npm run dev:host
 http://127.0.0.1:5174/
 ```
 
-Host 页面在 5174，Frame 脚本来自 5273，Frame document 本身是 opaque sandbox srcdoc。这比两个普通跨 origin 页面更接近生产架构。当前私有测试分支默认加载 `dragon-raja` Theme；需要调试基础设施时可通过 `?theme=bridge-debug` 切换。
+Host 页面在 5174，Frame 脚本来自 5273，Frame document 本身是 opaque sandbox srcdoc。这比两个普通跨 origin 页面更接近生产架构。当前私有测试分支固定加载 `dragon-raja` Theme。
 
 ### 2.2 Frame 连接错误页
 
@@ -169,7 +169,7 @@ typecheck + tests → build:host → build:frame → build:inline:rules → veri
 - Wire 净化；
 - stable reference 和两阶段删除；
 - Frame CSS 注入；
-- 部分模型 resolver、调试 payload 和特效设置。
+- Dragon Raja sanitizer、AI 派生状态和组件事务。
 
 明显待补见 [架构优化路线图](ROADMAP.md)。
 
@@ -192,7 +192,7 @@ Git Bash：
 MMD_HUD_BUILD_ID=<version-or-commit-sha> npm run build:inline
 ```
 
-开发缺省值为 dev；正式内嵌构建脚本会拒绝 `dev` Build ID，并在完成后验证规则链和 `bridge-debug`-only Frame 产物。
+开发缺省值为 dev；正式内嵌构建脚本会拒绝 `dev` Build ID，并在完成后验证规则链和 Dragon Raja-only Frame 产物。
 
 ---
 
@@ -257,10 +257,10 @@ Host 与 Frame 必须来自同一次源码状态、同一次构建和同一个 B
 5. 执行 `npm run check`；
 6. 用同一 Build ID 执行 `npm run build:inline`；
 7. 确认 `verify:release` 通过；
-8. 确认 Frame 产物仅包含本发布版本的 `bridge-debug` Theme；
+8. 确认 Frame 产物仅包含本发布版本的 `dragon-raja` Theme；
 9. 确认第三方库和资产已打入 bundle；
 10. 检查 release diff；
-11. 在真实 MMD 执行 bridge-debug 冒烟；
+11. 在真实 MMD 执行 Dragon Raja 基础冒烟；
 12. 审核后提交发布分支；是否推送远程仓库或创建 GitHub Release，应作为独立人工步骤明确执行。
 
 指定远程仓库推送（维护者专用）：
@@ -326,15 +326,9 @@ __MMD_HUD_IFRAME__.destroy()
 
 ---
 
-## 12. bridge-debug 导出安全
+## 12. 私有数据安全
 
-默认导出会脱敏：
-
-- confirmation token；
-- HTTP(S) link/avatar；
-- text/html/identity/subtitle/preview。
-
-完整导出可能包含聊天正文、用户人设、设定补充和分享链接，必须二次确认，不应公开上传。
+聊天正文、用户人设、设定补充和分享链接不得写入公开 manifest、README 或测试产物。公开仓库只发布编译后的 Host/Frame、校验信息和注入说明。
 
 ---
 

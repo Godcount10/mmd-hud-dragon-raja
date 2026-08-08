@@ -10,7 +10,7 @@ MMD 原生页面
   → HostApp / FrameController / HostSession
   ║  MessagePort Protocol v2
   → HostClient / HudContext
-  → Vue Theme：bridge-debug 调控台
+  → Vue Theme：Dragon Raja
 ```
 
 ---
@@ -20,11 +20,11 @@ MMD 原生页面
 - 协议版本：v2；
 - NativeAction 契约：67 项；
 - 已注册原生 handler：61 项；
-- Theme：仅发布 `bridge-debug` 调控台；
+- Theme：仅发布 `dragon-raja`；
 - Host 与 Frame 分别构建为独立 IIFE；
 - Frame SFC CSS 注入单一 Frame JS，不需要发布独立 CSS；
-- 自动化测试覆盖协议、Host、Frame、Wire、构建注入及部分模型/调试状态；
-- 核心 bridge-debug 真实 MMD 冒烟已通过；完整 handler 回归、移动端、CSP、BFCache 和发布自动化仍需持续验收。
+- 自动化测试覆盖协议、Host、Frame、Wire、构建注入及 Dragon Raja Theme 逻辑；
+- 详细浏览器视觉验收由注入测试负责，仓库门禁聚焦自动化验证和产物一致性。
 
 当前行为以源码、测试和本项目文档为准。
 
@@ -67,7 +67,7 @@ README
 README
   → docs/BRIDGE_DEVELOPMENT.md
   → docs/ARCHITECTURE.md
-  → 在 bridge-debug 和真实 MMD 中回归
+  → 在真实 MMD 中回归实际 Theme 依赖动作
 ```
 
 #### 我要接手后续优化
@@ -137,7 +137,7 @@ npm run dev:host
 http://127.0.0.1:5174/
 ```
 
-本私有测试分支默认启动 `dragon-raja` Theme；可通过 `?theme=bridge-debug` 切换到 Bridge 调控台。
+本私有测试分支固定启动 `dragon-raja` Theme，不再提供调试 Theme 切换开关。
 
 更多命令、Build ID、单文件 CSS、浏览器检查和发布步骤见 [开发、测试与发布](docs/DEVELOPMENT_AND_RELEASE.md)。
 
@@ -181,9 +181,7 @@ mmd-hud-iframe/
 
 ### Bridge 调控台 Theme
 
-当前私有测试分支包含 `dragon-raja` Theme，以及用于协议和 Bridge 验证的 `bridge-debug` 调控台。Dragon Raja 的原生镜像由 Snapshot 驱动，地图、图鉴和 AI 派生状态属于 Theme 私有边界。
-
-Theme 内的数据处理层位于 `src/hud/themes/bridge-debug/composables/` 与 `src/hud/themes/bridge-debug/utils/`，负责 Snapshot 历史、事件流、Action 执行、确认 token、Proxy 脱离、差异计算和导出脱敏。
+当前私有测试分支只包含 `dragon-raja` Theme。Dragon Raja 的原生镜像由 Snapshot 驱动，地图、图鉴和 AI 派生状态属于 Theme 私有边界。
 
 Theme 内的功能必须区分：
 

@@ -511,7 +511,7 @@ harness.pushSnapshot(nextSnapshot)
 - 不通过 `any` 绕过 HudContext 类型；
 - fake invoke 与真实 ActionResult contract 一致；
 - 测试可精确控制异步顺序；
-- bridge-debug 的关键镜像面板至少各有一条根挂载测试。
+- Theme 的关键镜像面板至少各有一条根挂载测试。
 
 ---
 
@@ -613,7 +613,7 @@ storage.delete
 - hudVisible 生命周期信号；
 - `refreshAndRead()`；
 - HostClient 去重和测试；
-- bridge-debug 特效/模型流程迁移试点。
+- Dragon Raja 特效/模型流程迁移动效试点。
 
 需要协议版本兼容设计。
 
