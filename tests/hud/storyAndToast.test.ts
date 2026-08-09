@@ -66,6 +66,56 @@ describe('Dragon Raja story motion', () => {
     wrapper.unmount()
   })
 
+  it('treats a disjoint idle message set as loaded history, then animates later increments', async () => {
+    vi.useFakeTimers()
+    const snapshot = ref(createTestSnapshot())
+    snapshot.value.messages = [message('old-1', 'assistant'), message('old-2', 'user')]
+    const wrapper = mountStory(snapshot)
+    await nextTick()
+
+    snapshot.value = {
+      ...snapshot.value,
+      revision: 2,
+      messages: [message('new-10', 'assistant'), message('new-11', 'user')],
+      generation: { status: 'idle', messageId: null },
+    }
+    await nextTick()
+    expect(wrapper.findAll('.dr-message--fresh')).toHaveLength(0)
+    expect(wrapper.get('.dr-story__messages').classes()).toContain('dr-story__messages--replacing')
+
+    await vi.advanceTimersByTimeAsync(360)
+    await nextTick()
+    expect(wrapper.get('.dr-story__messages').classes()).not.toContain('dr-story__messages--replacing')
+
+    snapshot.value = {
+      ...snapshot.value,
+      revision: 3,
+      messages: [...snapshot.value.messages, message('new-12', 'assistant')],
+    }
+    await nextTick()
+    expect(wrapper.get('[data-message-id="new-12"]').classes()).toContain('dr-message--fresh')
+
+    wrapper.unmount()
+  })
+
+  it('still treats the first message after an empty history as new', async () => {
+    vi.useFakeTimers()
+    const snapshot = ref(createTestSnapshot())
+    const wrapper = mountStory(snapshot)
+    await nextTick()
+
+    snapshot.value = {
+      ...snapshot.value,
+      revision: 2,
+      messages: [message('first-1', 'assistant')],
+    }
+    await nextTick()
+
+    expect(wrapper.get('[data-message-id="first-1"]').classes()).toContain('dr-message--fresh')
+    expect(wrapper.get('.dr-story__messages').classes()).not.toContain('dr-story__messages--replacing')
+    wrapper.unmount()
+  })
+
   it('does not replay the entrance when an existing streaming message changes', async () => {
     vi.useFakeTimers()
     const snapshot = ref(createTestSnapshot())

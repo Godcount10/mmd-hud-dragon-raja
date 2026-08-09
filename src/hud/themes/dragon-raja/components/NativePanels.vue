@@ -18,6 +18,7 @@ const layerRoot = ref<HTMLElement | null>(null)
 const panelRoot = ref<HTMLElement | null>(null)
 const displayedPanel = ref<NativePanel | null>(null)
 const leaving = ref(false)
+const switching = ref(false)
 const motion = useMotionScope({ root: layerRoot })
 let restoreFocus: HTMLElement | null = null
 
@@ -33,36 +34,78 @@ const panel = computed<NativePanel | null>(() => {
   return null
 })
 
-watch(panel, async (dialog, previous) => {
+watch(panel, async (dialog) => {
+  const token = motion.nextGeneration()
+
   if (dialog) {
-    const interruptedLeave = leaving.value
-    if (interruptedLeave) motion.nextGeneration()
-    if (!displayedPanel.value) {
+    const wasLeaving = leaving.value
+    const previousPanel = displayedPanel.value
+    if (!previousPanel) {
       restoreFocus = document.activeElement instanceof HTMLElement ? document.activeElement : null
     }
-    displayedPanel.value = dialog
     leaving.value = false
-    await nextTick()
-    if (!previous || interruptedLeave) {
+
+    if (previousPanel && previousPanel !== dialog && !wasLeaving) {
+      switching.value = true
+      const currentPanel = panelRoot.value
+      if (currentPanel && !motion.reducedMotion.value) {
+        motion.timeline(undefined, (timeline) => {
+          timeline.to(currentPanel.querySelectorAll('.dr-native-panel__header > *, .dr-native-panel__body > *, .dr-native-panel__footer > *'), {
+            autoAlpha: 0,
+            x: -18,
+            duration: .2,
+            stagger: { each: .018, from: 'end' },
+            ease: 'power2.in',
+          })
+        })
+        const left = await motion.delay(220, token)
+        if (!left || !motion.isCurrent(token) || panel.value !== dialog) return
+      }
+
+      displayedPanel.value = dialog
+      await nextTick()
+      if (!motion.isCurrent(token) || panel.value !== dialog) return
+      const nextPanel = panelRoot.value
+      if (nextPanel && !motion.reducedMotion.value) {
+        motion.timeline(undefined, (timeline) => {
+          timeline.fromTo(
+            nextPanel.querySelectorAll('.dr-native-panel__header > *, .dr-native-panel__body > *, .dr-native-panel__footer > *'),
+            { autoAlpha: 0, x: 18 },
+            { autoAlpha: 1, x: 0, duration: .3, stagger: .03, ease: 'expo.out' },
+          )
+        })
+      }
+      switching.value = false
       panelRoot.value?.focus()
+      return
+    }
+
+    displayedPanel.value = dialog
+    await nextTick()
+    if (!motion.isCurrent(token) || panel.value !== dialog) return
+    panelRoot.value?.focus()
+    if (!previousPanel || wasLeaving) {
       if (!motion.reducedMotion.value) {
         motion.timeline(undefined, (timeline) => {
           timeline
-            .fromTo('.dr-native-layer__scrim', { autoAlpha: 0 }, { autoAlpha: 1, duration: .25, ease: 'power2.out' }, 0)
+            .fromTo('.dr-native-layer__scrim', { autoAlpha: wasLeaving ? 1 : 0 }, { autoAlpha: 1, duration: .25, ease: 'power2.out' }, 0)
             .fromTo('.dr-native-panel', { autoAlpha: 0, y: 22, scale: .98, clipPath: 'inset(0 0 100% 0)' }, { autoAlpha: 1, y: 0, scale: 1, clipPath: 'inset(0)', duration: .42, ease: 'expo.out' }, .05)
             .fromTo('.dr-native-panel__header > *, .dr-native-panel__body > *, .dr-native-panel__footer > *', { autoAlpha: 0, y: 10 }, { autoAlpha: 1, y: 0, duration: .3, stagger: .035, ease: 'power2.out' }, .2)
         })
       }
     }
+    switching.value = false
     return
   }
+
+  switching.value = false
   if (!displayedPanel.value || leaving.value) return
   leaving.value = true
-  const token = motion.nextGeneration()
   if (motion.reducedMotion.value) {
     displayedPanel.value = null
     leaving.value = false
     if (restoreFocus?.isConnected) restoreFocus.focus()
+    restoreFocus = null
     return
   }
   motion.timeline(undefined, (timeline) => {
@@ -72,10 +115,11 @@ watch(panel, async (dialog, previous) => {
       .to('.dr-native-layer__scrim', { autoAlpha: 0, duration: .28, ease: 'power2.in' }, .12)
   })
   void motion.delay(440, token).then((completed) => {
-    if (!completed || !motion.isCurrent(token)) return
+    if (!completed || !motion.isCurrent(token) || panel.value) return
     displayedPanel.value = null
     leaving.value = false
     if (restoreFocus?.isConnected) restoreFocus.focus()
+    restoreFocus = null
   })
 })
 
@@ -217,9 +261,9 @@ async function chooseSupplementPosition(choiceId: string): Promise<void> {
 </script>
 
 <template>
-  <section v-if="displayedPanel" ref="layerRoot" class="dr-native-layer" role="dialog" aria-modal="true" :aria-label="displayedPanel" :aria-busy="leaving">
+  <section v-if="displayedPanel" ref="layerRoot" class="dr-native-layer" role="dialog" aria-modal="true" :aria-label="displayedPanel" :aria-busy="leaving || switching">
     <button class="dr-native-layer__scrim" type="button" tabindex="-1" aria-label="关闭原生镜像" @click="close" />
-    <div ref="panelRoot" class="dr-native-panel" tabindex="-1">
+    <div ref="panelRoot" class="dr-native-panel" :data-panel="displayedPanel" tabindex="-1">
       <header class="dr-native-panel__header">
         <div><span>MMD NATIVE MIRROR</span><h2 v-if="displayedPanel === 'instruction'">选择快捷指令</h2><h2 v-else-if="displayedPanel === 'edit'">编辑消息</h2><h2 v-else-if="displayedPanel === 'model-config'">{{ snapshot.modelConfiguration.title || '模型设置' }}</h2><h2 v-else-if="displayedPanel === 'models'">{{ snapshot.modelPanel.title || '模型选择' }}</h2><h2 v-else-if="displayedPanel === 'archives'">{{ snapshot.conversationPanel.title || '管理存档' }}</h2><h2 v-else-if="displayedPanel === 'persona'">{{ snapshot.personaPanel.title || '用户人设' }}</h2><h2 v-else-if="displayedPanel === 'supplement'">{{ snapshot.supplementPanel.title || '补充设定' }}</h2><h2 v-else>{{ snapshot.chatSettings.title || '对话设置' }}</h2></div>
         <button type="button" :disabled="pending !== null || (displayedPanel === 'supplement' && snapshot.supplementPanel.picker.open)" @click="close"><svg viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18" /></svg></button>

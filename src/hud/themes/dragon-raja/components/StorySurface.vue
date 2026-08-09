@@ -23,7 +23,9 @@ const sanitizedCache = new Map<string, { source: string; output: string }>()
 const seenMessageIds = new Set<string>()
 const completedMessageIds = new Set<string>()
 const freshMessageIds = ref(new Set<string>())
+const historyReplacing = ref(false)
 let freshGeneration = 0
+let historyGeneration = 0
 let seeded = false
 
 const currentModel = computed(() => snapshot.value.modelPanel.models.find((model) => model.selected)?.name || '选择模型')
@@ -90,17 +92,51 @@ function animateNewMessages(messages: readonly ChatMessage[], ids: readonly stri
   })
 }
 
+function animateHistoryReplacement(): void {
+  const node = list.value
+  if (!node || motion.reducedMotion.value) return
+  motion.timeline(undefined, (timeline) => {
+    timeline.fromTo(node, { autoAlpha: .72, y: 8 }, { autoAlpha: 1, y: 0, duration: .32, ease: 'power2.out' })
+  })
+}
+
 watch(() => props.initialDraft, (value) => {
   if (!value) return
   draft.value = value
   emit('draftConsumed')
 }, { immediate: true })
 
-watch(() => snapshot.value.messages, async (messages) => {
+watch(() => snapshot.value.messages, async (messages, previousMessages) => {
   sanitizedCache.forEach((_value, id) => {
     if (!messages.some((message) => message.id === id)) sanitizedCache.delete(id)
   })
+  const previousIds = new Set(previousMessages?.map((message) => message.id) ?? [])
   const nextIds = new Set(messages.map((message) => message.id))
+  const replacedHistory = seeded
+    && previousIds.size > 0
+    && nextIds.size > 0
+    && snapshot.value.generation.status === 'idle'
+    && ![...nextIds].some((id) => previousIds.has(id))
+
+  if (replacedHistory) {
+    seenMessageIds.clear()
+    completedMessageIds.clear()
+    messages.forEach((message) => seenMessageIds.add(message.id))
+    freshGeneration += 1
+    freshMessageIds.value = new Set()
+    historyGeneration += 1
+    const token = historyGeneration
+    historyReplacing.value = true
+    await nextTick()
+    if (token !== historyGeneration || motion.disposed.value) return
+    animateHistoryReplacement()
+    scrollToBottom('auto')
+    void motion.delay(360).then((completed) => {
+      if (completed && token === historyGeneration) historyReplacing.value = false
+    })
+    return
+  }
+
   for (const id of seenMessageIds) {
     if (!nextIds.has(id)) {
       seenMessageIds.delete(id)
@@ -157,7 +193,7 @@ watch(() => snapshot.value.generation, async (generation, previous) => {
       <span class="dr-story__signal" :data-state="snapshot.connection.status"><i />{{ snapshot.connection.status === 'connected' ? '在线' : '重连中' }}</span>
     </header>
 
-    <div ref="list" class="dr-story__messages" aria-live="polite">
+    <div ref="list" class="dr-story__messages" :class="{ 'dr-story__messages--replacing': historyReplacing }" aria-live="polite">
       <div v-if="!snapshot.messages.length" class="dr-story__empty"><strong>频道静默</strong><span>第一条角色消息抵达后，叙事会在这里展开。</span></div>
       <article v-for="message in snapshot.messages" :key="message.id" class="dr-message" :class="[`dr-message--${message.role}`, { 'dr-message--fresh': freshMessageIds.has(message.id) }]" :data-message-id="message.id">
         <header><span>{{ message.role === 'assistant' ? snapshot.character.name : message.role === 'user' ? '你' : '系统记录' }}</span><time>{{ String(message.index + 1).padStart(3, '0') }}</time></header>
