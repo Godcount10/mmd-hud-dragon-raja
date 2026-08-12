@@ -1,6 +1,7 @@
 import { createApp, h, type App } from 'vue'
 import { HUD_CONTEXT_KEY, type HudContext } from '../hud/context'
 import { dragonRajaTheme } from '../hud/themes/dragon-raja'
+import { dragonRajaMediaCss } from '../hud/themes/dragon-raja/media'
 import type { HudThemeDefinition } from '../hud/themes/types'
 import { decodeFrameBootstrap, type HudThemeId } from '../protocol'
 import { HostClient } from './connection/HostClient'
@@ -34,6 +35,13 @@ if (!bootstrap || bootstrap.buildId !== __MMD_HUD_BUILD_ID__) {
       style.dataset.mmdHudTheme = theme.id
       style.textContent = theme.styles
       document.head.appendChild(style)
+    }
+    const mediaCss = dragonRajaMediaCss()
+    if (mediaCss) {
+      const mediaStyle = document.createElement('style')
+      mediaStyle.dataset.mmdHudMedia = theme.id
+      mediaStyle.textContent = mediaCss
+      document.head.appendChild(mediaStyle)
     }
 
     const context: HudContext = {

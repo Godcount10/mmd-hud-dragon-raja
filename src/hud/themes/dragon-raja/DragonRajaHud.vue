@@ -43,6 +43,14 @@ watch(statuses, (nextStatuses, previousStatuses) => {
 
 const characterName = computed(() => context.snapshot.value.character.name || '未知角色')
 const connectionLabel = computed(() => context.connection.value.status === 'ready' ? 'FRAME ONLINE' : context.connection.value.status.toUpperCase())
+const generationCopy = computed(() => {
+  const status = context.snapshot.value.generation.status
+  if (status === 'starting') return { code: 'CALIBRATING', label: '正在建立叙事回路' }
+  if (status === 'streaming') return { code: 'WRITING', label: '原生回复正在写入' }
+  if (status === 'stopping') return { code: 'STOPPING', label: '正在停止原生生成' }
+  if (status === 'error') return { code: 'ERROR', label: '原生生成发生错误' }
+  return { code: 'STANDBY', label: '等待下一次行动' }
+})
 
 function showMessage(ok: boolean, message: string): void {
   feedbackId += 1
@@ -185,28 +193,55 @@ async function edit(messageId: string): Promise<void> {
     <OpeningSurface v-else-if="mountedSurface === 'opening'" @complete="completeOpening" @cancel="enterStory" />
     <section v-else class="dr-shell" ref="shellRoot" :aria-busy="surfaceChanging">
       <header class="dr-topbar">
-        <button class="dr-brand" type="button" aria-label="返回故事" @click="requestSurface('story')"><span class="dr-brand__mark">DR</span><span><strong>Dragon Raja</strong><small>ACADEMY ARCHIVE</small></span></button>
-        <div class="dr-character"><span class="dr-character__avatar">{{ characterName.slice(0, 1) }}</span><span><small>当前叙事对象</small><strong>{{ characterName }}</strong></span></div>
-        <div class="dr-topbar__status"><i :class="{ live: context.connection.value.status === 'ready' }" /><span>{{ connectionLabel }}</span><b>REV {{ context.snapshot.value.revision }}</b></div>
+        <button class="dr-brand" type="button" aria-label="返回故事" @click="requestSurface('story')">
+          <span class="dr-brand__mark" aria-hidden="true"><i /></span>
+          <span><strong>卡塞尔学院</strong><small>炼金叙事终端</small></span>
+        </button>
+        <div class="dr-character"><span class="dr-character__avatar">{{ characterName.slice(0, 1) }}</span><span><strong>{{ characterName }}</strong></span></div>
+        <div class="dr-topbar__status" :title="`${connectionLabel} · 快照修订 ${context.snapshot.value.revision}`"><i :class="{ live: context.connection.value.status === 'ready' }" /><b>REV {{ context.snapshot.value.revision }}</b></div>
         <nav class="dr-primary-actions" aria-label="一级功能">
-          <button type="button" :disabled="refreshConversationPending || !context.snapshot.value.capabilities.refreshConversation.available" @click="refreshConversation"><span>同步</span><strong>{{ refreshConversationPending ? '刷新中' : '刷新对话' }}</strong></button>
-          <button type="button" class="dr-primary-actions__compact" @click="openLocalView('codex')"><span>资料</span><strong>图鉴</strong></button>
-          <button type="button" class="dr-primary-actions__compact" @click="openLocalView('map')"><span>坐标</span><strong>地图</strong></button>
+          <button type="button" :disabled="refreshConversationPending || !context.snapshot.value.capabilities.refreshConversation.available" @click="refreshConversation"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12a8 8 0 1 1-2.3-5.6M20 4v4h-4" /></svg><strong>{{ refreshConversationPending ? '刷新中' : '刷新对话' }}</strong></button>
+          <button type="button" class="dr-primary-actions__compact" @click="openLocalView('codex')"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h6a3 3 0 0 1 3 3v13a3 3 0 0 0-3-3H5V4Zm14 0h-5v16a3 3 0 0 1 3-3h2V4Z" /></svg><strong>图鉴</strong></button>
+          <button type="button" class="dr-primary-actions__compact" @click="openLocalView('map')"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m4 6 5-2 6 2 5-2v14l-5 2-6-2-5 2V6Zm5-2v14m6-12v14" /></svg><strong>打开地图</strong></button>
         </nav>
-        <button class="dr-menu-trigger" type="button" @click="openLocalView('menu')"><i /><i /><span>更多</span></button>
+        <button class="dr-menu-trigger" type="button" @click="openLocalView('menu')"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 7h14M5 12h14M5 17h14" /></svg><span>更多</span></button>
       </header>
       <div class="dr-shell__rule" />
       <section v-if="mountedSurface === 'story'" class="dr-workspace">
-        <aside class="dr-sidebar">
-          <div><span>WORLD SIGNAL</span><h2>正在发生</h2></div>
-          <div class="dr-sidebar__status"><small>AI DERIVED STATUS</small><p v-if="!statuses.length">等待叙事标记……</p><dl v-else><template v-for="item in statuses" :key="item.key"><dt :class="{ changed: changedStatusKeys.has(item.key) }">{{ item.key }}</dt><dd :class="{ changed: changedStatusKeys.has(item.key) }">{{ item.value }}</dd></template></dl></div>
-          <nav><button type="button" @click="openLocalView('menu')"><span>档案与设置</span><strong>更多</strong></button><button type="button" @click="openLocalView('codex')"><span>本地世界资料</span><strong>图鉴 ↗</strong></button></nav>
-          <button class="dr-sidebar__hide" type="button" @click="hide">查看原生界面</button>
+        <div class="dr-story-environment" aria-hidden="true"><div class="dr-story-environment__plate" /><div class="dr-story-environment__mask" /><div class="dr-story-environment__alchemy" /></div>
+        <aside class="dr-sidebar" aria-label="故事二级导航">
+          <div class="dr-sidebar__crest" aria-hidden="true" />
+          <nav>
+            <button type="button" class="active" aria-current="page" @click="requestSurface('story')"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4h9a3 3 0 0 1 3 3v13H8a2 2 0 0 1-2-2V4Zm2 0v14a2 2 0 0 0-2-2h12M10 8h5M10 12h5" /></svg><strong>故事</strong></button>
+            <button type="button" @click="openLocalView('status')"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 5 7v5c0 4.2 2.7 7.6 7 9 4.3-1.4 7-4.8 7-9V7l-7-4Zm-3 9 2 2 4-5" /></svg><strong>判读</strong></button>
+            <button type="button" @click="openLocalView('map')"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m4 6 5-2 6 2 5-2v14l-5 2-6-2-5 2V6Zm5-2v14m6-12v14" /></svg><strong>地图</strong><small>打开地图</small></button>
+            <button type="button" @click="openLocalView('codex')"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h6a3 3 0 0 1 3 3v13a3 3 0 0 0-3-3H5V4Zm14 0h-5v16a3 3 0 0 1 3-3h2V4Z" /></svg><strong>图鉴</strong></button>
+            <button type="button" @click="openNative('openConversationPanel')"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16v13H4V7Zm3-3h10v3H7V4Zm2 7h6m-6 4h4" /></svg><strong>档案</strong></button>
+            <button type="button" @click="openLocalView('menu')"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 7h14M5 12h14M5 17h14" /></svg><strong>更多</strong></button>
+          </nav>
+          <button class="dr-sidebar__hide" type="button" @click="hide">原生界面</button>
         </aside>
         <StorySurface :initial-draft="openingDraft" :edit-pending="editPending" @draft-consumed="openingDraft = ''" @open-models="openNative('openModelSettings')" @edit="edit" @rollback="rollback" @feedback="showMessage" />
-        <aside class="dr-radar"><div class="dr-radar__sweep" /><span class="dr-radar__label">LOCAL MAP / CURRENT NODE</span><div class="dr-radar__circle"><i /><i /><i /><b>英灵殿</b></div><button type="button" @click="openLocalView('map')">打开地图 <span>↗</span></button><div class="dr-radar__footer"><span>生成状态</span><strong>{{ context.snapshot.value.generation.status }}</strong></div></aside>
+        <!-- One continuous panel in three sections: the Native / AI-derived / Theme-local split is
+             carried by the section headings and ordering rather than three competing card colours. -->
+        <aside class="dr-radar" aria-label="状态栏">
+          <section class="dr-status-card dr-status-card--native" aria-labelledby="dr-status-native">
+            <header><span id="dr-status-native">原生快照</span><i :class="{ live: context.connection.value.status === 'ready' }" /></header>
+            <dl><dt>连接</dt><dd>{{ context.connection.value.status === 'ready' ? '已同步' : '连接中' }}</dd><dt>模型</dt><dd>{{ context.snapshot.value.modelPanel.models.find((model) => model.selected)?.name || '未选择' }}</dd><dt>生成</dt><dd :data-state="context.snapshot.value.generation.status">{{ generationCopy.label }}</dd></dl>
+          </section>
+          <section class="dr-status-card dr-status-card--derived" aria-labelledby="dr-status-derived">
+            <header><span id="dr-status-derived">AI 临时判读</span><button type="button" @click="openLocalView('status')">全部</button></header>
+            <div class="dr-sidebar__status"><p v-if="!statuses.length">暂无助手文本标记</p><dl v-else><template v-for="item in statuses.slice(0, 3)" :key="item.key"><dt :class="{ changed: changedStatusKeys.has(item.key) }" :title="item.key">{{ item.key }}</dt><dd :class="{ changed: changedStatusKeys.has(item.key) }" :title="item.value">{{ item.value }}</dd></template></dl></div>
+            <small>来自 assistant 文本，只读</small>
+          </section>
+          <section class="dr-status-card dr-status-card--local" aria-labelledby="dr-status-local">
+            <header><span id="dr-status-local">学院本地资料</span></header>
+            <p>地图与图鉴为 Theme Local 预览，不代表当前剧情地点。</p>
+            <nav><button type="button" @click="openLocalView('map')">打开地图</button><button type="button" @click="openLocalView('codex')">图鉴</button></nav>
+          </section>
+        </aside>
       </section>
-      <section v-else class="dr-settings"><header><button type="button" @click="requestSurface('story')">← 返回故事</button><div><span>HUD CONTROL / NATIVE MIRROR</span><h1>系统设置</h1></div></header><div class="dr-settings__grid"><button type="button" @click="openNative('openPersona')"><span>01</span><strong>用户人设</strong><small>称呼、身份与角色视角</small></button><button type="button" @click="openNative('openSupplement')"><span>02</span><strong>补充设定</strong><small>管理世界注入位置和正文</small></button><button type="button" @click="openNative('openChatSettings')"><span>03</span><strong>对话设置</strong><small>镜像当前 MMD 对话参数</small></button><button type="button" :disabled="refreshPending" @click="refreshSnapshot"><span>04</span><strong>{{ refreshPending ? '读取中' : '刷新快照' }}</strong><small>只重新读取原生事实，不触发对话重载</small></button></div></section>
+      <section v-else class="dr-settings"><header><button type="button" @click="requestSurface('story')">← 返回故事</button><div><h1>系统设置</h1><p>原生事实以最新 Snapshot 为准</p></div></header><div class="dr-settings__grid"><button type="button" @click="openNative('openPersona')"><span>人设</span><strong>用户人设</strong><small>称呼、身份与角色视角</small></button><button type="button" @click="openNative('openSupplement')"><span>设定</span><strong>补充设定</strong><small>管理世界注入位置和正文</small></button><button type="button" @click="openNative('openChatSettings')"><span>对话</span><strong>对话设置</strong><small>镜像当前 MMD 对话参数</small></button><button type="button" :disabled="refreshPending" @click="refreshSnapshot"><span>同步</span><strong>{{ refreshPending ? '读取中' : '刷新快照' }}</strong><small>只重新读取原生事实，不触发对话重载</small></button></div></section>
     </section>
     <LocalMenu v-if="localView" :initial-view="localView" :statuses="statuses" @close="localView = null" @settings="handleLocalAction('settings')" @archives="handleLocalAction('archives')" @persona="handleLocalAction('persona')" @supplement="handleLocalAction('supplement')" @exit="handleLocalAction('exit')" />
     <NativePanels @feedback="notify" />

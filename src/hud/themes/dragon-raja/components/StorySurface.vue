@@ -24,11 +24,27 @@ const seenMessageIds = new Set<string>()
 const completedMessageIds = new Set<string>()
 const freshMessageIds = ref(new Set<string>())
 const historyReplacing = ref(false)
+const openActionsId = ref<string | null>(null)
 let freshGeneration = 0
 let historyGeneration = 0
 let seeded = false
 
 const currentModel = computed(() => snapshot.value.modelPanel.models.find((model) => model.selected)?.name || '选择模型')
+const generationCopy = computed(() => {
+  const status = snapshot.value.generation.status
+  if (status === 'starting') return { code: 'CALIBRATING', title: '正在建立叙事回路', detail: '原生生成即将开始' }
+  if (status === 'streaming') return { code: 'WRITING', title: '事件记录写入中', detail: '当前回复来自原生快照' }
+  if (status === 'stopping') return { code: 'STOPPING', title: '正在停止生成', detail: '等待原生状态确认' }
+  if (status === 'error') return { code: 'ERROR', title: '叙事回路异常', detail: '请检查原生界面或重新尝试' }
+  return { code: 'STANDBY', title: '机密线路已封存', detail: '等待下一次行动提交' }
+})
+const sendCapabilityReason = computed(() => snapshot.value.capabilities.sendMessage.reason || '当前原生界面无法发送消息')
+
+function roleLabel(message: ChatMessage): string {
+  if (message.role === 'assistant') return snapshot.value.character.name || '未知角色'
+  if (message.role === 'user') return '你的行动'
+  return '系统事件'
+}
 
 function html(message: ChatMessage): string {
   const source = message.html || message.text
@@ -54,7 +70,44 @@ async function send(): Promise<void> {
 
 function editMessage(messageId: string): void {
   if (props.editPending) return
+  closeActions()
   emit('edit', messageId)
+}
+
+function rollbackMessage(messageId: string): void {
+  closeActions()
+  emit('rollback', messageId)
+}
+
+/* One menu open at a time; the trigger keeps focus so Escape can return to it. */
+function toggleActions(messageId: string): void {
+  openActionsId.value = openActionsId.value === messageId ? null : messageId
+}
+
+function closeActions(): void {
+  openActionsId.value = null
+}
+
+function closeActionsAndRefocus(messageId: string): void {
+  if (openActionsId.value !== messageId) return
+  closeActions()
+  const trigger = list.value?.querySelector<HTMLElement>(`${messageSelector(messageId)} .dr-message__actions-trigger`)
+  trigger?.focus()
+}
+
+/* Touch taps also fire pointerleave, so only a real mouse should dismiss on leave. */
+function leaveActions(messageId: string, event: PointerEvent): void {
+  if (openActionsId.value !== messageId || event.pointerType !== 'mouse') return
+  closeActions()
+}
+
+/* Keyboard exit: close once focus leaves the footer entirely. */
+function blurActions(messageId: string, event: FocusEvent): void {
+  if (openActionsId.value !== messageId) return
+  const footer = event.currentTarget as HTMLElement | null
+  const next = event.relatedTarget as Node | null
+  if (footer && next && footer.contains(next)) return
+  closeActions()
 }
 
 function nearBottom(): boolean {
@@ -110,6 +163,7 @@ watch(() => snapshot.value.messages, async (messages, previousMessages) => {
   sanitizedCache.forEach((_value, id) => {
     if (!messages.some((message) => message.id === id)) sanitizedCache.delete(id)
   })
+  if (openActionsId.value && !messages.some((message) => message.id === openActionsId.value)) closeActions()
   const previousIds = new Set(previousMessages?.map((message) => message.id) ?? [])
   const nextIds = new Set(messages.map((message) => message.id))
   const replacedHistory = seeded
@@ -186,29 +240,40 @@ watch(() => snapshot.value.generation, async (generation, previous) => {
 <template>
   <section ref="root" class="dr-story" aria-label="Dragon Raja 对话频道">
     <header class="dr-story__header">
-      <div>
+      <div class="dr-story__identity">
         <h1>{{ snapshot.character.name || '未知角色' }}</h1>
-        <p>{{ snapshot.generation.status === 'idle' ? '线路已加密，等待下一次行动' : '言灵回路正在生成新的叙事' }}</p>
       </div>
-      <span class="dr-story__signal" :data-state="snapshot.connection.status"><i />{{ snapshot.connection.status === 'connected' ? '在线' : '重连中' }}</span>
+      <div class="dr-story__channel">
+        <span class="dr-story__signal" :data-state="snapshot.connection.status"><i />{{ snapshot.connection.status === 'connected' ? '已连接' : '重新连接中' }}</span>
+        <strong v-if="generationCopy.code !== 'STANDBY'" :data-state="snapshot.generation.status">{{ generationCopy.title }}</strong>
+      </div>
     </header>
 
     <div ref="list" class="dr-story__messages" :class="{ 'dr-story__messages--replacing': historyReplacing }" aria-live="polite">
-      <div v-if="!snapshot.messages.length" class="dr-story__empty"><strong>频道静默</strong><span>第一条角色消息抵达后，叙事会在这里展开。</span></div>
-      <article v-for="message in snapshot.messages" :key="message.id" class="dr-message" :class="[`dr-message--${message.role}`, { 'dr-message--fresh': freshMessageIds.has(message.id) }]" :data-message-id="message.id">
-        <header><span>{{ message.role === 'assistant' ? snapshot.character.name : message.role === 'user' ? '你' : '系统记录' }}</span><time>{{ String(message.index + 1).padStart(3, '0') }}</time></header>
+      <div v-if="!snapshot.messages.length" class="dr-story__empty"><strong>频道静默</strong><p>第一条角色消息抵达后，叙事会在这里展开。</p></div>
+      <article v-for="message in snapshot.messages" :key="message.id" class="dr-message" :class="[`dr-message--${message.role}`, { 'dr-message--fresh': freshMessageIds.has(message.id), 'dr-message--streaming': message.streaming }]" :data-message-id="message.id">
+        <i class="dr-message__rail" aria-hidden="true" />
+        <header><span><strong>{{ roleLabel(message) }}</strong></span><time v-if="message.role === 'system'">事件</time></header>
         <div class="dr-message__body" v-html="html(message)" />
-        <footer v-if="message.capabilities.edit || message.capabilities.rollback">
-          <button v-if="message.capabilities.edit" type="button" :disabled="editPending || !snapshot.capabilities.openEditMessage.available" @click="editMessage(message.id)">编辑</button>
-          <button v-if="message.capabilities.rollback" type="button" :disabled="editPending || !snapshot.capabilities.rollbackMessage.available" @click="emit('rollback', message.id)">回溯</button>
+        <div v-if="message.streaming" class="dr-message__stream"><i />正在写入原生回复</div>
+        <!-- Pointer users get dismiss-on-leave; keyboard and touch still rely on the click toggle,
+             Escape, and focusout, so the menu is never unreachable without a mouse. -->
+        <footer v-if="message.capabilities.edit || message.capabilities.rollback" @keydown.esc.stop.prevent="closeActionsAndRefocus(message.id)" @pointerleave="leaveActions(message.id, $event)" @focusout="blurActions(message.id, $event)">
+          <button type="button" class="dr-message__actions-trigger" :aria-expanded="openActionsId === message.id" aria-haspopup="true" :aria-label="`这条消息的操作：${roleLabel(message)}`" @click="toggleActions(message.id)"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="6" cy="12" r="1.4" /><circle cx="12" cy="12" r="1.4" /><circle cx="18" cy="12" r="1.4" /></svg></button>
+          <div v-if="openActionsId === message.id" class="dr-message__actions">
+            <button v-if="message.capabilities.edit" type="button" :disabled="editPending || !snapshot.capabilities.openEditMessage.available" @click="editMessage(message.id)"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h4L19 9a2.1 2.1 0 0 0-3-3L5 17v3Z" /><path d="m14.5 6.5 3 3" /></svg>编辑</button>
+            <button v-if="message.capabilities.rollback" type="button" :disabled="editPending || !snapshot.capabilities.rollbackMessage.available" @click="rollbackMessage(message.id)"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12a8 8 0 1 0 2.3-5.6M4 4v4h4" /></svg>从这里回溯</button>
+          </div>
         </footer>
       </article>
     </div>
 
     <form class="dr-composer" @submit.prevent="send">
-      <button type="button" class="dr-composer__model" :disabled="!snapshot.capabilities.openModelSettings.available" @click="emit('openModels')"><span>模型</span><strong>{{ currentModel }}</strong></button>
-      <label><span class="dr-visually-hidden">输入行动</span><textarea v-model="draft" maxlength="2000" rows="1" placeholder="输入你的行动或回复……" @keydown.ctrl.enter.prevent="send" /></label>
-      <button type="submit" class="dr-composer__send" :disabled="sending || !draft.trim() || !snapshot.capabilities.sendMessage.available"><span>{{ sending ? '同步中' : '发送' }}</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 19 19 5M8 5h11v11" /></svg></button>
+      <div class="dr-composer__calibration" aria-hidden="true"><span /><i /><i /><i /></div>
+      <button type="button" class="dr-composer__model" :disabled="!snapshot.capabilities.openModelSettings.available" :title="snapshot.capabilities.openModelSettings.reason" @click="emit('openModels')"><strong>{{ currentModel }}</strong><small>原生模型</small></button>
+      <label><span class="dr-visually-hidden">输入行动</span><textarea v-model="draft" maxlength="2000" rows="1" placeholder="记录下一步行动或回复……" :aria-describedby="!snapshot.capabilities.sendMessage.available ? 'dr-send-capability' : undefined" @keydown.ctrl.enter.prevent="send" /></label>
+      <button type="submit" class="dr-composer__send" :disabled="sending || !draft.trim() || !snapshot.capabilities.sendMessage.available"><strong>{{ sending ? '同步中' : '提交行动' }}</strong><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 19 19 5M8 5h11v11" /></svg></button>
+      <p v-if="!snapshot.capabilities.sendMessage.available" id="dr-send-capability" class="dr-composer__reason">{{ sendCapabilityReason }}</p>
     </form>
   </section>
 </template>

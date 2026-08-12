@@ -100,7 +100,7 @@ onBeforeUnmount(() => motion.kill())
     <div class="dr-opening__storm" aria-hidden="true"><i /><i /><i /></div>
     <header class="dr-opening__top">
       <div><strong>卡塞尔学院</strong><span>新生档案终端</span></div>
-      <button type="button" aria-label="暂不开局" :disabled="transitioning" @click="emit('cancel')"><svg viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18" /></svg></button>
+      <button type="button" aria-label="暂不开局，直接进入故事" :disabled="transitioning" @click="emit('cancel')"><span>暂不开局</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18" /></svg></button>
     </header>
     <nav class="dr-opening__steps" aria-label="开局步骤">
       <button v-for="(item, index) in OPENING_GROUPS" :key="item.id" type="button" :class="{ active: index === activeGroup, done: Boolean(selected[item.id]) }" :disabled="transitioning" @click="void goToGroup(index)"><span>{{ index + 1 }}</span>{{ item.title }}</button>

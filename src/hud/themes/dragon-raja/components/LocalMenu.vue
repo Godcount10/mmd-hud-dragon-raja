@@ -4,7 +4,7 @@ import { useMotionScope } from '../../../shared/motion'
 import { LOCAL_CODEX_PREVIEW, LOCAL_MAP_PREVIEW } from '../worldData'
 import type { DerivedStatus } from '../types'
 
-export type LocalView = 'menu' | 'codex' | 'map'
+export type LocalView = 'menu' | 'status' | 'codex' | 'map'
 type MenuAction = 'close' | 'settings' | 'archives' | 'persona' | 'supplement' | 'exit'
 
 const props = withDefaults(defineProps<{
@@ -37,9 +37,22 @@ const menuItems = computed(() => [
   { label: '退出角色卡', detail: '返回 MMD 上一层界面', action: 'exit' as const },
 ])
 
+const viewTitle = computed(() => ({
+  status: 'AI 判读',
+  codex: '图鉴档案',
+  map: '学院地图',
+}[view.value as 'status' | 'codex' | 'map'] || '档案与设置'))
+
 function focusables(): HTMLElement[] {
   if (!dialog.value) return []
   return [...dialog.value.querySelectorAll<HTMLElement>('button:not([disabled]), [href], input:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])')]
+}
+
+function contentSelector(targetView: LocalView = view.value): string {
+  if (targetView === 'menu') return '.dr-menu__panel nav button'
+  if (targetView === 'status') return '.dr-status-screen__item'
+  if (targetView === 'codex') return '.dr-codex-grid article'
+  return '.dr-map__node'
 }
 
 function animateEntry(): void {
@@ -51,14 +64,14 @@ function animateEntry(): void {
         .fromTo('.dr-menu__underlay--far', { xPercent: 104 }, { xPercent: 0, duration: .48, ease: 'expo.out' }, .02)
         .fromTo('.dr-menu__underlay--near', { xPercent: 104 }, { xPercent: 0, duration: .52, ease: 'expo.out' }, .06)
         .fromTo('.dr-menu__panel', { xPercent: 104 }, { xPercent: 0, duration: .56, ease: 'expo.out' }, .1)
-        .fromTo('.dr-menu__panel nav button', { autoAlpha: 0, x: 22 }, { autoAlpha: 1, x: 0, duration: .32, stagger: .045, ease: 'power2.out' }, .28)
+        .fromTo(contentSelector(), { autoAlpha: 0, x: 22 }, { autoAlpha: 1, x: 0, duration: .32, stagger: .045, ease: 'power2.out' }, .28)
     })
     return
   }
   motion.timeline(undefined, (timeline) => {
     timeline
       .fromTo(dialog.value, { autoAlpha: 0, scale: .985 }, { autoAlpha: 1, scale: 1, duration: .38, ease: 'expo.out' })
-      .fromTo(view.value === 'codex' ? '.dr-codex-grid article' : '.dr-map__node', { autoAlpha: 0, y: 12 }, { autoAlpha: 1, y: 0, duration: .3, stagger: .055, ease: 'power2.out' }, .12)
+      .fromTo(contentSelector(), { autoAlpha: 0, y: 12 }, { autoAlpha: 1, y: 0, duration: .3, stagger: .055, ease: 'power2.out' }, .12)
   })
 }
 
@@ -98,14 +111,14 @@ function closeOverlay(action: MenuAction = 'close'): void {
   motion.timeline(undefined, (timeline) => {
     if (closingMenu) {
       timeline
-        .to('.dr-menu__panel nav button', { autoAlpha: 0, x: 18, duration: .18, stagger: { each: .025, from: 'end' }, ease: 'power2.in' }, 0)
+        .to(contentSelector(), { autoAlpha: 0, x: 18, duration: .18, stagger: { each: .025, from: 'end' }, ease: 'power2.in' }, 0)
         .to('.dr-menu__panel', { xPercent: 104, duration: .42, ease: 'power3.in' }, .1)
         .to('.dr-menu__underlay--near', { xPercent: 104, duration: .38, ease: 'power3.in' }, .15)
         .to('.dr-menu__underlay--far', { xPercent: 104, duration: .35, ease: 'power3.in' }, .19)
         .to('.dr-menu__scrim', { autoAlpha: 0, duration: .28, ease: 'power2.in' }, .18)
     } else {
       timeline
-        .to(view.value === 'codex' ? '.dr-codex-grid article' : '.dr-map__node', { autoAlpha: 0, y: -8, duration: .18, stagger: { each: .025, from: 'end' }, ease: 'power2.in' })
+        .to(contentSelector(), { autoAlpha: 0, y: -8, duration: .18, stagger: { each: .025, from: 'end' }, ease: 'power2.in' })
         .to(dialog.value, { autoAlpha: 0, scale: .985, duration: .32, ease: 'power2.in' }, .08)
     }
   })
@@ -132,7 +145,7 @@ async function changeView(nextView: LocalView): Promise<void> {
     motion.timeline(undefined, (timeline) => {
       timeline
         .fromTo(dialog.value, { autoAlpha: 0, y: 12 }, { autoAlpha: 1, y: 0, duration: .38, ease: 'expo.out' })
-        .fromTo(nextView === 'menu' ? '.dr-menu__panel nav button' : nextView === 'codex' ? '.dr-codex-grid article' : '.dr-map__node', { autoAlpha: 0, y: 12 }, { autoAlpha: 1, y: 0, duration: .3, stagger: .055, ease: 'power2.out' }, .12)
+        .fromTo(contentSelector(nextView), { autoAlpha: 0, y: 12 }, { autoAlpha: 1, y: 0, duration: .3, stagger: .055, ease: 'power2.out' }, .12)
     })
   }
   focusables()[0]?.focus()
@@ -167,14 +180,19 @@ function handleKeydown(event: KeyboardEvent): void {
       <div class="dr-menu__underlay dr-menu__underlay--far" aria-hidden="true" />
       <div class="dr-menu__underlay dr-menu__underlay--near" aria-hidden="true" />
       <aside class="dr-menu__panel">
-        <header><div><span>DRAGON RAJA // ARCHIVE</span><h2>档案与设置</h2></div><button type="button" aria-label="关闭" @click="closeOverlay()"><svg viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18" /></svg></button></header>
+        <header><div><span>学院低频入口</span><h2>档案与设置</h2></div><button type="button" aria-label="关闭" @click="closeOverlay()"><svg viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18" /></svg></button></header>
         <nav><button v-for="(item, index) in menuItems" :key="item.action" type="button" :class="{ danger: item.action === 'exit' }" :disabled="leaving" @click="closeOverlay(item.action)"><small>{{ String(index + 1).padStart(2, '0') }}</small><span><strong>{{ item.label }}</strong><em>{{ item.detail }}</em></span><b>↗</b></button></nav>
-        <footer><span>LOW FREQUENCY CONTROLS</span><strong>{{ statuses.length }} 条状态已同步</strong></footer>
+        <footer><span>低频控制</span><strong>{{ statuses.length }} 条判读已同步</strong></footer>
       </aside>
     </section>
-    <section v-else ref="dialog" class="dr-local-screen" role="dialog" aria-modal="true" :aria-label="view === 'codex' ? '图鉴' : '地图'">
-      <header><button type="button" @click="void changeView('menu')">← 档案与设置</button><div><span>LOCAL WORLD DATA</span><h2>{{ view === 'codex' ? '图鉴档案' : '城市节点图' }}</h2></div><button type="button" @click="closeOverlay()">关闭</button></header>
-      <div v-if="view === 'codex'" class="dr-codex-grid"><article v-for="entry in LOCAL_CODEX_PREVIEW" :key="entry.label" :class="{ locked: entry.state !== '已登记' }"><span>{{ entry.kind }}</span><h3>{{ entry.label }}</h3><p>{{ entry.state === '已登记' ? '内置世界条目已准备，后续 AI 标记会继续扩展记录。' : '尚未从叙事中发现该条目。' }}</p><strong>{{ entry.state }}</strong></article></div>
+    <section v-else ref="dialog" class="dr-local-screen" role="dialog" aria-modal="true" :aria-label="viewTitle">
+      <header><button type="button" @click="void changeView('menu')">← 档案与设置</button><div><span>学院本地资料 · 预览</span><h2>{{ viewTitle }}</h2></div><button type="button" @click="closeOverlay()">关闭</button></header>
+      <div v-if="view === 'status'" class="dr-status-screen">
+        <div class="dr-status-screen__intro"><span>AI TEXT DERIVATION</span><h3>助手文本中的临时判读</h3><p>仅解析 assistant 消息里的 [A=B] 标记；后出现的值覆盖旧值，不写回原生 Snapshot。</p></div>
+        <div v-if="!statuses.length" class="dr-status-screen__empty">暂无可显示的助手文本标记。</div>
+        <div v-else class="dr-status-screen__list"><article v-for="item in statuses" :key="item.key" class="dr-status-screen__item"><span>{{ item.key }}</span><strong>{{ item.value }}</strong><small>AI 派生 · 只读</small></article></div>
+      </div>
+      <div v-else-if="view === 'codex'" class="dr-codex-grid"><article v-for="(entry, index) in LOCAL_CODEX_PREVIEW" :key="entry.label" :class="{ locked: entry.state !== '已登记' }"><div class="dr-codex-grid__art" :style="{ '--dr-codex-index': index }" aria-hidden="true" /><span>{{ entry.kind }}</span><h3>{{ entry.label }}</h3><p>{{ entry.state === '已登记' ? '内置世界条目已准备，后续 AI 标记会继续扩展记录。' : '尚未从叙事中发现该条目。' }}</p><strong>{{ entry.state }}</strong></article></div>
       <div v-else class="dr-map"><div class="dr-map__grid" /><button v-for="node in LOCAL_MAP_PREVIEW" :key="node.label" type="button" class="dr-map__node" :class="{ active: node.active }" :style="{ left: `${node.x}%`, top: `${node.y}%` }"><i /><strong>{{ node.label }}</strong><small>{{ node.note }}</small></button></div>
     </section>
   </section>

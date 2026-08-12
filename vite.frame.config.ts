@@ -5,11 +5,25 @@ import { frameCssInjectionPlugin } from './build/frameCssInjection'
 
 const packageJson = JSON.parse(readFileSync(new URL('./package.json', import.meta.url), 'utf8')) as { version: string }
 
+const dragonRajaMedia = {
+  storyDesktopUrl: process.env.DRAGON_RAJA_STORY_DESKTOP_URL ?? '',
+  storyMobileUrl: process.env.DRAGON_RAJA_STORY_MOBILE_URL ?? '',
+  storyPosterUrl: process.env.DRAGON_RAJA_STORY_POSTER_URL ?? '',
+  alchemyAssetsUrl: process.env.DRAGON_RAJA_ALCHEMY_ASSETS_URL ?? '',
+  localMapUrl: process.env.DRAGON_RAJA_LOCAL_MAP_URL ?? '',
+  codexAssetsUrl: process.env.DRAGON_RAJA_CODEX_ASSETS_URL ?? '',
+  paperGrainUrl: process.env.DRAGON_RAJA_PAPER_GRAIN_URL ?? '',
+  storySerifFontUrl: process.env.DRAGON_RAJA_SERIF_FONT_URL ?? '',
+  storySansFontUrl: process.env.DRAGON_RAJA_SANS_FONT_URL ?? '',
+  storyMonoFontUrl: process.env.DRAGON_RAJA_MONO_FONT_URL ?? '',
+}
+
 export default defineConfig({
   define: {
     'process.env.NODE_ENV': JSON.stringify('production'),
     __MMD_HUD_BUILD_ID__: JSON.stringify(process.env.MMD_HUD_BUILD_ID ?? 'dev'),
     __MMD_HUD_VERSION__: JSON.stringify(packageJson.version),
+    __DRAGON_RAJA_MEDIA__: JSON.stringify(dragonRajaMedia),
   },
   plugins: [vue(), frameCssInjectionPlugin()],
   build: {

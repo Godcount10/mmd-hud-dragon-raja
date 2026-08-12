@@ -41,7 +41,7 @@ export const LOCAL_CODEX_PREVIEW = [
 ] as const
 
 export const LOCAL_MAP_PREVIEW = [
-  { label: '英灵殿', note: '当前位置', x: 49, y: 46, active: true },
+  { label: '英灵殿', note: '本地预览节点', x: 49, y: 46, active: true },
   { label: '诺顿馆', note: '可访问', x: 28, y: 64, active: false },
   { label: '图书馆', note: '可访问', x: 65, y: 30, active: false },
   { label: '冰窖', note: '权限不足', x: 72, y: 72, active: false },
