@@ -7,4 +7,5 @@ coverage/
 .tmp/
 .claude/worktrees/
 测试结果/
+缓存/
 *.log

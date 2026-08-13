@@ -50,7 +50,8 @@ function html(message: ChatMessage): string {
   const source = message.html || message.text
   const cached = sanitizedCache.get(message.id)
   if (cached?.source === source) return cached.output
-  const output = sanitizeMessageHtml(source)
+  // Dossier markers are stripped from assistant prose only; a reader's own brackets stay verbatim.
+  const output = sanitizeMessageHtml(source, message.role === 'assistant')
   sanitizedCache.set(message.id, { source, output })
   return output
 }

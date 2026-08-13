@@ -9,7 +9,7 @@ import WelcomeSurface from './components/WelcomeSurface.vue'
 import FeedbackToast from './components/FeedbackToast.vue'
 import LocalMenu, { type LocalView } from './components/LocalMenu.vue'
 import NativePanels from './components/NativePanels.vue'
-import { useDerivedStatus } from './useDerivedStatus'
+import { useDerivedDossier, useDerivedStatus } from './useDerivedStatus'
 
 type Surface = 'welcome' | 'opening' | 'story' | 'settings'
 const context = useHudContext()
@@ -26,8 +26,58 @@ const refreshPending = ref(false)
 const refreshConversationPending = ref(false)
 const editPending = ref(false)
 const statuses = useDerivedStatus(context.snapshot)
+const dossier = useDerivedDossier(context.snapshot)
 const changedStatusKeys = ref(new Set<string>())
 let statusGeneration = 0
+/* Right rail is a two-panel surface: the dossier, or the forum reached from its own button. */
+const railView = ref<'dossier' | 'forum'>('dossier')
+const characterSlot = ref(0)
+const optionDraft = ref('')
+
+const activeCharacter = computed(() => dossier.value.characters[characterSlot.value] ?? null)
+/* The opening dossier and the action options share one channel into the composer's draft. */
+const pendingDraft = computed(() => optionDraft.value || openingDraft.value)
+
+function clearPendingDraft(): void {
+  optionDraft.value = ''
+  openingDraft.value = ''
+}
+
+/* A shrinking cast must not leave the pager pointing past the end of the list. */
+watch(() => dossier.value.characters.length, (count) => {
+  if (characterSlot.value >= count) characterSlot.value = 0
+})
+
+/* The forum panel is meaningless once the assistant stops sending forum markers. */
+watch(() => dossier.value.forum, (forum) => {
+  if (!forum && railView.value === 'forum') railView.value = 'dossier'
+})
+
+/* Attribute rows in display order; blanks are dropped by the template rather than shown empty. */
+const characterFields = computed(() => {
+  const character = activeCharacter.value
+  if (!character) return []
+  return [
+    { label: '身份', value: character.title },
+    { label: '关系', value: character.relation },
+    { label: '血统', value: character.blood },
+    { label: '言灵', value: character.spirit },
+    { label: '装备', value: character.equipment },
+    { label: '特质', value: character.trait },
+  ]
+})
+
+function stepCharacter(delta: number): void {
+  const count = dossier.value.characters.length
+  if (count < 2) return
+  characterSlot.value = (characterSlot.value + delta + count) % count
+}
+
+/* Options overwrite the draft rather than appending, and never send on their own. */
+function chooseOption(text: string): void {
+  optionDraft.value = text
+  showMessage(true, '行动文本已写入输入框，确认后发送')
+}
 
 watch(statuses, (nextStatuses, previousStatuses) => {
   const previous = new Map(previousStatuses?.map((item) => [item.key, item.value]) ?? [])
@@ -221,7 +271,7 @@ async function edit(messageId: string): Promise<void> {
           </nav>
           <button class="dr-sidebar__hide" type="button" @click="hide">原生界面</button>
         </aside>
-        <StorySurface :initial-draft="openingDraft" :edit-pending="editPending" @draft-consumed="openingDraft = ''" @open-models="openNative('openModelSettings')" @edit="edit" @rollback="rollback" @feedback="showMessage" />
+        <StorySurface :initial-draft="pendingDraft" :edit-pending="editPending" @draft-consumed="clearPendingDraft" @open-models="openNative('openModelSettings')" @edit="edit" @rollback="rollback" @feedback="showMessage" />
         <!-- One continuous panel in three sections: the Native / AI-derived / Theme-local split is
              carried by the section headings and ordering rather than three competing card colours. -->
         <aside class="dr-radar" aria-label="状态栏">
@@ -229,15 +279,63 @@ async function edit(messageId: string): Promise<void> {
             <header><span id="dr-status-native">原生快照</span><i :class="{ live: context.connection.value.status === 'ready' }" /></header>
             <dl><dt>连接</dt><dd>{{ context.connection.value.status === 'ready' ? '已同步' : '连接中' }}</dd><dt>模型</dt><dd>{{ context.snapshot.value.modelPanel.models.find((model) => model.selected)?.name || '未选择' }}</dd><dt>生成</dt><dd :data-state="context.snapshot.value.generation.status">{{ generationCopy.label }}</dd></dl>
           </section>
-          <section class="dr-status-card dr-status-card--derived" aria-labelledby="dr-status-derived">
-            <header><span id="dr-status-derived">AI 临时判读</span><button type="button" @click="openLocalView('status')">全部</button></header>
-            <div class="dr-sidebar__status"><p v-if="!statuses.length">暂无助手文本标记</p><dl v-else><template v-for="item in statuses.slice(0, 3)" :key="item.key"><dt :class="{ changed: changedStatusKeys.has(item.key) }" :title="item.key">{{ item.key }}</dt><dd :class="{ changed: changedStatusKeys.has(item.key) }" :title="item.value">{{ item.value }}</dd></template></dl></div>
+          <!-- AI derived, read-only, never written back to the Snapshot. -->
+          <section v-if="railView === 'dossier'" class="dr-status-card dr-status-card--derived" aria-labelledby="dr-status-derived">
+            <header>
+              <span id="dr-status-derived">互动对象</span>
+              <span class="dr-dossier__meta">
+                <b v-if="dossier.time">{{ dossier.time }}</b>
+                <button v-if="dossier.forum" type="button" title="守夜人讨论区" @click="railView = 'forum'">论坛</button>
+              </span>
+            </header>
+
+            <p v-if="!activeCharacter" class="dr-dossier__empty">暂无助手档案标记</p>
+            <div v-else class="dr-dossier">
+              <nav v-if="dossier.characters.length > 1" class="dr-dossier__pager">
+                <button type="button" aria-label="上一位" @click="stepCharacter(-1)">‹</button>
+                <strong>{{ activeCharacter.name }}</strong>
+                <button type="button" aria-label="下一位" @click="stepCharacter(1)">›</button>
+              </nav>
+              <strong v-else class="dr-dossier__name">{{ activeCharacter.name }}</strong>
+
+              <div v-if="activeCharacter.portraitUrl" class="dr-dossier__portrait" :style="{ backgroundImage: `url(${activeCharacter.portraitUrl})` }" role="img" :aria-label="`${activeCharacter.name} 立绘`" />
+              <div v-else class="dr-dossier__portrait dr-dossier__portrait--empty" aria-hidden="true" />
+
+              <dl class="dr-dossier__fields">
+                <template v-for="field in characterFields" :key="field.label">
+                  <dt v-if="field.value">{{ field.label }}</dt>
+                  <dd v-if="field.value">{{ field.value }}</dd>
+                </template>
+              </dl>
+
+              <p v-if="activeCharacter.description" class="dr-dossier__desc">{{ activeCharacter.description }}</p>
+              <div v-if="activeCharacter.characterLine" class="dr-dossier__line"><span>{{ activeCharacter.name }}</span><q>{{ activeCharacter.characterLine }}</q></div>
+              <div v-if="activeCharacter.playerLine" class="dr-dossier__line dr-dossier__line--player"><span>你</span><q>{{ activeCharacter.playerLine }}</q></div>
+              <p v-if="activeCharacter.profile" class="dr-dossier__profile">{{ activeCharacter.profile }}</p>
+            </div>
+
+            <div v-if="statuses.length" class="dr-sidebar__status">
+              <dl><template v-for="item in statuses" :key="item.key"><dt :class="{ changed: changedStatusKeys.has(item.key) }" :title="item.key">{{ item.key }}</dt><dd :class="{ changed: changedStatusKeys.has(item.key) }" :title="item.value">{{ item.value }}</dd></template></dl>
+            </div>
+
+            <!-- Options fill the composer draft and never send by themselves. -->
+            <div v-if="dossier.options.length" class="dr-options">
+              <span class="dr-options__title">可选行动</span>
+              <button v-for="option in dossier.options" :key="option.slot" type="button" @click="chooseOption(option.text)">{{ option.label }}</button>
+            </div>
+
             <small>来自 assistant 文本，只读</small>
           </section>
-          <section class="dr-status-card dr-status-card--local" aria-labelledby="dr-status-local">
-            <header><span id="dr-status-local">学院本地资料</span></header>
-            <p>地图与图鉴为 Theme Local 预览，不代表当前剧情地点。</p>
-            <nav><button type="button" @click="openLocalView('map')">打开地图</button><button type="button" @click="openLocalView('codex')">图鉴</button></nav>
+
+          <section v-else-if="dossier.forum" class="dr-status-card dr-status-card--derived dr-forum" aria-labelledby="dr-status-forum">
+            <header><span id="dr-status-forum">守夜人讨论区</span><button type="button" @click="railView = 'dossier'">返回</button></header>
+            <ul v-if="dossier.forum.headlines.length" class="dr-forum__threads"><li v-for="(headline, index) in dossier.forum.headlines" :key="index">{{ headline }}</li></ul>
+            <article v-if="dossier.forum.threadBody" class="dr-forum__thread">
+              <span v-if="dossier.forum.threadAuthor">{{ dossier.forum.threadAuthor }}</span>
+              <p>{{ dossier.forum.threadBody }}</p>
+            </article>
+            <ul v-if="dossier.forum.replies.length" class="dr-forum__replies"><li v-for="reply in dossier.forum.replies" :key="reply.slot"><span>{{ reply.handle }}</span><p>{{ reply.text }}</p></li></ul>
+            <small>来自 assistant 文本，只读</small>
           </section>
         </aside>
       </section>

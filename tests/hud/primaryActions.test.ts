@@ -47,7 +47,8 @@ describe('Dragon Raja primary actions', () => {
 
     expect(wrapper.find('.dr-primary-actions').text()).toContain('刷新对话')
     expect(wrapper.find('.dr-sidebar').text()).toContain('图鉴')
-    expect(wrapper.find('.dr-radar').text()).toContain('打开地图')
+    // Local previews live on the topbar and sidebar; the right rail is the derived status panel only.
+    expect(wrapper.find('.dr-primary-actions').text()).toContain('打开地图')
     expect(wrapper.find('.dr-composer__model').exists()).toBe(false)
 
     wrapper.unmount()

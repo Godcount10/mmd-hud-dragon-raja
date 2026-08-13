@@ -25,7 +25,12 @@ function message(text: string, role: ChatSnapshot['messages'][number]['role'] = 
 }
 
 describe('Dragon Raja derived status', () => {
-  it('reads only assistant markers and lets later values override earlier values', () => {
+  /*
+   * Whole-snapshot semantics: the newest marker-bearing assistant message defines the panel and
+   * earlier ones are ignored outright. Merging was dropped because a repeated slot could otherwise
+   * compose one character out of two different people.
+   */
+  it('reads only assistant markers, and only from the latest message that carries any', () => {
     const snapshot = createTestSnapshot()
     snapshot.messages = [
       message('[地点=英灵殿][好感度=12]', 'assistant', 0),
@@ -34,15 +39,14 @@ describe('Dragon Raja derived status', () => {
     ]
     const statuses = useDerivedStatus(ref(snapshot))
     expect(statuses.value).toEqual([
-      { key: '地点', value: '英灵殿' },
       { key: '好感度', value: '18' },
       { key: '状态', value: '警戒' },
     ])
   })
 
-  it('returns only the most recent six non-empty markers', () => {
+  it('returns only the last six markers of the defining message', () => {
     const snapshot = createTestSnapshot()
-    snapshot.messages = [0, 1, 2, 3, 4, 5, 6].map((index) => message(`[K${index}=V${index}]`, 'assistant', index))
+    snapshot.messages = [message([0, 1, 2, 3, 4, 5, 6].map((index) => `[K${index}=V${index}]`).join(''), 'assistant', 0)]
     expect(useDerivedStatus(ref(snapshot)).value).toHaveLength(6)
     expect(useDerivedStatus(ref(snapshot)).value[0]).toEqual({ key: 'K1', value: 'V1' })
   })

@@ -701,6 +701,50 @@ button:focus-visible, textarea:focus-visible { outline: 2px solid var(--dr-bronz
 .dr-status-card dt { color: var(--dr-ink-muted); }
 .dr-status-card dd { margin: 0; overflow: hidden; color: var(--dr-ink-body); font-weight: 600; text-align: right; text-overflow: ellipsis; white-space: nowrap; }
 .dr-status-card p { margin: 9px 0 11px; color: var(--dr-ink-muted); font-size: var(--dr-step--2); line-height: 1.6; }
+
+/*
+ * AI-derived dossier. Fields stack vertically because the rail's content box is only ~204px wide;
+ * long values such as a full trait list need to wrap rather than be truncated. The rail already
+ * scrolls, so a tall cast list costs nothing.
+ */
+.dr-dossier__meta { display: flex; align-items: baseline; gap: 8px; }
+.dr-dossier__meta b { color: var(--dr-ink-muted); font-family: var(--dr-font-mono); font-size: var(--dr-step--2); font-weight: 500; letter-spacing: normal; }
+.dr-dossier__empty { margin: 11px 0 0; }
+.dr-dossier { display: grid; gap: 9px; margin-top: 11px; }
+/* The dark shell stretches every `.dr-status-card nav button`, so the arrows need equal reach. */
+.dr-status-card nav.dr-dossier__pager { display: grid; grid-template-columns: 24px minmax(0, 1fr) 24px; align-items: center; gap: 6px; }
+.dr-status-card nav.dr-dossier__pager button { flex: 0 0 auto; width: 24px; min-height: 24px; padding: 0; border: 1px solid rgba(138,95,36,.28); color: var(--dr-ink-bronze); background: var(--dr-sheet); font-size: var(--dr-step--1); line-height: 1; cursor: pointer; }
+.dr-status-card nav.dr-dossier__pager button:hover { border-color: rgba(138,95,36,.5); background: #f0e9da; }
+.dr-dossier__pager strong, .dr-dossier__name { color: var(--dr-ink-body); font-family: var(--dr-font-serif); font-size: var(--dr-step-0); text-align: center; overflow-wrap: anywhere; }
+.dr-dossier__name { display: block; }
+.dr-dossier__portrait { width: 100%; aspect-ratio: 3 / 4; border: 1px solid var(--dr-rule); background: var(--dr-sheet) center / cover no-repeat; }
+.dr-dossier__portrait--empty { display: grid; place-items: center; background: repeating-linear-gradient(135deg, rgba(138,95,36,.09) 0 6px, transparent 6px 13px); }
+.dr-dossier__fields { display: grid; gap: 6px 0; margin: 0; font-size: var(--dr-step--2); }
+.dr-dossier__fields dt { color: var(--dr-ink-muted); }
+.dr-dossier__fields dd { margin: 0 0 4px; color: var(--dr-ink-body); font-weight: 600; line-height: 1.5; overflow-wrap: anywhere; }
+.dr-dossier__desc { margin: 0; padding-top: 8px; border-top: 1px solid var(--dr-rule); color: var(--dr-ink-muted); font-size: var(--dr-step--2); line-height: 1.65; }
+.dr-dossier__line { display: grid; gap: 3px; }
+.dr-dossier__line span { color: var(--dr-ink-cyan); font-size: var(--dr-step--2); font-weight: 600; }
+.dr-dossier__line--player span { color: var(--dr-ink-bronze); }
+.dr-dossier__line q { padding: 8px 10px; border-left: 2px solid rgba(47,115,118,.4); background: var(--dr-sheet); color: var(--dr-ink-body); font-size: var(--dr-step--2); font-style: normal; line-height: 1.6; quotes: none; overflow-wrap: anywhere; }
+.dr-dossier__line--player q { border-left-color: rgba(138,95,36,.42); }
+.dr-dossier__profile { margin: 0; color: var(--dr-ink-bronze); font-family: var(--dr-font-serif); font-size: var(--dr-step--2); font-style: italic; line-height: 1.6; text-align: center; }
+
+/* Action options write the composer draft; they never submit on their own. */
+.dr-options { display: grid; gap: 6px; margin-top: 12px; padding-top: 11px; border-top: 1px solid var(--dr-rule); }
+.dr-options__title { color: var(--dr-ink-muted); font-size: var(--dr-step--2); font-weight: 600; letter-spacing: .06em; }
+.dr-options button { padding: 9px 11px; border: 1px solid rgba(138,95,36,.3); color: var(--dr-ink-body); background: var(--dr-sheet); font-size: var(--dr-step--2); line-height: 1.5; text-align: left; cursor: pointer; transition: border-color .16s, background .16s; }
+.dr-options button:hover { border-color: rgba(138,95,36,.55); background: #f6f0e4; }
+
+.dr-forum { display: grid; align-content: start; gap: 10px; }
+.dr-forum__threads, .dr-forum__replies { display: grid; gap: 7px; margin: 0; padding: 0; list-style: none; }
+.dr-forum__threads li { padding-left: 11px; position: relative; color: var(--dr-ink-body); font-size: var(--dr-step--2); line-height: 1.55; overflow-wrap: anywhere; }
+.dr-forum__threads li::before { content: ''; position: absolute; left: 0; top: .55em; width: 4px; height: 4px; background: var(--dr-ink-bronze); }
+.dr-forum__thread { padding: 10px; border-left: 2px solid rgba(138,95,36,.42); background: var(--dr-sheet); }
+.dr-forum__thread span { color: var(--dr-ink-bronze); font-size: var(--dr-step--2); font-weight: 600; }
+.dr-forum__thread p, .dr-forum__replies p { margin: 5px 0 0; color: var(--dr-ink-body); font-size: var(--dr-step--2); line-height: 1.6; overflow-wrap: anywhere; }
+.dr-forum__replies li { padding: 9px 10px; border: 1px solid var(--dr-rule); background: var(--dr-sheet); }
+.dr-forum__replies span { color: var(--dr-ink-cyan); font-size: var(--dr-step--2); font-weight: 600; }
 .dr-status-card nav { display: flex; gap: 6px; }
 .dr-status-card nav button { flex: 1; min-height: 34px; border: 1px solid rgba(138,95,36,.3); color: var(--dr-ink-bronze); background: var(--dr-sheet-sunk); font-size: var(--dr-step--2); cursor: pointer; }
 .dr-status-card nav button:hover { border-color: rgba(138,95,36,.5); background: #f0e9da; }
