@@ -18,9 +18,6 @@
 @font-face { font-family: "DragonRaja Serif"; src: local("Noto Serif SC"), local("SimSun"); font-display: swap; font-style: normal; font-weight: 400 700; }
 @font-face { font-family: "DragonRaja Sans"; src: local("Microsoft YaHei"), local("Segoe UI"); font-display: swap; font-style: normal; font-weight: 400 700; }
 @font-face { font-family: "DragonRaja Mono"; src: local("Consolas"); font-display: swap; font-style: normal; font-weight: 400 700; }
-/* Self-host the complete Ma Shan Zheng file so every Chinese Opening heading
- * stays in the same display voice instead of falling back per glyph. */
-@font-face { font-family: "DragonRaja Brush"; src: url("./assets/ma-shan-zheng-dragon-raja.ttf") format("truetype"); font-display: swap; font-style: normal; font-weight: 400; }
 :root { --dr-font-serif: "DragonRaja Serif", "Noto Serif SC", SimSun, serif; --dr-font-sans: "DragonRaja Sans", "Segoe UI", "Microsoft YaHei", system-ui, sans-serif; --dr-font-mono: "DragonRaja Mono", Consolas, monospace; }
 
 * { box-sizing: border-box; }

@@ -9,6 +9,7 @@ const DEFAULT_POSTER_PATH = resolve(
   'output/imagegen/dragon-raja-live-1866e90d-local-refined/ritual-refined.png',
 )
 const DEFAULT_CREST_PATH = resolve('缓存/image-1787581608135.jpg')
+const DEFAULT_BRUSH_FONT_PATH = resolve('src/hud/themes/dragon-raja/assets/ma-shan-zheng-dragon-raja.ttf')
 const MEDIA_OUTPUT_DIR = resolve('tmp/dev-preview/media')
 
 const viteBin = resolve('node_modules/vite/bin/vite.js')
@@ -30,6 +31,15 @@ function isLikelyImage(filePath) {
     return false
   } finally {
     if (fd !== undefined) closeSync(fd)
+  }
+}
+
+function isLikelyFont(filePath) {
+  try {
+    const info = statSync(filePath)
+    return info.isFile() && info.size >= 1024
+  } catch {
+    return false
   }
 }
 
@@ -118,7 +128,8 @@ env.VITE_MMD_HUD_DEV_FRAME_SCRIPT_URL = `http://127.0.0.1:${framePort}/mmd-hud-i
 
 const shouldServeDefaultPoster = !env.DRAGON_RAJA_WELCOME_POSTER_URL && isLikelyImage(DEFAULT_POSTER_PATH)
 const shouldServeDefaultCrest = !env.DRAGON_RAJA_CASSELL_CREST_URL && isLikelyImage(DEFAULT_CREST_PATH)
-if (shouldServeDefaultPoster || shouldServeDefaultCrest) mkdirSync(MEDIA_OUTPUT_DIR, { recursive: true })
+const shouldServeDefaultBrushFont = !env.DRAGON_RAJA_BRUSH_FONT_URL && isLikelyFont(DEFAULT_BRUSH_FONT_PATH)
+if (shouldServeDefaultPoster || shouldServeDefaultCrest || shouldServeDefaultBrushFont) mkdirSync(MEDIA_OUTPUT_DIR, { recursive: true })
 if (shouldServeDefaultPoster) {
   copyFileSync(DEFAULT_POSTER_PATH, resolve(MEDIA_OUTPUT_DIR, 'ritual-refined.png'))
   env.DRAGON_RAJA_WELCOME_POSTER_URL = `http://127.0.0.1:${posterPort}/ritual-refined.png`
@@ -126,6 +137,10 @@ if (shouldServeDefaultPoster) {
 if (shouldServeDefaultCrest) {
   copyFileSync(DEFAULT_CREST_PATH, resolve(MEDIA_OUTPUT_DIR, 'cassell-college-crest.jpg'))
   env.DRAGON_RAJA_CASSELL_CREST_URL = `http://127.0.0.1:${posterPort}/cassell-college-crest.jpg`
+}
+if (shouldServeDefaultBrushFont) {
+  copyFileSync(DEFAULT_BRUSH_FONT_PATH, resolve(MEDIA_OUTPUT_DIR, 'ma-shan-zheng-dragon-raja.ttf'))
+  env.DRAGON_RAJA_BRUSH_FONT_URL = `http://127.0.0.1:${posterPort}/ma-shan-zheng-dragon-raja.ttf`
 }
 
 console.log(`[dev:preview] Build ID: ${BUILD_ID}`)
@@ -136,12 +151,15 @@ if (env.DRAGON_RAJA_WELCOME_POSTER_URL) {
 if (env.DRAGON_RAJA_CASSELL_CREST_URL) {
   console.log(`[dev:preview] Cassell crest URL: ${env.DRAGON_RAJA_CASSELL_CREST_URL}`)
 }
+if (env.DRAGON_RAJA_BRUSH_FONT_URL) {
+  console.log(`[dev:preview] Brush font URL: ${env.DRAGON_RAJA_BRUSH_FONT_URL}`)
+}
 
 await runOnce(process.execPath, [viteBin, 'build', '--config', 'vite.frame.config.ts'], env)
 
 start('frame-assets', process.execPath, ['scripts/serve-cors.mjs', FRAME_OUTPUT_DIR, String(framePort)], env)
 
-if (shouldServeDefaultPoster || shouldServeDefaultCrest) {
+if (shouldServeDefaultPoster || shouldServeDefaultCrest || shouldServeDefaultBrushFont) {
   start('media-assets', process.execPath, ['scripts/serve-cors.mjs', MEDIA_OUTPUT_DIR, String(posterPort)], env)
 }
 
