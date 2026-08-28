@@ -1,0 +1,390 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dragon Raja - Status Rail Comp</title>
+  <style>
+    :root {
+      --night: #191719;
+      --night-2: #242022;
+      --night-3: #2d2523;
+      --paper: #efe5d2;
+      --paper-2: #f8f1e2;
+      --paper-3: #ded0b9;
+      --ink: #211d1c;
+      --muted: #a89b91;
+      --line: rgba(239, 229, 210, .24);
+      --line-dark: rgba(33, 29, 28, .2);
+      --brass: #d7952d;
+      --brass-deep: #9f641f;
+      --ember: #b13d36;
+      --ember-hot: #df6d55;
+      --cobalt: #286b7a;
+      --sage: #78968a;
+      --violet: #655b79;
+      --sans: "Segoe UI", "Microsoft YaHei", system-ui, sans-serif;
+      --serif: "Noto Serif CJK SC", "Songti SC", "STSong", Georgia, serif;
+      --mono: Consolas, "SFMono-Regular", monospace;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; min-height: 100%; background: var(--night); }
+    body { color: var(--paper); font-family: var(--sans); }
+    button, textarea { font: inherit; }
+    button { color: inherit; }
+    .stage { min-height: 100vh; display: grid; grid-template-rows: 70px 1fr; background: var(--night); }
+    .topbar { display: grid; grid-template-columns: minmax(230px, 1fr) minmax(320px, 1.25fr) minmax(220px, .8fr); gap: 24px; align-items: center; padding: 0 30px; border-bottom: 1px solid var(--line); background: #171517; }
+    .brand { display: flex; align-items: center; gap: 14px; }
+    .crest { width: 34px; height: 34px; position: relative; flex: none; border: 1px solid var(--brass); transform: rotate(45deg); }
+    .crest::before { content: ""; position: absolute; inset: 7px; border: 1px solid var(--brass); }
+    .crest::after { content: ""; position: absolute; inset: 12px 8px 8px 12px; border-left: 1px solid var(--brass); border-top: 1px solid var(--brass); }
+    .brand-copy strong { display: block; color: var(--paper-2); font: 700 14px var(--serif); letter-spacing: .13em; white-space: nowrap; }
+    .brand-copy small { display: block; margin-top: 5px; color: #b8a89a; font: 9px var(--mono); letter-spacing: .11em; }
+    .scene-marker { display: flex; align-items: baseline; justify-content: center; gap: 13px; min-width: 0; }
+    .scene-marker b { color: var(--brass); font: 700 11px var(--mono); letter-spacing: .15em; white-space: nowrap; }
+    .scene-marker span { overflow: hidden; color: #c5b7ab; font-size: 12px; text-overflow: ellipsis; white-space: nowrap; }
+    .top-actions { display: flex; justify-content: flex-end; gap: 18px; align-items: center; }
+    .top-actions span { color: var(--brass); font: 700 9px var(--mono); letter-spacing: .11em; }
+    .top-actions button, .tool-rail button, .cast-row, .mobile-trigger { border: 0; background: none; cursor: pointer; }
+    .top-actions button { color: #c6b9ad; font-size: 11px; }
+    .top-actions button:hover { color: var(--paper-2); }
+    .stage-body { display: grid; grid-template-columns: 72px minmax(0, 1fr); min-height: 0; }
+    .tool-rail { display: flex; flex-direction: column; justify-content: space-between; align-items: center; padding: 20px 0 17px; border-right: 1px solid var(--line); background: #181618; }
+    .tool-rail nav { display: grid; gap: 19px; width: 100%; }
+    .tool-rail button { display: grid; justify-items: center; gap: 6px; position: relative; width: 100%; padding: 7px 4px; color: #a69a91; }
+    .tool-rail button.active { color: var(--paper-2); }
+    .tool-rail button.active::before { content: ""; position: absolute; left: 0; width: 3px; height: 31px; background: var(--ember); }
+    .tool-rail svg { width: 19px; height: 19px; fill: none; stroke: currentColor; stroke-width: 1.4; }
+    .tool-rail span { font: 9px var(--sans); }
+    .tool-rail .exit { color: var(--brass); font: 9px var(--sans); writing-mode: vertical-rl; letter-spacing: .1em; }
+    .workbench { display: grid; grid-template-columns: minmax(0, 1fr) minmax(350px, 27vw); min-height: calc(100vh - 70px); }
+    .reading-room { position: relative; min-width: 0; padding: 28px clamp(28px, 4.5vw, 72px) 30px; overflow: hidden; color: var(--ink); background: var(--paper); }
+    .reading-room::before { content: ""; position: absolute; inset: 0; pointer-events: none; opacity: .3; background: repeating-linear-gradient(0deg, transparent 0 6px, rgba(33, 29, 28, .06) 7px, transparent 8px); }
+    .reading-inner { position: relative; max-width: 900px; margin: 0 auto; }
+    .reading-kicker { display: flex; justify-content: space-between; gap: 20px; padding-bottom: 13px; border-bottom: 1px solid var(--line-dark); color: var(--brass-deep); font: 9px var(--mono); letter-spacing: .11em; }
+    .reading-kicker span:last-child { color: #6f625b; }
+    .chapter { display: grid; grid-template-columns: 7px minmax(0, 1fr); gap: 15px; margin: 25px 0 24px; }
+    .chapter-bar { background: var(--ember); }
+    .chapter h1 { margin: 0; color: var(--ink); font: 700 clamp(25px, 3vw, 37px)/1.12 var(--serif); letter-spacing: .02em; }
+    .chapter p { margin: 9px 0 0; color: #665850; font-size: 12px; line-height: 1.7; }
+    .chapter-meta { display: flex; gap: 19px; margin-top: 13px; color: var(--brass-deep); font: 9px var(--mono); }
+    .chapter-meta span + span::before { content: ""; display: inline-block; width: 4px; height: 4px; margin: 0 11px 2px -12px; background: var(--brass); }
+    .message { padding: 22px 0 24px; border-top: 1px solid var(--line-dark); }
+    .message:first-of-type { border-top: 0; }
+    .message-head { display: flex; justify-content: space-between; gap: 15px; align-items: baseline; margin-bottom: 12px; }
+    .speaker { display: inline-flex; align-items: center; gap: 9px; }
+    .speaker i { width: 9px; height: 9px; background: var(--ember); }
+    .message--user .speaker i { background: var(--cobalt); }
+    .speaker strong { color: var(--ink); font: 700 14px var(--serif); }
+    .speaker small, .message time { color: #74665e; font: 9px var(--mono); letter-spacing: .06em; }
+    .message p { max-width: 70ch; margin: 0; color: #302a28; font: 15px/1.9 var(--serif); }
+    .message p + p { margin-top: 11px; }
+    .message--user { margin-left: 13px; padding-left: 16px; border-left: 2px solid var(--cobalt); }
+    .message--user p { color: #3e4a4d; font: 13px/1.8 var(--sans); }
+    .composer { position: sticky; bottom: 0; display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 10px; align-items: end; margin: 22px -10px 0; padding: 11px 10px 0; border-top: 1px solid var(--line-dark); background: linear-gradient(var(--paper), var(--paper) 12px, rgba(239, 229, 210, .95)); }
+    .composer button, .composer textarea { border: 1px solid var(--brass-deep); background: var(--paper-2); color: var(--ink); }
+    .composer button { cursor: pointer; }
+    .composer .model { min-height: 47px; padding: 7px 11px; text-align: left; }
+    .composer .model strong, .composer .model small { display: block; }
+    .composer .model strong { font: 700 10px var(--mono); }
+    .composer .model small { margin-top: 4px; color: #6f625b; font-size: 9px; }
+    .composer textarea { min-height: 47px; width: 100%; resize: vertical; padding: 12px 13px; outline: none; border-color: rgba(33, 29, 28, .25); border-bottom: 2px solid var(--brass-deep); font-size: 12px; }
+    .composer textarea::placeholder { color: #86766b; }
+    .composer .send { min-height: 47px; padding: 0 16px; border-color: var(--ember); background: var(--ember); color: #fff4e6; font-weight: 700; }
+    .composer .send span { display: block; font-size: 11px; }
+    .composer .send small { display: block; margin-top: 4px; font: 9px var(--mono); opacity: .84; }
+    .status-room { position: relative; min-width: 0; overflow: hidden; border-left: 1px solid var(--line); background: var(--night-2); }
+    .status-canvas { position: absolute; inset: 0; width: 100%; height: 100%; opacity: .86; pointer-events: none; }
+    .status-room::after { content: ""; position: absolute; inset: 0; pointer-events: none; background: linear-gradient(90deg, rgba(36, 32, 34, .98) 0%, rgba(36, 32, 34, .87) 35%, rgba(36, 32, 34, .73) 100%); }
+    .status-content { position: relative; z-index: 1; height: 100%; overflow: auto; padding: 25px 22px 28px; }
+    .status-head { display: flex; justify-content: space-between; align-items: end; padding-bottom: 14px; border-bottom: 1px solid var(--line); }
+    .status-head h2 { margin: 0; color: var(--paper-2); font: 700 18px var(--serif); }
+    .status-head p { margin: 5px 0 0; color: #b0a198; font: 9px var(--mono); letter-spacing: .08em; }
+    .status-count { color: var(--brass); font: 700 20px var(--mono); }
+    .cast-list { margin-top: 12px; border-top: 1px solid var(--line); }
+    .cast-row { display: grid; grid-template-columns: 11px minmax(0, 1fr) auto; gap: 10px; align-items: center; width: 100%; min-height: 58px; padding: 8px 0; border-bottom: 1px solid var(--line); text-align: left; }
+    .cast-row .lamp { width: 8px; height: 25px; background: var(--sage); }
+    .cast-row:nth-child(2) .lamp { background: var(--ember); }
+    .cast-row:nth-child(3) .lamp { background: var(--brass); }
+    .cast-row:nth-child(4) .lamp { background: var(--cobalt); }
+    .cast-row:nth-child(5) .lamp { background: var(--violet); }
+    .cast-row.active { padding-left: 9px; margin-left: -9px; border-left: 3px solid var(--brass); background: rgba(215, 149, 45, .09); }
+    .cast-row strong { display: block; color: var(--paper-2); font: 700 14px var(--serif); }
+    .cast-row small { display: block; margin-top: 3px; color: #a99c93; font: 9px var(--mono); }
+    .cast-row em { color: #c6b5a5; font: 9px var(--sans); font-style: normal; text-align: right; }
+    .instrument { position: relative; min-height: 208px; margin: 20px -4px 0; border-top: 2px solid var(--brass-deep); border-bottom: 1px solid var(--line); overflow: hidden; }
+    .instrument-copy { position: relative; z-index: 1; padding: 13px 8px 14px; }
+    .instrument-label { display: flex; justify-content: space-between; color: var(--brass); font: 9px var(--mono); letter-spacing: .1em; }
+    .instrument-label span:last-child { color: #b0a198; }
+    .instrument h3 { margin: 10px 0 2px; color: var(--paper-2); font: 700 23px var(--serif); }
+    .instrument .role { color: #b6a79d; font: 9px var(--mono); }
+    .instrument-copy p { max-width: 29ch; margin: 12px 0 0; color: #d3c6b8; font-size: 11px; line-height: 1.65; }
+    .instrument--orrery .instrument-copy { padding-right: 45%; }
+    .dossier-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; margin-top: 14px; border: 1px solid var(--line); background: var(--line); }
+    .dossier-grid div { min-height: 49px; padding: 9px 9px; background: rgba(36, 32, 34, .9); }
+    .dossier-grid span { display: block; color: #a99c93; font: 8px var(--mono); }
+    .dossier-grid strong { display: block; margin-top: 4px; color: var(--paper-2); font: 600 11px var(--sans); }
+    .status-strip { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 11px; align-items: center; margin-top: 18px; padding: 12px 8px; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+    .status-strip dl { display: grid; grid-template-columns: auto 1fr; gap: 5px 10px; margin: 0; color: #b0a198; font: 9px var(--mono); }
+    .status-strip dd { margin: 0; color: var(--brass); text-align: right; }
+    .status-strip .live-mark { width: 8px; height: 8px; border-radius: 50%; background: var(--cobalt); box-shadow: 0 0 12px rgba(40, 107, 122, .75); }
+    .rail-actions { display: grid; gap: 9px; margin-top: 16px; }
+    .rail-actions button { min-height: 38px; padding: 0 10px; border: 1px solid rgba(215, 149, 45, .45); background: rgba(215, 149, 45, .07); color: #e4d5be; font-size: 10px; text-align: left; cursor: pointer; }
+    .rail-actions button:last-child { border-color: rgba(177, 61, 54, .46); background: rgba(177, 61, 54, .08); }
+    .mobile-trigger { display: none; }
+    .mobile-only-close { display: none; }
+    .variant-1 .instrument { min-height: 218px; }
+    .variant-1 .status-canvas { opacity: .98; }
+    .variant-1 .status-room::after { background: linear-gradient(90deg, rgba(36, 32, 34, .94) 0%, rgba(36, 32, 34, .78) 58%, rgba(36, 32, 34, .58) 100%); }
+    .variant-2 .cast-list { display: grid; grid-template-columns: 1fr 1fr; gap: 0 14px; border-top: 0; }
+    .variant-2 .cast-row { min-height: 70px; }
+    .variant-2 .instrument { min-height: 250px; margin-top: 18px; border-top-color: var(--cobalt); border-bottom: 2px solid var(--brass-deep); }
+    .variant-2 .instrument-copy { padding-right: 8px; }
+    .variant-2 .instrument-copy p { max-width: 34ch; }
+    .variant-2 .status-canvas { opacity: .98; }
+    .variant-2 .status-room::after { background: linear-gradient(90deg, rgba(36, 32, 34, .93) 0%, rgba(36, 32, 34, .72) 65%, rgba(36, 32, 34, .59) 100%); }
+    .variant-3 .cast-list { display: grid; grid-template-columns: 1fr 1fr; gap: 0 14px; border-top: 0; }
+    .variant-3 .cast-row { min-height: 68px; }
+    .variant-3 .cast-row.active { grid-column: 1 / -1; }
+    .variant-3 .instrument { min-height: 272px; margin-top: 17px; border-top-color: var(--ember); }
+    .variant-3 .instrument-copy { padding-right: 9px; }
+    .variant-3 .status-canvas { opacity: .96; }
+    .variant-3 .status-room::after { background: linear-gradient(90deg, rgba(36, 32, 34, .93) 0%, rgba(36, 32, 34, .75) 54%, rgba(36, 32, 34, .57) 100%); }
+    @media (max-width: 1060px) {
+      .topbar { grid-template-columns: 1fr auto; }
+      .scene-marker { display: none; }
+      .workbench { grid-template-columns: minmax(0, 1fr) 320px; }
+    }
+    @media (max-width: 760px) {
+      html, body { min-height: 100%; }
+      .stage { grid-template-rows: 61px 55px 1fr; }
+      .topbar { grid-template-columns: 1fr auto; padding: 0 15px; }
+      .crest { width: 27px; height: 27px; }
+      .crest::before { inset: 5px; }
+      .crest::after { inset: 10px 6px 6px 10px; }
+      .brand { gap: 10px; }
+      .brand-copy strong { font-size: 12px; }
+      .brand-copy small { font-size: 7px; }
+      .top-actions span, .top-actions button:first-of-type { display: none; }
+      .top-actions { gap: 12px; }
+      .top-actions button { font-size: 10px; }
+      .stage-body { display: contents; }
+      .tool-rail { grid-row: 2; height: 55px; flex-direction: row; padding: 0 8px; border: 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+      .tool-rail nav { display: flex; justify-content: space-around; gap: 0; }
+      .tool-rail button { min-width: 53px; padding: 7px 4px; }
+      .tool-rail button.active::before { left: 0; top: 0; width: 100%; height: 3px; }
+      .tool-rail .exit { display: none; }
+      .workbench { grid-row: 3; display: block; min-height: 0; }
+      .reading-room { min-height: calc(100vh - 116px); padding: 20px 15px 23px; }
+      .reading-kicker { padding-bottom: 11px; font-size: 8px; }
+      .chapter { grid-template-columns: 5px minmax(0, 1fr); gap: 11px; margin: 19px 0 21px; }
+      .chapter h1 { font-size: 26px; }
+      .chapter p { font-size: 11px; }
+      .message { padding: 19px 0 22px; }
+      .message p { max-width: none; font-size: 15px; line-height: 1.9; }
+      .message--user { margin-left: 7px; padding-left: 13px; }
+      .composer { position: static; grid-template-columns: 1fr auto; margin: 21px 0 0; padding: 11px 0 0; }
+      .composer .model { grid-column: 1 / -1; min-height: 0; display: flex; gap: 8px; align-items: baseline; padding: 8px 10px; }
+      .composer .model small { margin-top: 0; }
+      .composer textarea { min-height: 47px; }
+      .composer .send { min-height: 47px; padding: 0 13px; }
+      .status-room { display: none; }
+      .mobile-trigger { display: flex; position: fixed; right: 12px; bottom: 14px; z-index: 5; align-items: center; gap: 9px; min-height: 44px; padding: 0 12px; border: 1px solid var(--brass); background: var(--night-2); color: var(--paper-2); box-shadow: 0 10px 25px rgba(0, 0, 0, .25); }
+      .mobile-trigger i { width: 8px; height: 8px; border-radius: 50%; background: var(--cobalt); }
+      .mobile-trigger strong { font: 700 11px var(--serif); }
+      .mobile-trigger span { color: var(--brass); font: 9px var(--mono); }
+      body.mobile-open .status-room { display: block; position: fixed; inset: 61px 0 0; z-index: 20; border: 0; background: rgba(25, 23, 25, .96); box-shadow: -20px 0 60px rgba(0, 0, 0, .45); }
+      body.mobile-open .status-content { padding: 18px 15px 24px; }
+      body.mobile-open .mobile-trigger { z-index: 22; top: 73px; right: 15px; bottom: auto; width: 40px; height: 40px; min-height: 40px; justify-content: center; padding: 0; border-color: var(--ember); }
+      body.mobile-open .mobile-trigger strong, body.mobile-open .mobile-trigger span { display: none; }
+      body.mobile-open .mobile-trigger::after { content: "×"; color: var(--paper-2); font: 23px/1 var(--serif); }
+      body.mobile-open .mobile-only-close { display: block; position: absolute; top: 0; right: 0; }
+      .status-head h2 { font-size: 16px; }
+      .status-head p { font-size: 8px; }
+      .status-count { font-size: 18px; }
+      .cast-list { display: flex; gap: 8px; margin-inline: -15px; padding: 0 15px 4px; overflow-x: auto; border-top: 0; scrollbar-width: none; }
+      .cast-list::-webkit-scrollbar { display: none; }
+      .cast-row { flex: 0 0 132px; display: block; min-height: 91px; padding: 10px; border: 1px solid var(--line); }
+      .variant-2 .cast-list, .variant-3 .cast-list { display: flex; gap: 8px; margin-inline: -15px; padding: 0 15px 4px; overflow-x: auto; }
+      .variant-2 .cast-row, .variant-3 .cast-row { min-height: 91px; }
+      .variant-3 .cast-row.active { grid-column: auto; }
+      .cast-row.active { padding-left: 10px; margin-left: 0; border-left: 3px solid var(--brass); }
+      .cast-row .lamp { display: block; width: 34px; height: 4px; margin-bottom: 9px; }
+      .cast-row em { display: block; margin-top: 7px; text-align: left; }
+      .instrument, .variant-1 .instrument, .variant-2 .instrument, .variant-3 .instrument { min-height: 230px; margin-top: 18px; }
+      .instrument-copy, .instrument--orrery .instrument-copy, .variant-2 .instrument-copy, .variant-3 .instrument-copy { padding-right: 7px; }
+      .instrument-copy p { max-width: 31ch; }
+      .status-strip { margin-top: 14px; }
+      .rail-actions { grid-template-columns: 1fr 1fr; }
+      .rail-actions button:last-child { grid-column: 1 / -1; }
+    }
+  </style>
+</head>
+<body>
+  <div class="stage" id="stage">
+    <header class="topbar">
+      <div class="brand"><span class="crest" aria-hidden="true"></span><div class="brand-copy"><strong>卡塞尔学院 · DRAGON RAJA</strong><small>STAGE MANAGER / STORY CHANNEL</small></div></div>
+      <div class="scene-marker"><b>SCENE 07 / 03:17</b><span>雨夜 · 东京分部旧档案库</span></div>
+      <div class="top-actions"><span>稿次 08 · 已同步</span><button type="button">刷新对话</button><button type="button">更多</button></div>
+    </header>
+    <div class="stage-body">
+      <aside class="tool-rail" aria-label="工具">
+        <nav>
+          <button type="button" class="active"><svg viewBox="0 0 24 24"><path d="M5 4h9a4 4 0 0 1 4 4v12H8a3 3 0 0 1-3-3V4Zm3 0v13a3 3 0 0 0-3-3h13M10 9h5M10 13h4" /></svg><span>故事</span></button>
+          <button type="button"><svg viewBox="0 0 24 24"><path d="M12 3 5 7v5c0 4.2 2.7 7.6 7 9 4.3-1.4 7-4.8 7-9V7l-7-4Zm-3 9 2 2 4-5" /></svg><span>判读</span></button>
+          <button type="button"><svg viewBox="0 0 24 24"><path d="m4 6 5-2 6 2 5-2v14l-5 2-6-2-5 2V6Zm5-2v14m6-12v14" /></svg><span>地图</span></button>
+          <button type="button"><svg viewBox="0 0 24 24"><path d="M5 4h6a3 3 0 0 1 3 3v13a3 3 0 0 0-3-3H5V4Zm14 0h-5v16a3 3 0 0 1 3-3h2V4Z" /></svg><span>图鉴</span></button>
+        </nav>
+        <button type="button" class="exit">返回原生界面</button>
+      </aside>
+      <div class="workbench">
+        <main class="reading-room">
+          <div class="reading-inner">
+            <div class="reading-kicker"><span>STORY / SCENE 07</span><span>最后写入 03:17:42</span></div>
+            <section class="chapter"><div class="chapter-bar"></div><div><h1>雨幕后的旧档案库</h1><p>一场尚未落幕的对话。角色状态沿场次脊线记录，变化会回到它发生的段落。</p><div class="chapter-meta"><span>东京分部</span><span>夜雨</span><span>调查中</span></div></div></section>
+            <article class="message"><div class="message-head"><span class="speaker"><i></i><strong>绘梨衣</strong><small>THE RED DRAGON</small></span><time>03:16:58</time></div><p>雨水沿着旧档案库的天窗边缘一滴一滴地落下来。绘梨衣站在门廊的阴影里，红色的伞面没有合上，像是把外面的夜色也留了一小块在这里。</p><p>她没有立刻走近，只是看着你把那张已经泛黄的照片从信封里抽出来。照片背面写着一个日期，墨水在潮气里晕开，最后一笔像是有人在写到一半时突然停下。</p></article>
+            <article class="message message--user"><div class="message-head"><span class="speaker"><i></i><strong>你的行动</strong><small>PLAYER CUE</small></span><time>03:17:11</time></div><p>我把照片翻到正面，先确认照片里的人，再问她为什么知道这个档案库。</p></article>
+            <article class="message"><div class="message-head"><span class="speaker"><i></i><strong>绘梨衣</strong><small>THE RED DRAGON</small></span><time>03:17:42</time></div><p>照片上的人站在学院旧礼堂前，身后是一整排还没有亮起的灯。你认出那件校服，却想不起自己在哪里见过这张脸。绘梨衣的手指在伞柄上收紧了一点，伞骨发出细微的响声。</p><p>“因为我也来过这里。”她说。声音很轻，几乎要被雨声盖住。</p></article>
+            <form class="composer"><button type="button" class="model"><strong>Claude 3.7 Sonnet</strong><small>原生模型</small></button><textarea aria-label="下一步行动" placeholder="记录下一步行动或回复……"></textarea><button type="button" class="send"><span>提交行动</span><small>CTRL + ENTER</small></button></form>
+          </div>
+        </main>
+        <aside class="status-room" aria-label="演员谱与状态栏">
+          <canvas class="status-canvas" aria-hidden="true"></canvas>
+          <div class="status-content">
+            <header class="status-head"><div><h2>演员谱 · 当前场次</h2><p>CAST LEDGER / STATUS CUE</p></div><strong class="status-count">05</strong></header>
+            <div class="cast-list">
+              <button type="button" class="cast-row active"><i class="lamp"></i><span><strong>绘梨衣</strong><small>THE RED DRAGON</small></span><em>对话中</em></button>
+              <button type="button" class="cast-row"><i class="lamp"></i><span><strong>路明非</strong><small>THE FOOL</small></span><em>远处待机</em></button>
+              <button type="button" class="cast-row"><i class="lamp"></i><span><strong>楚子航</strong><small>THE JUDGEMENT</small></span><em>线索追踪</em></button>
+              <button type="button" class="cast-row"><i class="lamp"></i><span><strong>零</strong><small>THE QUEEN</small></span><em>通讯静默</em></button>
+              <button type="button" class="cast-row"><i class="lamp"></i><span><strong>诺诺</strong><small>THE WITCH</small></span><em>外围观察</em></button>
+            </div>
+            <section class="instrument instrument--orrery">
+              <div class="instrument-copy"><div class="instrument-label"><span>当前档案 / ACTIVE DOSSIER</span><span>01 / 05</span></div><h3>绘梨衣</h3><div class="role">THE RED DRAGON · 互动对象</div><p>她已经知道档案库的来历，但仍在等待你先说出照片背后的名字。</p><div class="dossier-grid"><div><span>关系</span><strong>同行者</strong></div><div><span>信条</span><strong>克制 · 警觉</strong></div><div><span>位置</span><strong>旧档案库门廊</strong></div><div><span>意图</span><strong>等待确认</strong></div></div></div>
+            </section>
+            <div class="status-strip"><dl><dt>连接</dt><dd>已同步</dd><dt>生成</dt><dd>待用户行动</dd><dt>最近变化</dt><dd>绘梨衣 · 意图</dd></dl><i class="live-mark" aria-hidden="true"></i></div>
+            <div class="rail-actions"><button type="button">查看守夜人讨论区</button><button type="button">上一位角色</button><button type="button">下一位角色</button></div>
+          </div>
+        </aside>
+      </div>
+    </div>
+    <button type="button" class="mobile-trigger" aria-label="展开状态栏"><i></i><strong>绘梨衣</strong><span>05 / 档案</span></button>
+  </div>
+  <script>
+    const params = new URLSearchParams(location.search)
+    const variant = Math.max(1, Math.min(3, Number(params.get('variant') || 1)))
+    const stage = document.getElementById('stage')
+    stage.classList.add(`variant-${variant}`)
+    if (params.get('mobile') === 'open') document.body.classList.add('mobile-open')
+    const trigger = document.querySelector('.mobile-trigger')
+    trigger.addEventListener('click', () => document.body.classList.toggle('mobile-open'))
+    const canvas = document.querySelector('.status-canvas')
+    const ctx = canvas.getContext('2d')
+    let width = 0
+    let height = 0
+    let dpr = 1
+    let start = performance.now()
+    const embers = Array.from({ length: 34 }, (_, index) => ({
+      seed: index * 1.731,
+      x: (index * 0.61803398875) % 1,
+      y: (index * 0.38196601125) % 1,
+      speed: 0.00016 + (index % 7) * 0.000018,
+      size: 0.7 + (index % 4) * 0.45,
+    }))
+    function resize() {
+      const rect = canvas.getBoundingClientRect()
+      dpr = Math.min(window.devicePixelRatio || 1, 2)
+      width = Math.max(1, Math.round(rect.width))
+      height = Math.max(1, Math.round(rect.height))
+      canvas.width = Math.round(width * dpr)
+      canvas.height = Math.round(height * dpr)
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
+    }
+    function line(x1, y1, x2, y2, color, alpha = 1, widthPx = 1) {
+      ctx.strokeStyle = color
+      ctx.globalAlpha = alpha
+      ctx.lineWidth = widthPx
+      ctx.beginPath()
+      ctx.moveTo(x1, y1)
+      ctx.lineTo(x2, y2)
+      ctx.stroke()
+      ctx.globalAlpha = 1
+    }
+    function drawOrrery(t) {
+      const cx = width * .73
+      const cy = height * .28
+      const radius = Math.min(width, height) * .24
+      ctx.save()
+      ctx.translate(cx, cy)
+      ctx.rotate(t * .000035)
+      for (let ring = 0; ring < 4; ring += 1) {
+        const r = radius * (0.43 + ring * .19)
+        ctx.strokeStyle = ring === 2 ? '#d7952d' : '#9f641f'
+        ctx.globalAlpha = ring === 2 ? .5 : .29
+        ctx.lineWidth = ring === 2 ? 1.3 : .7
+        ctx.beginPath()
+        ctx.arc(0, 0, r, 0, Math.PI * 2)
+        ctx.stroke()
+        const marks = 16 + ring * 4
+        for (let mark = 0; mark < marks; mark += 1) {
+          const angle = mark / marks * Math.PI * 2
+          const inner = r - (mark % 4 === 0 ? 8 : 4)
+          line(Math.cos(angle) * inner, Math.sin(angle) * inner, Math.cos(angle) * r, Math.sin(angle) * r, '#d7952d', mark % 4 === 0 ? .48 : .24, mark % 4 === 0 ? 1.1 : .6)
+        }
+      }
+      const pointer = t * .00022 + .7
+      line(0, 0, Math.cos(pointer) * radius * 1.14, Math.sin(pointer) * radius * 1.14, '#df6d55', .75, 1.4)
+      ctx.fillStyle = '#d7952d'
+      ctx.globalAlpha = .8
+      ctx.beginPath()
+      ctx.arc(0, 0, 3.5, 0, Math.PI * 2)
+      ctx.fill()
+      ctx.restore()
+    }
+    function drawContours(t) {
+      ctx.save()
+      ctx.globalAlpha = .36
+      for (let path = 0; path < 8; path += 1) {
+        const offset = height * (.08 + path * .11)
+        ctx.strokeStyle = path % 3 === 0 ? '#b13d36' : path % 3 === 1 ? '#9f641f' : '#286b7a'
+        ctx.lineWidth = path % 3 === 0 ? 1.25 : .7
+        ctx.beginPath()
+        for (let step = 0; step <= 42; step += 1) {
+          const x = width * (.05 + step / 42 * 1.02)
+          const y = offset + Math.sin(step * .42 + path * .9 + t * .00016) * (10 + path * 1.5) + Math.cos(step * .15 + path) * 4
+          if (step === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y)
+        }
+        ctx.stroke()
+      }
+      ctx.restore()
+    }
+    function drawEmbers(t) {
+      for (const ember of embers) {
+        const x = ((ember.x * width) + Math.sin(t * ember.speed * 9 + ember.seed) * 15 + width) % width
+        const y = ((ember.y * height - t * ember.speed * height * 1.5) % height + height) % height
+        ctx.fillStyle = ember.seed % 2 > 1 ? '#df6d55' : '#ff9d32'
+        ctx.globalAlpha = .18 + (Math.sin(t * .001 + ember.seed) + 1) * .12
+        ctx.beginPath()
+        ctx.arc(x, y, ember.size, 0, Math.PI * 2)
+        ctx.fill()
+      }
+      ctx.globalAlpha = 1
+    }
+    function frame(now) {
+      if (!width) resize()
+      const t = now - start
+      ctx.clearRect(0, 0, width, height)
+      ctx.fillStyle = '#242022'
+      ctx.fillRect(0, 0, width, height)
+      if (variant === 1 || variant === 3) drawOrrery(t)
+      if (variant === 2 || variant === 3) drawContours(t)
+      drawEmbers(t)
+      window.__compReady = true
+      requestAnimationFrame(frame)
+    }
+    window.addEventListener('resize', resize)
+    resize()
+    requestAnimationFrame(frame)
+  </script>
+</body>
+</html>

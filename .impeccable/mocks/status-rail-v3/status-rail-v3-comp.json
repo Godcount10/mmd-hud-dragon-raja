@@ -1,0 +1,47 @@
+{
+  "surface": "story-status-rail",
+  "mode": "local-html-canvas-svg",
+  "approved": false,
+  "revision": 3,
+  "reason": "Complete visual redo after v2 rejection",
+  "brief": [
+    "Reduce decoration to meaningful foreground instruments rather than repeated labels or boxes",
+    "Use SVG for all decorative geometry and animate the foreground with requestAnimationFrame",
+    "Keep the status rail continuous and flat, with rules and spacing instead of stacked cards",
+    "Keep mobile collapsed by default and expanded as a covering overlay"
+  ],
+  "options": [
+    {
+      "id": "01",
+      "label": "轨道档案",
+      "thesis": "一枚黄铜轨道装置围绕当前角色运转，指针把最新状态钉回场次。",
+      "animation": "前景轨道与指针持续转动，状态信号以脉冲节奏回应。",
+      "desktop": "./status-rail-v3-01-desktop.png",
+      "mobileCollapsed": "./status-rail-v3-01-mobile-collapsed.png",
+      "mobileOpen": "./status-rail-v3-01-mobile-open.png"
+    },
+    {
+      "id": "02",
+      "label": "龙脉剖面",
+      "thesis": "一组像地形测绘的龙脉线穿过档案，关系与位置沿路径相连。",
+      "animation": "前景等高线以不等速描边流动，节点缓慢偏移而不制造噪声。",
+      "desktop": "./status-rail-v3-02-desktop.png",
+      "mobileCollapsed": "./status-rail-v3-02-mobile-collapsed.png",
+      "mobileOpen": "./status-rail-v3-02-mobile-open.png"
+    },
+    {
+      "id": "03",
+      "label": "封印仪轨",
+      "thesis": "单一龙族封印成为状态栏的前景焦点，四条关系射线保持信息秩序。",
+      "animation": "封印环轻微摆动，核心与信号线以节拍脉冲，强调当前角色而非背景。",
+      "desktop": "./status-rail-v3-03-desktop.png",
+      "mobileCollapsed": "./status-rail-v3-03-mobile-collapsed.png",
+      "mobileOpen": "./status-rail-v3-03-mobile-open.png"
+    }
+  ],
+  "interactionContract": {
+    "mobileDefault": "collapsed",
+    "mobileExpanded": "covering overlay",
+    "preserve": ["Host", "Bridge", "Protocol", "iframe", "MessagePort", "all existing Story events"]
+  }
+}

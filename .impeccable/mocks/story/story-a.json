@@ -1,0 +1,8 @@
+{
+  "surface": "story",
+  "variant": "a",
+  "prompt": "Dragon Raja Story desktop and mobile UI comp. Real-world stage manager desk: warm paper reading sheet, dark theatre ledger, brass cue marks, ember red and cobalt blue blocks. Long Chinese narrative is the primary reading surface; a five-person cast ledger is equally important. No futuristic technology, no cyberpunk, no neon, no glassmorphism, no holograms. Structure: narrow low-frequency tool rail, wide reading sheet with a red scene spine and long assistant prose, right cast ledger with five named characters and one active dossier, action composer at bottom. Mobile keeps cast ledger before the reading sheet and uses a non-overlapping sticky tool strip.",
+  "approved": true,
+  "approved_comp": ".impeccable/mocks/story/story-a-desktop.png",
+  "approved_mobile_comp": ".impeccable/mocks/story/story-a-mobile.png"
+}

@@ -28,6 +28,7 @@ const openActionsId = ref<string | null>(null)
 let freshGeneration = 0
 let historyGeneration = 0
 let seeded = false
+let lastConsumedDraft = ''
 
 const currentModel = computed(() => snapshot.value.modelPanel.models.find((model) => model.selected)?.name || '选择模型')
 const generationCopy = computed(() => {
@@ -63,7 +64,10 @@ async function send(): Promise<void> {
   try {
     const result = await invoke('sendMessage', { text })
     emit('feedback', result.ok, result.ok ? '行动已送入叙事频道' : result.error?.message || '消息发送失败')
-    if (result.ok) draft.value = ''
+    if (result.ok) {
+      draft.value = ''
+      emit('draftConsumed')
+    }
   } finally {
     sending.value = false
   }
@@ -154,10 +158,13 @@ function animateHistoryReplacement(): void {
   })
 }
 
-watch(() => props.initialDraft, (value) => {
+watch(() => props.initialDraft, (value, oldValue) => {
+  // 忽略空字符串的变化，防止清空时触发不必要的更新
   if (!value) return
+  // 忽略相同值的重复触发
+  if (value === oldValue || value === lastConsumedDraft) return
+  lastConsumedDraft = value
   draft.value = value
-  emit('draftConsumed')
 }, { immediate: true })
 
 watch(() => snapshot.value.messages, async (messages, previousMessages) => {
@@ -243,6 +250,7 @@ watch(() => snapshot.value.generation, async (generation, previous) => {
     <header class="dr-story__header">
       <div class="dr-story__identity">
         <h1>{{ snapshot.character.name || '未知角色' }}</h1>
+        <p>连续叙事记录 · 角色状态沿场次脊线更新</p>
       </div>
       <div class="dr-story__channel">
         <span class="dr-story__signal" :data-state="snapshot.connection.status"><i />{{ snapshot.connection.status === 'connected' ? '已连接' : '重新连接中' }}</span>
@@ -252,8 +260,8 @@ watch(() => snapshot.value.generation, async (generation, previous) => {
 
     <div ref="list" class="dr-story__messages" :class="{ 'dr-story__messages--replacing': historyReplacing }" aria-live="polite">
       <div v-if="!snapshot.messages.length" class="dr-story__empty"><strong>频道静默</strong><p>第一条角色消息抵达后，叙事会在这里展开。</p></div>
-      <article v-for="message in snapshot.messages" :key="message.id" class="dr-message" :class="[`dr-message--${message.role}`, { 'dr-message--fresh': freshMessageIds.has(message.id), 'dr-message--streaming': message.streaming }]" :data-message-id="message.id">
-        <i class="dr-message__rail" aria-hidden="true" />
+      <article v-for="message in snapshot.messages" :key="message.id" class="dr-message dr-message--chapter" :class="[`dr-message--${message.role}`, { 'dr-message--fresh': freshMessageIds.has(message.id), 'dr-message--streaming': message.streaming }]" :data-message-id="message.id">
+        <i class="dr-message__chapter-rule" aria-hidden="true" />
         <header><span><strong>{{ roleLabel(message) }}</strong></span><time v-if="message.role === 'system'">事件</time></header>
         <div class="dr-message__body" v-html="html(message)" />
         <div v-if="message.streaming" class="dr-message__stream"><i />正在写入原生回复</div>

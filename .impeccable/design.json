@@ -1,0 +1,672 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-08-27T14:57:55.600Z",
+  "title": "Design System: Dragon Raja Immersive HUD",
+  "extensions": {
+    "colorMeta": {
+      "admissions-ink": {
+        "role": "neutral",
+        "displayName": "雨夜墨",
+        "canonical": "#05070b",
+        "tonalRamp": [
+          "oklch(15% 0.011 259.6)",
+          "oklch(27% 0.011 259.6)",
+          "oklch(39% 0.011 259.6)",
+          "oklch(51% 0.011 259.6)",
+          "oklch(63% 0.011 259.6)",
+          "oklch(75% 0.011 259.6)",
+          "oklch(87% 0.011 259.6)",
+          "oklch(95% 0.011 259.6)"
+        ]
+      },
+      "admissions-paper": {
+        "role": "neutral",
+        "displayName": "入学信纸",
+        "canonical": "#e8e2d6",
+        "tonalRamp": [
+          "oklch(15% 0.017 84.6)",
+          "oklch(27% 0.017 84.6)",
+          "oklch(39% 0.017 84.6)",
+          "oklch(51% 0.017 84.6)",
+          "oklch(63% 0.017 84.6)",
+          "oklch(75% 0.017 84.6)",
+          "oklch(87% 0.017 84.6)",
+          "oklch(95% 0.017 84.6)"
+        ]
+      },
+      "admissions-muted": {
+        "role": "neutral",
+        "displayName": "雨幕灰",
+        "canonical": "#93a3ad",
+        "tonalRamp": [
+          "oklch(15% 0.023 235.2)",
+          "oklch(27% 0.023 235.2)",
+          "oklch(39% 0.023 235.2)",
+          "oklch(51% 0.023 235.2)",
+          "oklch(63% 0.023 235.2)",
+          "oklch(75% 0.023 235.2)",
+          "oklch(87% 0.023 235.2)",
+          "oklch(95% 0.023 235.2)"
+        ]
+      },
+      "admissions-bronze": {
+        "role": "primary",
+        "displayName": "炼金铜（雨夜）",
+        "canonical": "#b99761",
+        "tonalRamp": [
+          "oklch(15% 0.082 78.4)",
+          "oklch(27% 0.082 78.4)",
+          "oklch(39% 0.082 78.4)",
+          "oklch(51% 0.082 78.4)",
+          "oklch(63% 0.082 78.4)",
+          "oklch(75% 0.082 78.4)",
+          "oklch(87% 0.082 78.4)",
+          "oklch(95% 0.082 78.4)"
+        ]
+      },
+      "admissions-signal": {
+        "role": "secondary",
+        "displayName": "同步青（雨夜）",
+        "canonical": "#72bfc1",
+        "tonalRamp": [
+          "oklch(15% 0.076 197.8)",
+          "oklch(27% 0.076 197.8)",
+          "oklch(39% 0.076 197.8)",
+          "oklch(51% 0.076 197.8)",
+          "oklch(63% 0.076 197.8)",
+          "oklch(75% 0.076 197.8)",
+          "oklch(87% 0.076 197.8)",
+          "oklch(95% 0.076 197.8)"
+        ]
+      },
+      "admissions-flame": {
+        "role": "tertiary",
+        "displayName": "龙焰红（仪式）",
+        "canonical": "#d55731",
+        "tonalRamp": [
+          "oklch(15% 0.168 37.1)",
+          "oklch(27% 0.168 37.1)",
+          "oklch(39% 0.168 37.1)",
+          "oklch(51% 0.168 37.1)",
+          "oklch(63% 0.168 37.1)",
+          "oklch(75% 0.168 37.1)",
+          "oklch(87% 0.168 37.1)",
+          "oklch(95% 0.168 37.1)"
+        ]
+      },
+      "archive-sheet": {
+        "role": "neutral",
+        "displayName": "卷宗纸",
+        "canonical": "#fffdf8",
+        "tonalRamp": [
+          "oklch(15% 0.007 88.6)",
+          "oklch(27% 0.007 88.6)",
+          "oklch(39% 0.007 88.6)",
+          "oklch(51% 0.007 88.6)",
+          "oklch(63% 0.007 88.6)",
+          "oklch(75% 0.007 88.6)",
+          "oklch(87% 0.007 88.6)",
+          "oklch(95% 0.007 88.6)"
+        ]
+      },
+      "archive-sheet-sunk": {
+        "role": "neutral",
+        "displayName": "下沉纸面",
+        "canonical": "#f5f1e8",
+        "tonalRamp": [
+          "oklch(15% 0.013 86.8)",
+          "oklch(27% 0.013 86.8)",
+          "oklch(39% 0.013 86.8)",
+          "oklch(51% 0.013 86.8)",
+          "oklch(63% 0.013 86.8)",
+          "oklch(75% 0.013 86.8)",
+          "oklch(87% 0.013 86.8)",
+          "oklch(95% 0.013 86.8)"
+        ]
+      },
+      "archive-ink": {
+        "role": "neutral",
+        "displayName": "档案墨",
+        "canonical": "#343a46",
+        "tonalRamp": [
+          "oklch(15% 0.023 264.2)",
+          "oklch(27% 0.023 264.2)",
+          "oklch(39% 0.023 264.2)",
+          "oklch(51% 0.023 264.2)",
+          "oklch(63% 0.023 264.2)",
+          "oklch(75% 0.023 264.2)",
+          "oklch(87% 0.023 264.2)",
+          "oklch(95% 0.023 264.2)"
+        ]
+      },
+      "archive-muted": {
+        "role": "neutral",
+        "displayName": "批注灰",
+        "canonical": "#666e7a",
+        "tonalRamp": [
+          "oklch(15% 0.021 258.4)",
+          "oklch(27% 0.021 258.4)",
+          "oklch(39% 0.021 258.4)",
+          "oklch(51% 0.021 258.4)",
+          "oklch(63% 0.021 258.4)",
+          "oklch(75% 0.021 258.4)",
+          "oklch(87% 0.021 258.4)",
+          "oklch(95% 0.021 258.4)"
+        ]
+      },
+      "archive-bronze": {
+        "role": "primary",
+        "displayName": "炼金铜（日光）",
+        "canonical": "#8a5f24",
+        "tonalRamp": [
+          "oklch(15% 0.093 71.4)",
+          "oklch(27% 0.093 71.4)",
+          "oklch(39% 0.093 71.4)",
+          "oklch(51% 0.093 71.4)",
+          "oklch(63% 0.093 71.4)",
+          "oklch(75% 0.093 71.4)",
+          "oklch(87% 0.093 71.4)",
+          "oklch(95% 0.093 71.4)"
+        ]
+      },
+      "archive-signal": {
+        "role": "secondary",
+        "displayName": "同步青（日光）",
+        "canonical": "#2f7376",
+        "tonalRamp": [
+          "oklch(15% 0.068 199.2)",
+          "oklch(27% 0.068 199.2)",
+          "oklch(39% 0.068 199.2)",
+          "oklch(51% 0.068 199.2)",
+          "oklch(63% 0.068 199.2)",
+          "oklch(75% 0.068 199.2)",
+          "oklch(87% 0.068 199.2)",
+          "oklch(95% 0.068 199.2)"
+        ]
+      },
+      "action-crimson": {
+        "role": "tertiary",
+        "displayName": "龙焰红（行动）",
+        "canonical": "#9c3d34",
+        "tonalRamp": [
+          "oklch(15% 0.129 28.1)",
+          "oklch(27% 0.129 28.1)",
+          "oklch(39% 0.129 28.1)",
+          "oklch(51% 0.129 28.1)",
+          "oklch(63% 0.129 28.1)",
+          "oklch(75% 0.129 28.1)",
+          "oklch(87% 0.129 28.1)",
+          "oklch(95% 0.129 28.1)"
+        ]
+      },
+      "stage-night": {
+        "role": "neutral",
+        "displayName": "舞台夜墨",
+        "canonical": "#191719",
+        "tonalRamp": [
+          "#191719",
+          "#302a2b",
+          "#4a3f40",
+          "#665655",
+          "#846d68",
+          "#a3867e",
+          "#c2a49a",
+          "#e0c4b7"
+        ]
+      },
+      "stage-night-2": {
+        "role": "neutral",
+        "displayName": "深色演员谱",
+        "canonical": "#242022",
+        "tonalRamp": [
+          "#242022",
+          "#3b3336",
+          "#55484d",
+          "#705d63",
+          "#8c7379",
+          "#aa8c91",
+          "#c8a8ab",
+          "#e3c8c6"
+        ]
+      },
+      "stage-paper": {
+        "role": "neutral",
+        "displayName": "场次纸面",
+        "canonical": "#efe5d2",
+        "tonalRamp": [
+          "#2b2824",
+          "#4a443d",
+          "#686057",
+          "#887e70",
+          "#a99d8b",
+          "#c8baa5",
+          "#ddcfba",
+          "#efe5d2"
+        ]
+      },
+      "stage-paper-2": {
+        "role": "neutral",
+        "displayName": "高光纸面",
+        "canonical": "#f8f1e2",
+        "tonalRamp": [
+          "#302d29",
+          "#504b43",
+          "#70695e",
+          "#928878",
+          "#b3a894",
+          "#d0c3ac",
+          "#e4d8c4",
+          "#f8f1e2"
+        ]
+      },
+      "stage-paper-sunk": {
+        "role": "neutral",
+        "displayName": "下沉行动纸",
+        "canonical": "#e4d8c5",
+        "tonalRamp": [
+          "#302c28",
+          "#50483f",
+          "#6f6255",
+          "#8e7e6d",
+          "#ad9a84",
+          "#c7b49c",
+          "#d7c8b1",
+          "#e4d8c5"
+        ]
+      },
+      "stage-ink": {
+        "role": "neutral",
+        "displayName": "舞台墨",
+        "canonical": "#211d1c",
+        "tonalRamp": [
+          "#211d1c",
+          "#393331",
+          "#514947",
+          "#6b5e5b",
+          "#877773",
+          "#a48f89",
+          "#c1aaa1",
+          "#ddc6ba"
+        ]
+      },
+      "stage-muted": {
+        "role": "neutral",
+        "displayName": "批注棕灰",
+        "canonical": "#6b5c54",
+        "tonalRamp": [
+          "#302823",
+          "#473c35",
+          "#5c4e46",
+          "#75645a",
+          "#8e7a6e",
+          "#a89385",
+          "#c2ac9c",
+          "#dac4b4"
+        ]
+      },
+      "stage-brass": {
+        "role": "primary",
+        "displayName": "场记黄铜",
+        "canonical": "#d7952d",
+        "tonalRamp": [
+          "#3d2b15",
+          "#66481f",
+          "#8d6427",
+          "#b27e2b",
+          "#d7952d",
+          "#e2ad52",
+          "#edc77d",
+          "#f7e1aa"
+        ]
+      },
+      "stage-brass-deep": {
+        "role": "primary",
+        "displayName": "深黄铜",
+        "canonical": "#9f641f",
+        "tonalRamp": [
+          "#2f2115",
+          "#4f3518",
+          "#70491b",
+          "#8b581d",
+          "#9f641f",
+          "#bb8032",
+          "#d39e57",
+          "#e8bf86"
+        ]
+      },
+      "stage-ember": {
+        "role": "tertiary",
+        "displayName": "场次余烬红",
+        "canonical": "#b13d36",
+        "tonalRamp": [
+          "#351718",
+          "#581f1e",
+          "#7a2825",
+          "#982f2c",
+          "#b13d36",
+          "#c8645a",
+          "#dc8980",
+          "#efb0a4"
+        ]
+      },
+      "stage-cobalt": {
+        "role": "secondary",
+        "displayName": "玩家钴蓝",
+        "canonical": "#286b7a",
+        "tonalRamp": [
+          "#102c34",
+          "#16424d",
+          "#1d5864",
+          "#246773",
+          "#286b7a",
+          "#4d8b99",
+          "#77abb4",
+          "#abd0d1"
+        ]
+      },
+      "stage-sage": {
+        "role": "secondary",
+        "displayName": "同步鼠尾草",
+        "canonical": "#78968a",
+        "tonalRamp": [
+          "#203129",
+          "#304c3e",
+          "#416454",
+          "#557d69",
+          "#78968a",
+          "#97b1a2",
+          "#b8cbbd",
+          "#d6e1d3"
+        ]
+      },
+      "stage-violet": {
+        "role": "secondary",
+        "displayName": "观察紫",
+        "canonical": "#655b79",
+        "tonalRamp": [
+          "#272231",
+          "#3c344b",
+          "#4e4561",
+          "#5b516d",
+          "#655b79",
+          "#847a97",
+          "#a79db6",
+          "#c9c1d2"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "admissions-display": {
+        "displayName": "入学主标题",
+        "purpose": "欢迎页唯一的超大标题。"
+      },
+      "opening-display": {
+        "displayName": "开局档案标题",
+        "purpose": "开局问题与建档阶段标题。"
+      },
+      "story-title": {
+        "displayName": "故事标题",
+        "purpose": "角色与频道标题。"
+      },
+      "story-body": {
+        "displayName": "叙事正文",
+        "purpose": "assistant 长篇故事阅读。"
+      },
+      "interface-body": {
+        "displayName": "界面正文",
+        "purpose": "用户行动、输入和说明文字。"
+      },
+      "interface-label": {
+        "displayName": "档案标签",
+        "purpose": "导航、状态和控件标签。"
+      },
+      "telemetry": {
+        "displayName": "系统遥测",
+        "purpose": "坐标、连接、版本和机器元数据。"
+      },
+      "story-cast": {
+        "displayName": "演员谱姓名",
+        "purpose": "状态栏中的角色姓名与身份标题。"
+      }
+    },
+    "shadows": [
+      {
+        "name": "low-chrome",
+        "value": "0 8px 22px rgba(74,60,38,.12)",
+        "purpose": "固定顶栏和最低层浮动工具。"
+      },
+      {
+        "name": "standard-sheet",
+        "value": "0 10px 26px rgba(74,60,38,.15)",
+        "purpose": "导航纸页和状态档案栏。"
+      },
+      {
+        "name": "reading-sheet",
+        "value": "0 14px 34px rgba(74,60,38,.16)",
+        "purpose": "主叙事阅读页。"
+      },
+      {
+        "name": "popover",
+        "value": "0 8px 22px rgba(74,60,38,.2)",
+        "purpose": "消息动作等局部覆盖层。"
+      },
+      {
+        "name": "side-panel",
+        "value": "-18px 12px 48px rgba(84,69,45,.18)",
+        "purpose": "右侧低频抽屉。"
+      },
+      {
+        "name": "modal",
+        "value": "0 26px 70px rgba(84,69,45,.22)",
+        "purpose": "原生镜像和最高层对话框。"
+      },
+      {
+        "name": "toast",
+        "value": "0 12px 32px rgba(84,69,45,.2)",
+        "purpose": "短时反馈。"
+      },
+      {
+        "name": "mobile-rail",
+        "value": "0 -8px 22px rgba(74,60,38,.14)",
+        "purpose": "移动端底部导航。"
+      }
+    ],
+    "motion": [
+      {
+        "name": "entry-container",
+        "value": "0.42s expo.out",
+        "purpose": "纸页、模态框和主要结构进入。"
+      },
+      {
+        "name": "entry-content",
+        "value": "0.30s power2.out",
+        "purpose": "标题、正文和控件分层出现。"
+      },
+      {
+        "name": "exit-content",
+        "value": "0.20s power2.in",
+        "purpose": "内容先于结构退出。"
+      },
+      {
+        "name": "exit-structure",
+        "value": "0.42s power3.in",
+        "purpose": "抽屉与主要结构关闭。"
+      },
+      {
+        "name": "status-change",
+        "value": "0.62s cubic-bezier(.16,1,.3,1)",
+        "purpose": "状态值更新提示。"
+      },
+      {
+        "name": "stream-signal",
+        "value": "1.1s ease-in-out",
+        "purpose": "流式生成信号。"
+      },
+      {
+        "name": "ambient-rain",
+        "value": "12s linear",
+        "purpose": "欢迎页低频雨幕环境运动。"
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "compact",
+        "value": "980px"
+      },
+      {
+        "name": "mobile",
+        "value": "700px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Admissions CTA",
+      "kind": "button",
+      "refersTo": "admission-cta",
+      "description": "雨夜欢迎页的拆信主入口。",
+      "html": "<button class=\"ds-btn-admission\"><span>拆开信封</span><svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M5 12h14M14 6l6 6-6 6\"/></svg></button>",
+      "css": ".ds-btn-admission{display:inline-flex;align-items:center;gap:36px;min-width:230px;padding:15px 18px 15px 24px;border:1px solid rgba(185,151,97,.6);color:#e8e2d6;background:rgba(11,17,24,.58);font:400 16px \"DragonRaja Sans\",\"Segoe UI\",\"Microsoft YaHei\",system-ui,sans-serif;cursor:pointer;transition:color .24s,border-color .24s,background .24s,transform .24s}.ds-btn-admission svg{width:18px;fill:none;stroke:currentColor;stroke-width:1.5}.ds-btn-admission:hover:not(:disabled){transform:translateY(-3px);border-color:#d9c49f;color:#fff;background:rgba(57,47,34,.64)}.ds-btn-admission:focus-visible{outline:2px solid #b99761;outline-offset:3px}.ds-btn-admission:disabled{opacity:.55;cursor:wait}"
+    },
+    {
+      "name": "Opening Choice",
+      "kind": "button",
+      "refersTo": "opening-choice",
+      "description": "开局建档流程中的可选择档案条目。",
+      "html": "<button class=\"ds-opening-choice selected\"><span>狮心会预备成员</span><svg viewBox=\"0 0 32 32\" aria-hidden=\"true\"><path d=\"m6 17 7 7L27 8\"/></svg></button>",
+      "css": ".ds-opening-choice{position:relative;display:flex;min-height:68px;align-items:center;justify-content:space-between;padding:0 22px;overflow:hidden;border:1px solid rgba(147,163,173,.16);color:rgba(232,226,214,.78);background:rgba(9,15,21,.68);font:400 16px \"DragonRaja Sans\",\"Segoe UI\",\"Microsoft YaHei\",system-ui,sans-serif;text-align:left;cursor:pointer;transition:transform .24s,border-color .24s,background .24s,color .24s}.ds-opening-choice::before{content:\"\";position:absolute;inset:0;opacity:0;background:linear-gradient(90deg,rgba(185,151,97,.16),transparent 64%);transition:opacity .24s}.ds-opening-choice:hover{transform:translateX(8px);border-color:rgba(185,151,97,.48);color:#fff}.ds-opening-choice.selected{border-color:#b99761;color:#fff;background:rgba(59,47,30,.55)}.ds-opening-choice.selected::before{opacity:1}.ds-opening-choice svg{position:relative;width:25px;fill:none;stroke:#b99761;stroke-width:1.5;opacity:0}.ds-opening-choice.selected svg{opacity:1}.ds-opening-choice:focus-visible{outline:2px solid #b99761;outline-offset:3px}"
+    },
+    {
+      "name": "Primary Story Action",
+      "kind": "button",
+      "refersTo": "story-action",
+      "description": "日光故事工作台唯一的高色度提交动作。",
+      "html": "<button class=\"ds-btn-primary\"><strong>提交行动</strong><svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M5 19 19 5M8 5h11v11\"/></svg></button>",
+      "css": ".ds-btn-primary{display:inline-flex;min-width:128px;min-height:62px;align-items:center;justify-content:space-between;gap:9px;padding:0 20px;border:0;border-left:1px solid #8f342c;color:#fff;background:#9c3d34;font-family:\"DragonRaja Sans\",\"Segoe UI\",\"Microsoft YaHei\",system-ui,sans-serif;cursor:pointer;transition:border-color .2s,background .2s,transform .2s}.ds-btn-primary strong{font-size:12px;font-weight:600;letter-spacing:.02em}.ds-btn-primary svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:1.5}.ds-btn-primary:hover:not(:disabled){transform:translateY(-1px);border-color:#d9c49f;background:#8a3229}.ds-btn-primary:focus-visible{outline:2px solid #a97939;outline-offset:3px}.ds-btn-primary:disabled{color:#f3ede2;background:#b9a89a;border-left-color:#ab9a8b;cursor:not-allowed;transform:none}"
+    },
+    {
+      "name": "Composer Field",
+      "kind": "input",
+      "refersTo": "composer-field",
+      "description": "故事工作台连续控制条中的纸面输入区。",
+      "html": "<label class=\"ds-composer-field\"><span class=\"ds-visually-hidden\">输入行动</span><textarea rows=\"2\" placeholder=\"记录下一步行动或回复……\"></textarea></label>",
+      "css": ".ds-composer-field{position:relative;display:grid;width:min(440px,100%);min-height:62px;border:1px solid rgba(120,108,86,.2);background:#fffdf8}.ds-composer-field textarea{width:100%;min-height:0;resize:none;padding:12px 14px;border:0;outline:0;color:#343a46;background:#fffdf8;font:400 12px/1.6 \"DragonRaja Sans\",\"Segoe UI\",\"Microsoft YaHei\",system-ui,sans-serif}.ds-composer-field textarea::placeholder{color:#7b828d}.ds-composer-field textarea:focus-visible{outline:2px solid #a97939;outline-offset:3px}.ds-visually-hidden{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}"
+    },
+    {
+      "name": "Story Rail Navigation",
+      "kind": "nav",
+      "refersTo": "story-navigation",
+      "description": "桌面竖栏与移动底栏共用的六项故事导航语言。",
+      "html": "<aside class=\"ds-story-nav\"><nav><button class=\"active\" aria-current=\"page\"><svg viewBox=\"0 0 24 24\"><path d=\"M6 4h9a3 3 0 0 1 3 3v13H8a2 2 0 0 1-2-2V4Zm2 0v14a2 2 0 0 0-2-2h12M10 8h5M10 12h5\"/></svg><strong>故事</strong></button><button><svg viewBox=\"0 0 24 24\"><path d=\"M12 3 5 7v5c0 4.2 2.7 7.6 7 9 4.3-1.4 7-4.8 7-9V7l-7-4Zm-3 9 2 2 4-5\"/></svg><strong>判读</strong></button><button><svg viewBox=\"0 0 24 24\"><path d=\"m4 6 5-2 6 2 5-2v14l-5 2-6-2-5 2V6Zm5-2v14m6-12v14\"/></svg><strong>地图</strong></button></nav></aside>",
+      "css": ".ds-story-nav{display:flex;flex-direction:column;width:96px;padding:18px 12px 16px;border:1px solid rgba(120,108,86,.2);background:#fffdf8;box-shadow:0 10px 26px rgba(74,60,38,.15);font-family:\"DragonRaja Sans\",\"Segoe UI\",\"Microsoft YaHei\",system-ui,sans-serif}.ds-story-nav nav{display:grid;gap:5px}.ds-story-nav button{position:relative;display:grid;align-content:center;justify-items:center;gap:5px;min-height:66px;padding:9px 3px;border:1px solid transparent;border-radius:0;color:#666e7a;background:transparent;cursor:pointer}.ds-story-nav button.active,.ds-story-nav button:hover{color:#343a46;border-color:rgba(169,121,57,.3);background:#f5f1e8}.ds-story-nav button.active::before{content:\"\";position:absolute;left:-13px;top:12px;bottom:12px;width:2px;background:#b94b3d}.ds-story-nav svg{width:20px;height:20px;fill:none;stroke:#8a5f24;stroke-width:1.5}.ds-story-nav strong{font-size:11px;font-weight:600}.ds-story-nav button:focus-visible{outline:2px solid #a97939;outline-offset:3px}"
+    },
+    {
+      "name": "Native Filter Chip",
+      "kind": "chip",
+      "refersTo": "native-filter",
+      "description": "暗色原生镜像中的直角筛选状态。",
+      "html": "<nav class=\"ds-native-pills\"><button class=\"active\">全部模型</button><button>收藏</button><button disabled>不可用</button></nav>",
+      "css": ".ds-native-pills{display:flex;flex-wrap:wrap;gap:7px}.ds-native-pills button{min-height:34px;padding:8px 12px;border:1px solid rgba(147,163,173,.18);color:#93a3ad;background:rgba(17,27,37,.45);font:400 10px \"DragonRaja Sans\",\"Segoe UI\",\"Microsoft YaHei\",system-ui,sans-serif;cursor:pointer}.ds-native-pills button.active{border-color:rgba(114,191,193,.54);color:#e8e2d6;background:rgba(42,91,96,.22)}.ds-native-pills button:focus-visible{outline:2px solid #b99761;outline-offset:3px}.ds-native-pills button:disabled{opacity:.36;cursor:not-allowed}"
+    },
+    {
+      "name": "Continuous Status Rail",
+      "kind": "card",
+      "refersTo": "status-rail",
+      "description": "以留白和发丝线组织的连续右侧档案页。",
+      "html": "<aside class=\"ds-status-rail\"><section class=\"ds-status-card\"><header><span>原生快照</span><i class=\"live\"></i></header><dl><dt>连接</dt><dd>已同步</dd><dt>模型</dt><dd>学院专线</dd><dt>生成</dt><dd>待命</dd></dl></section></aside>",
+      "css": ".ds-status-rail{width:228px;padding:18px 12px 16px;border:1px solid rgba(120,108,86,.2);color:#343a46;background:#fffdf8;box-shadow:0 10px 26px rgba(74,60,38,.15);font-family:\"DragonRaja Sans\",\"Segoe UI\",\"Microsoft YaHei\",system-ui,sans-serif}.ds-status-card{padding:15px 2px}.ds-status-card header{display:flex;align-items:baseline;justify-content:space-between;gap:8px;color:#666e7a;font-size:11px;font-weight:600;letter-spacing:.06em}.ds-status-card header i{width:7px;height:7px;border-radius:50%;background:#b3a897}.ds-status-card header i.live{background:#2f7376}.ds-status-card dl{display:grid;grid-template-columns:auto 1fr;gap:7px 10px;margin:11px 0 0;font-size:11px}.ds-status-card dt{color:#666e7a}.ds-status-card dd{margin:0;color:#343a46;font-weight:600;text-align:right}"
+    },
+    {
+      "name": "Reader Turn Inset",
+      "kind": "card",
+      "refersTo": "reader-turn",
+      "description": "让用户行动退后于角色叙事的内缩纸面。",
+      "html": "<article class=\"ds-user-turn\"><header><strong>你</strong></header><div class=\"ds-user-turn__body\"><p>沿着雨幕走向卡塞尔学院正门。</p></div></article>",
+      "css": ".ds-user-turn{display:grid;width:min(100%,60ch);margin:0 0 22px auto;font-family:\"DragonRaja Sans\",\"Segoe UI\",\"Microsoft YaHei\",system-ui,sans-serif}.ds-user-turn header{margin-bottom:8px}.ds-user-turn header strong{color:#8a5f24;font-size:11px;font-weight:600;letter-spacing:.08em}.ds-user-turn__body{padding:13px 17px;border-left:2px solid rgba(138,95,36,.38);color:#4a5260;background:#f5f1e8;font-size:12px;line-height:1.8}.ds-user-turn__body p{margin:0}"
+    },
+    {
+      "name": "Dossier Dialogue",
+      "kind": "custom",
+      "refersTo": "dossier-dialogue",
+      "description": "角色与用户声部并置的档案对话条目。",
+      "html": "<div class=\"ds-dialogue-stack\"><div class=\"ds-dossier-line\"><span>路明非</span><q>有些门一旦打开，就不会再关上。</q></div><div class=\"ds-dossier-line ds-dossier-line--player\"><span>你</span><q>那就进去看看。</q></div></div>",
+      "css": ".ds-dialogue-stack{display:grid;gap:9px;width:228px;font-family:\"DragonRaja Sans\",\"Segoe UI\",\"Microsoft YaHei\",system-ui,sans-serif}.ds-dossier-line{display:grid;gap:3px}.ds-dossier-line span{color:#2f7376;font-size:11px;font-weight:600}.ds-dossier-line q{padding:8px 10px;border-left:2px solid rgba(47,115,118,.4);color:#343a46;background:#fffdf8;font-size:11px;font-style:normal;line-height:1.6;quotes:none}.ds-dossier-line--player span{color:#8a5f24}.ds-dossier-line--player q{border-left-color:rgba(138,95,36,.42)}"
+    },
+    {
+      "name": "Cast Ledger Row",
+      "kind": "custom",
+      "refersTo": "cast-row",
+      "description": "最多五名角色的可切换场次记录行。",
+      "html": "<button class=\"ds-cast-row\"><i aria-hidden=\"true\"></i><span><strong>楚子航</strong><small>狮心会会长</small></span><em>执行专员</em></button>",
+      "css": ".ds-cast-row{display:grid;grid-template-columns:8px minmax(0,1fr) auto;gap:10px;align-items:center;width:100%;min-height:57px;padding:8px 0;border:0;border-bottom:1px solid rgba(239,229,210,.22);color:#efe5d2;background:transparent;text-align:left;cursor:pointer}.ds-cast-row>i{width:8px;height:25px;background:#78968a}.ds-cast-row strong,.ds-cast-row small{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.ds-cast-row strong{color:#f8f1e2;font:700 14px \"DragonRaja Serif\",\"Noto Serif SC\",SimSun,serif}.ds-cast-row small{margin-top:4px;color:#a99c93;font:10px \"DragonRaja Mono\",Consolas,monospace}.ds-cast-row em{color:#c6b5a5;font:10px \"DragonRaja Sans\",\"Segoe UI\",\"Microsoft YaHei\",system-ui,sans-serif;font-style:normal;text-align:right;white-space:nowrap}.ds-cast-row:hover,.ds-cast-row.active{padding-left:9px;border-left:1px solid #d7952d;background:rgba(215,149,45,.08)}.ds-cast-row:focus-visible{outline:2px solid #d7952d;outline-offset:3px}"
+    }
+  ],
+  "narrative": {
+    "northStar": "雨夜入学，日光归档",
+    "overview": "“雨夜入学，日光归档”把界面组织成一次门槛明确的转场：用户在雨幕、坐标、学院印章和低照度终端中完成入学仪式；进入故事后，世界切换为晨光里的学院卷宗。暖白纸页悬在柔焦环境图前，炼金铜建立秩序，同步青只标记活态，龙焰红只召唤关键行动。\n\n整体气质神秘、克制、具有学院感，同时以长篇叙事的可阅读性为最高约束。界面不模仿通用聊天产品：助手文本是一条阅读列，用户行动是较窄的纸面内缩；导航、状态和原生镜像像档案器械一样精准，不使用霓虹玻璃、圆角气泡或卡片堆叠制造“未来感”。\n\nStory 的当前实现采用场次脊线：窄工具轨、暖纸阅读面和深色演员谱并置；移动端先呈现角色状态再进入正文。演员谱由 assistant 标记动态生成，最多五名角色；无真实立绘 URL 时不渲染占位图。",
+    "keyCharacteristics": [
+      "暗色入学仪式与明亮档案工作台形成明确双相。",
+      "叙事正文优先于工具，工具退居纸页边缘和低频覆盖层。",
+      "直角纸面、发丝边框、炼金几何与有限的语义色构成组件语言。",
+      "背景负责氛围和景深，任何长文本都落在不透明、高对比的阅读表面。",
+      "动效遵循进入、揭页、归档和关闭的方向语义，并完整尊重减少动态效果偏好。",
+      "演员谱最多承载五名角色，移动端状态先于长篇正文。"
+    ],
+    "rules": [
+      {
+        "name": "The One Accent Rule",
+        "body": "炼金铜是常规强调色；同步青只表示活态，龙焰红只表示关键行动或异常。",
+        "section": "colors"
+      },
+      {
+        "name": "The Opaque Reading Rule",
+        "body": "背景图可以营造景深，但正文、输入和状态文字必须位于不透明卷宗纸上。",
+        "section": "colors"
+      },
+      {
+        "name": "The Three Voices Rule",
+        "body": "衬线讲故事，无衬线完成操作，等宽体报告系统；不要让任何一种字体同时承担三种职责。",
+        "section": "typography"
+      },
+      {
+        "name": "The Dual Threshold Rule",
+        "body": "欢迎与开局属于雨夜仪式，故事与日常操作属于日光档案；不要在同一主表面中混合两套底色。",
+        "section": "layout"
+      },
+      {
+        "name": "The Structural Shadow Rule",
+        "body": "阴影只说明表面的真实层级，不作为按钮、文字或背景的装饰性发光。",
+        "section": "elevation"
+      },
+      {
+        "name": "The Square Instrument Rule",
+        "body": "默认组件必须像档案器械一样直角且精准；只有对象本身具有印章、人物或信号语义时才使用圆形。",
+        "section": "shapes"
+      },
+      {
+        "name": "The One Primary Action Rule",
+        "body": "每个工作表面只能有一个持续可见的龙焰红主动作，其余操作使用纸面、炼金铜或中性色层级。",
+        "section": "components"
+      },
+      {
+        "name": "The Cast Ledger Rule",
+        "body": "角色状态通过连续演员谱和 1px cue 线组织；选择角色只切换当前 dossier，不改变原生事实。",
+        "section": "components"
+      }
+    ],
+    "dos": [
+      "**Do** 让欢迎和开局保持雨夜暗场，让故事与工作界面落在暖白卷宗纸上。",
+      "**Do** 把助手文本当成长篇阅读内容，用 68ch 阅读列、充足行高和留白组织节奏。",
+      "**Do** 使用炼金铜建立常规层级，只让同步青表达活态、龙焰红表达主行动或异常。",
+      "**Do** 让阴影、动效和几何都解释真实结构、方向或状态。",
+      "**Do** 为键盘焦点、减少动态效果和移动端安全区保留明确处理。"
+    ],
+    "donts": [
+      "**Don't** 引入霓虹玻璃、发光描边、渐变光球或无语义的赛博朋克装饰。",
+      "**Don't** 把消息改成通用左右圆角气泡，或把连续档案栏拆成卡片堆叠。",
+      "**Don't** 给按钮、输入、chip 和纸页自动添加通用圆角；圆形只服务印章、头像和状态语义。",
+      "**Don't** 把文字直接压在环境图、雨纹或纸张纹理上而不提供不透明阅读表面。",
+      "**Don't** 用装饰性斜纹或低透明度伪造缺失的角色立绘；无真实资源时保持空白并保留字段可读性。"
+    ]
+  }
+}

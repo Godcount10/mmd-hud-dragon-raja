@@ -45,6 +45,7 @@ export class FrameController {
     this.iframe = document.createElement('iframe')
     this.iframe.title = 'MMD HUD'
     this.iframe.sandbox.add('allow-scripts', 'allow-downloads')
+    if (__MMD_HUD_DEV_ALLOW_SAME_ORIGIN__) this.iframe.sandbox.add('allow-same-origin')
     this.iframe.allow = 'clipboard-write'
     this.iframe.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;border:0;background:#050a0f;pointer-events:auto'
     this.iframe.addEventListener('load', this.handleLoad)
@@ -104,6 +105,12 @@ export class FrameController {
 
   private navigate(): void {
     this.bootstrapId = createBootstrapId()
+    const frameScriptUrl = this.options.frameScriptUrl
+      ? new URL(this.options.frameScriptUrl)
+      : undefined
+    if (frameScriptUrl && __MMD_HUD_DEV_ALLOW_SAME_ORIGIN__) {
+      frameScriptUrl.searchParams.set('mmd-hud-bootstrap', this.bootstrapId)
+    }
     this.iframe.name = encodeFrameBootstrap({
       protocol: 'mmd-hud-iframe-bootstrap',
       buildId: this.options.buildId,
@@ -113,7 +120,7 @@ export class FrameController {
     })
     this.iframe.srcdoc = this.options.frameScriptSource
       ? createEmbeddedFrameSrcdoc(this.options.frameScriptSource)
-      : createFrameSrcdoc(this.options.frameScriptUrl!)
+      : createFrameSrcdoc(frameScriptUrl!)
   }
 
   private handleLoad = (): void => {

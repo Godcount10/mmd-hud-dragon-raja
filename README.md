@@ -156,6 +156,7 @@ mmd-hud-iframe/
 │  ├─ HUD_BRIDGE_CONSTRAINTS.md     # HUD 与 Bridge 约束提醒
 │  ├─ INLINE_INJECTION.md            # 内嵌正则 JSON 构建与导入
 │  ├─ DEVELOPMENT_AND_RELEASE.md    # 本地开发、测试、构建、发布
+│  ├─ LIVE_PREVIEW_WEBGL_POSTMORTEM.md # Live DOM 与 WebGL 故障复盘
 │  └─ ROADMAP.md                    # 后续架构优化交接
 ├─ src/
 │  ├─ contracts/                    # Snapshot / Action / Capability / Event
@@ -247,3 +248,4 @@ __MMD_HUD_IFRAME__.destroy()
 ## 一句话总结
 
 **Bridge 是 MMD DOM 的安全适配层，Host 是父页面与 iframe 的生命周期/RPC 网关，Protocol 是唯一跨窗口边界，HostClient/HudContext 是 Frame 内的远程代理，而 Theme 才是具体 HUD 实例。**
+

@@ -154,8 +154,7 @@ async function changeView(nextView: LocalView): Promise<void> {
 function handleKeydown(event: KeyboardEvent): void {
   if (event.key === 'Escape') {
     event.preventDefault()
-    if (view.value === 'menu') closeOverlay()
-    else void changeView('menu')
+    closeOverlay()
     return
   }
   if (event.key !== 'Tab') return
@@ -179,14 +178,14 @@ function handleKeydown(event: KeyboardEvent): void {
       <button class="dr-menu__scrim" type="button" aria-label="关闭菜单" @click="closeOverlay()" />
       <div class="dr-menu__underlay dr-menu__underlay--far" aria-hidden="true" />
       <div class="dr-menu__underlay dr-menu__underlay--near" aria-hidden="true" />
-      <aside class="dr-menu__panel">
-        <header><div><span>学院低频入口</span><h2>档案与设置</h2></div><button type="button" aria-label="关闭" @click="closeOverlay()"><svg viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18" /></svg></button></header>
-        <nav><button v-for="(item, index) in menuItems" :key="item.action" type="button" :class="{ danger: item.action === 'exit' }" :disabled="leaving" @click="closeOverlay(item.action)"><small>{{ String(index + 1).padStart(2, '0') }}</small><span><strong>{{ item.label }}</strong><em>{{ item.detail }}</em></span><b>↗</b></button></nav>
-        <footer><span>低频控制</span><strong>{{ statuses.length }} 条判读已同步</strong></footer>
+      <aside class="dr-menu__panel dr-menu-palette--night">
+          <header><div><span>学院低频入口</span><h2>档案与设置</h2></div><button type="button" aria-label="关闭" @click="closeOverlay()"><svg viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18" /></svg></button></header>
+          <nav><button v-for="(item, index) in menuItems" :key="item.action" type="button" :class="{ danger: item.action === 'exit' }" :disabled="leaving" @click="closeOverlay(item.action)"><small>{{ String(index + 1).padStart(2, '0') }}</small><span><strong>{{ item.label }}</strong><em>{{ item.detail }}</em></span><b>↗</b></button></nav>
+          <footer><span>低频控制</span><strong>{{ statuses.length }} 条判读已同步</strong></footer>
       </aside>
     </section>
     <section v-else ref="dialog" class="dr-local-screen" role="dialog" aria-modal="true" :aria-label="viewTitle">
-      <header><button type="button" @click="void changeView('menu')">← 档案与设置</button><div><span>学院本地资料 · 预览</span><h2>{{ viewTitle }}</h2></div><button type="button" @click="closeOverlay()">关闭</button></header>
+      <header><button type="button" @click="closeOverlay()">← 返回故事</button><div><span>学院本地资料 · 预览</span><h2>{{ viewTitle }}</h2></div><button type="button" @click="closeOverlay()">关闭</button></header>
       <div v-if="view === 'status'" class="dr-status-screen">
         <div class="dr-status-screen__intro"><span>AI TEXT DERIVATION</span><h3>助手文本中的临时判读</h3><p>仅解析 assistant 消息里的 [A=B] 标记；后出现的值覆盖旧值，不写回原生 Snapshot。</p></div>
         <div v-if="!statuses.length" class="dr-status-screen__empty">暂无可显示的助手文本标记。</div>

@@ -102,6 +102,43 @@ describe('Dragon Raja menu motion and focus', () => {
     wrapper.unmount()
     expect(document.activeElement).toBe(outside)
   })
+
+  it('returns directly to Story when a local screen back button is clicked', async () => {
+    vi.useFakeTimers()
+    const wrapper = mount(LocalMenu, {
+      props: { statuses: [], initialView: 'status' },
+      attachTo: document.body,
+    })
+
+    await wrapper.get('.dr-local-screen header button').trigger('click')
+    expect(wrapper.emitted('close')).toBeUndefined()
+    expect(wrapper.find('.dr-menu').exists()).toBe(false)
+
+    await vi.advanceTimersByTimeAsync(420)
+    expect(wrapper.emitted('close')).toHaveLength(1)
+    expect(wrapper.find('.dr-menu').exists()).toBe(false)
+
+    wrapper.unmount()
+  })
+
+  it('returns directly to Story when Escape is pressed from a local screen', async () => {
+    vi.useFakeTimers()
+    const wrapper = mount(LocalMenu, {
+      props: { statuses: [], initialView: 'map' },
+      attachTo: document.body,
+    })
+
+    await nextTick()
+    window.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true, cancelable: true }))
+    expect(wrapper.emitted('close')).toBeUndefined()
+    expect(wrapper.find('.dr-menu').exists()).toBe(false)
+
+    await vi.advanceTimersByTimeAsync(420)
+    expect(wrapper.emitted('close')).toHaveLength(1)
+    expect(wrapper.find('.dr-menu').exists()).toBe(false)
+
+    wrapper.unmount()
+  })
 })
 
 describe('Dragon Raja native panel presence', () => {

@@ -6,6 +6,9 @@ export interface OpeningChoiceGroup {
   title: string
   instruction: string
   options: readonly string[]
+  selectionMode?: 'single' | 'multiple'
+  minSelections?: number
+  maxSelections?: number
 }
 
 export interface OpeningSelection {

@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Story comp approval board</title>
+  <style>
+    :root { --bg:#171517; --paper:#efe5d2; --muted:#b8aa9d; --brass:#d7952d; --ember:#b13d36; --sans:"Segoe UI","Microsoft YaHei",system-ui,sans-serif; }
+    * { box-sizing:border-box; }
+    html,body { margin:0; min-height:100%; background:var(--bg); color:#f8f1e2; font-family:var(--sans); }
+    body { padding:28px; background-image:linear-gradient(115deg,rgba(255,255,255,.025) 0 1px,transparent 1px 17px),linear-gradient(25deg,rgba(0,0,0,.12) 0 1px,transparent 1px 19px); background-size:19px 19px,23px 23px; }
+    .board { max-width:1820px; margin:0 auto; }
+    header { display:flex; align-items:end; justify-content:space-between; gap:20px; padding-bottom:18px; border-bottom:1px solid rgba(239,229,210,.25); }
+    h1 { margin:0; font:700 25px/1.1 Georgia,"Noto Serif CJK SC",serif; letter-spacing:.03em; }
+    header p { margin:7px 0 0; color:var(--muted); font-size:12px; }
+    .rule { width:70px; height:4px; margin-bottom:6px; background:var(--ember); }
+    .set { margin-top:22px; display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:18px; }
+    .option { min-width:0; padding:13px; border:1px solid rgba(239,229,210,.24); background:rgba(33,29,31,.85); }
+    .option-head { display:flex; justify-content:space-between; align-items:baseline; gap:12px; padding:0 2px 11px; }
+    .option-head strong { font:700 16px Georgia,"Noto Serif CJK SC",serif; }
+    .option-head span { color:var(--brass); font:10px Consolas,monospace; letter-spacing:.08em; }
+    .frames { display:grid; grid-template-columns:minmax(0,1fr) 185px; gap:10px; align-items:start; }
+    figure { margin:0; }
+    figure img { display:block; width:100%; height:auto; border:1px solid rgba(239,229,210,.2); background:#0f0e0f; }
+    figure.mobile img { max-height:650px; object-fit:cover; object-position:top; }
+    figcaption { margin-top:7px; color:var(--muted); font:9px Consolas,monospace; letter-spacing:.08em; text-transform:uppercase; }
+    .note { margin:12px 2px 0; padding-top:10px; border-top:1px solid rgba(239,229,210,.16); color:#d6c8bb; font-size:11px; line-height:1.6; }
+    footer { margin-top:18px; color:var(--muted); font-size:11px; line-height:1.6; }
+    footer b { color:var(--brass); }
+    @media (max-width:1050px) { body { padding:18px; } .set { grid-template-columns:1fr; } .frames { grid-template-columns:minmax(0,1fr) 215px; } }
+    @media (max-width:620px) { .frames { grid-template-columns:1fr; } figure.mobile { max-width:210px; } h1 { font-size:21px; } }
+  </style>
+</head>
+<body>
+  <main class="board">
+    <header><div><div class="rule"></div><h1>STORY / 三种场次工作面 comp</h1><p>同一视觉世界的三种结构试验。左：桌面；右：手机。请比较信息顺序、阅读连续性与角色状态的存在感。</p></div><span style="color:var(--brass);font:10px Consolas,monospace;letter-spacing:.1em">CASSel ACADEMY · STORY</span></header>
+    <section class="set">
+      <article class="option"><div class="option-head"><strong>A · 场次脊线</strong><span>READING / CUE</span></div><div class="frames"><figure><img src="./story-a-desktop.png" alt="A 桌面 comp"><figcaption>desktop · 1440</figcaption></figure><figure class="mobile"><img src="./story-a-mobile.png" alt="A 手机 comp"><figcaption>mobile · 390</figcaption></figure></div><p class="note">正文是连续提示本，红色场次线和蓝色行动线标记叙事节拍；手机先展示演员谱，再进入阅读。</p></article>
+      <article class="option"><div class="option-head"><strong>B · 演员谱优先</strong><span>CAST / LEDGER</span></div><div class="frames"><figure><img src="./story-b-desktop.png" alt="B 桌面 comp"><figcaption>desktop · 1440</figcaption></figure><figure class="mobile"><img src="./story-b-mobile.png" alt="B 手机 comp"><figcaption>mobile · 390</figcaption></figure></div><p class="note">右侧状态区更宽，五人以两列谱面排列；适合频繁比较角色，但阅读列相应收窄。</p></article>
+      <article class="option"><div class="option-head"><strong>C · 场景长页</strong><span>SCENE / SHEET</span></div><div class="frames"><figure><img src="./story-c-desktop.png" alt="C 桌面 comp"><figcaption>desktop · 1440</figcaption></figure><figure class="mobile"><img src="./story-c-mobile.png" alt="C 手机 comp"><figcaption>mobile · 390</figcaption></figure></div><p class="note">阅读面最宽，场次标题以实体红色横条起笔；适合沉浸长文，但状态区的对比权重较低。</p></article>
+    </section>
+    <footer><b>审批问题：</b>哪一种结构应该成为 Story 的骨架？你也可以指定“采用 A 的正文 + B 的状态区”等组合；确认后才会进入 Vue 实现。</footer>
+  </main>
+</body>
+</html>

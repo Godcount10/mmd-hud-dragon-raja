@@ -30,7 +30,7 @@ const FORBIDDEN_FRAME_MARKERS = [
   'EffectComposer',
   'postprocessing',
 ]
-const FORBIDDEN_DEPENDENCIES = ['three', 'postprocessing', '@types/three']
+const FORBIDDEN_DEPENDENCIES = ['postprocessing']
 
 function requiredBuildId() {
   const value = process.env.MMD_HUD_BUILD_ID

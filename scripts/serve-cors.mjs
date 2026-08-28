@@ -24,6 +24,9 @@ const contentTypes = new Map([
 const server = http.createServer(async (request, response) => {
   response.setHeader('Access-Control-Allow-Origin', '*')
   response.setHeader('Cross-Origin-Resource-Policy', 'cross-origin')
+  response.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate')
+  response.setHeader('Pragma', 'no-cache')
+  response.setHeader('Expires', '0')
   if (request.method === 'OPTIONS') {
     response.writeHead(204)
     response.end()

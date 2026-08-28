@@ -1,0 +1,50 @@
+{
+  "title": "Story 状态栏 · 视觉构图选择",
+  "question": "请选择一个状态栏构图。请重点比较饰品动效的承载方式、人物 dossier 的排版复杂度，以及移动端覆盖展开是否成立。可以选择一个方向后补充修改意见。",
+  "options": [
+    {
+      "id": "01",
+      "label": "星盘主焦点",
+      "kicker": "PRIMARY A / ORRERY",
+      "lineage": "余烬星盘作为状态栏视觉锚点",
+      "thesis": "让角色档案像一件正在校准的黄铜天文仪，状态变化沿指针和信号轴留下痕迹。",
+      "palette": ["#191719", "#242022", "#efe5d2", "#d7952d", "#b13d36", "#286b7a"],
+      "materials": ["Canvas 星盘", "黄铜刻线", "角色印记", "菱形事实徽记"],
+      "viewport": "桌面右侧连续状态轨；移动端默认收起，点击后覆盖展开。",
+      "case": "纵向演员谱保持场记感，dossier 用 DOSS 编号、角色封印、四类事实标记和最近变化专线建立复杂层级。",
+      "risk": "星盘装饰最强，若密度过高可能压过 dossier 的正文信息。",
+      "comp": ".impeccable/mocks/status-rail-v2/status-rail-v2-01-desktop.png",
+      "board": ".impeccable/mocks/status-rail-v2/status-rail-v2-01-mobile-open.png"
+    },
+    {
+      "id": "02",
+      "label": "龙脉索引",
+      "kicker": "SECONDARY C / TOPOGRAPHY",
+      "lineage": "龙脉图谱贯穿整个右轨",
+      "thesis": "把角色状态组织成一张会呼吸的龙脉测绘板，让路径和关系比容器更重要。",
+      "palette": ["#191719", "#242022", "#efe5d2", "#9f641f", "#b13d36", "#286b7a"],
+      "materials": ["Canvas 等高线", "余烬流场", "双列演员索引", "状态色相标记"],
+      "viewport": "桌面右侧地图式状态轨；移动端默认收起，点击后覆盖展开。",
+      "case": "双列演员谱适合比较五名角色；dossier 的事实徽记、状态轴和路径标记形成更强的图谱感。",
+      "risk": "地图纹理和路径密度可能削弱长文状态值的快速扫描。",
+      "comp": ".impeccable/mocks/status-rail-v2/status-rail-v2-02-desktop.png",
+      "board": ".impeccable/mocks/status-rail-v2/status-rail-v2-02-mobile-open.png"
+    },
+    {
+      "id": "03",
+      "label": "混合仪器",
+      "kicker": "A + C / HYBRID",
+      "lineage": "星盘、龙脉与特殊状态饰品并置",
+      "thesis": "把当前角色置于一台完整的场次仪器中心，所有特殊信息都有自己的符号和运动轨迹。",
+      "palette": ["#191719", "#242022", "#efe5d2", "#d7952d", "#b13d36", "#286b7a", "#78968a"],
+      "materials": ["Canvas 环盘", "龙脉等高线", "信号轴", "状态菱形"],
+      "viewport": "桌面右侧混合式仪器；移动端默认收起，点击后覆盖展开。",
+      "case": "当前角色跨列突出，星盘指针、龙脉路径、角色封印和最近变化刻线共同组成视觉焦点。",
+      "risk": "表现力最强，必须用动效预算和层级节奏控制视觉噪声。",
+      "comp": ".impeccable/mocks/status-rail-v2/status-rail-v2-03-desktop.png",
+      "board": ".impeccable/mocks/status-rail-v2/status-rail-v2-03-mobile-open.png"
+    }
+  ],
+  "steer": true,
+  "buildPath": { "value": "comp", "toggle": false }
+}

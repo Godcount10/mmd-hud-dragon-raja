@@ -1,0 +1,50 @@
+{
+  "title": "Story 状态栏 · v3 视觉重做",
+  "question": "上一轮三套状态栏方案都不符合预期。本轮已全部重做：减少无意义装饰，改用 SVG 前景装置，并把动画放到轨道、龙脉和封印本身。请选择一套继续实现。",
+  "options": [
+    {
+      "id": "01",
+      "label": "轨道档案",
+      "kicker": "NEW / ORBIT LEDGER",
+      "lineage": "黄铜轨道仪 · 指针回写场次",
+      "thesis": "一枚黄铜轨道装置围绕当前角色运转，指针把最新状态钉回场次。",
+      "palette": ["#151214", "#211b1c", "#eee4d1", "#d79735", "#b33d35", "#367987"],
+      "materials": ["SVG 轨道", "场次指针", "连续档案台面"],
+      "viewport": "桌面右侧以大轨道切入档案区；移动端仍默认收起，展开后覆盖正文。",
+      "case": "角色谱保持纵向，档案字段留在轨道下方，前景装置只承担当前角色与最近变化。",
+      "risk": "轨道比例若过大，会压缩 dossier 的长文本区域。",
+      "comp": ".impeccable/mocks/status-rail-v3/status-rail-v3-01-desktop.png",
+      "board": ".impeccable/mocks/status-rail-v3/status-rail-v3-01-mobile-open.png"
+    },
+    {
+      "id": "02",
+      "label": "龙脉剖面",
+      "kicker": "NEW / TOPOGRAPHY",
+      "lineage": "测绘等高线 · 关系节点",
+      "thesis": "一组像地形测绘的龙脉线穿过档案，关系与位置沿路径相连。",
+      "palette": ["#151214", "#211b1c", "#eee4d1", "#96621f", "#ef7650", "#367987"],
+      "materials": ["SVG 等高线", "路径节点", "单列字段"],
+      "viewport": "桌面将龙脉路径置于 dossier 右侧，移动端以窄幅路径保留层次。",
+      "case": "五名角色以双列索引快速扫读，字段改为纵向测绘条目，关系和地点最醒目。",
+      "risk": "路径线密度需要克制，否则会和 1000-3000 字正文形成视觉疲劳。",
+      "comp": ".impeccable/mocks/status-rail-v3/status-rail-v3-02-desktop.png",
+      "board": ".impeccable/mocks/status-rail-v3/status-rail-v3-02-mobile-open.png"
+    },
+    {
+      "id": "03",
+      "label": "封印仪轨",
+      "kicker": "NEW / SEAL RITE",
+      "lineage": "龙族封印 · 单焦点状态",
+      "thesis": "单一龙族封印成为状态栏的前景焦点，四条关系射线保持信息秩序。",
+      "palette": ["#151214", "#211b1c", "#eee4d1", "#d79735", "#ef7650", "#756684"],
+      "materials": ["SVG 封印", "关系射线", "信号脉冲"],
+      "viewport": "桌面右栏由封印占据 dossier 上半部；移动端覆盖层仍以单一封印建立焦点。",
+      "case": "当前角色跨列突出，其他角色退为规则行；字段顺序和原有交互保持不变。",
+      "risk": "封印的存在感最强，需要控制不透明度才能保持正文和状态栏的同等重要。",
+      "comp": ".impeccable/mocks/status-rail-v3/status-rail-v3-03-desktop.png",
+      "board": ".impeccable/mocks/status-rail-v3/status-rail-v3-03-mobile-open.png"
+    }
+  ],
+  "steer": true,
+  "buildPath": { "value": "comp", "toggle": false }
+}

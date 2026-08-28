@@ -1,0 +1,39 @@
+{
+  "surface": "story-status-rail",
+  "mode": "local-html-canvas",
+  "approved": false,
+  "primaryDirection": "A - Ember Orrery",
+  "secondaryDirection": "C - Dragon Topography",
+  "viewport": { "desktop": "1536x1024", "mobile": "390x844" },
+  "options": [
+    {
+      "id": "01",
+      "label": "星盘主焦点",
+      "desktop": "./status-rail-01-desktop.png",
+      "mobileCollapsed": "./status-rail-01-mobile-collapsed.png",
+      "mobileOpen": "./status-rail-01-mobile-open.png",
+      "topology": "large orrery dial with vertical cast ledger"
+    },
+    {
+      "id": "02",
+      "label": "龙脉索引",
+      "desktop": "./status-rail-02-desktop.png",
+      "mobileCollapsed": "./status-rail-02-mobile-collapsed.png",
+      "mobileOpen": "./status-rail-02-mobile-open.png",
+      "topology": "contour atlas with two-column cast index"
+    },
+    {
+      "id": "03",
+      "label": "混合仪器",
+      "desktop": "./status-rail-03-desktop.png",
+      "mobileCollapsed": "./status-rail-03-mobile-collapsed.png",
+      "mobileOpen": "./status-rail-03-mobile-open.png",
+      "topology": "hybrid ring and contour field with active row spanning"
+    }
+  ],
+  "interactionContract": {
+    "mobileDefault": "collapsed",
+    "mobileExpanded": "covering overlay",
+    "preserve": ["Host", "Bridge", "Protocol", "iframe", "MessagePort", "all existing Story events"]
+  }
+}

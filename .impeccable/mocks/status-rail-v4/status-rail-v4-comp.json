@@ -1,0 +1,24 @@
+{
+  "surface": "story-status-rail",
+  "mode": "local-html-canvas-svg",
+  "approved": true,
+  "selected": "01",
+  "selectedComp": ".impeccable/mocks/status-rail-v4/status-rail-v4-01-desktop.png",
+  "selectedBoard": ".impeccable/mocks/status-rail-v4/status-rail-v4-01-mobile-open.png",
+  "revision": 4,
+  "reason": "Four fresh directions for ash, level-reactive star chart, and restrained dragon SVG ornament",
+  "sharedRequirements": [
+    "Canvas ash particles rise and drift behind the status rail",
+    "SVG star chart nodes react to character level 12, 42, or 88",
+    "One meaningful dragon SVG sticker or seal per direction",
+    "Mobile status rail stays collapsed by default and opens as a covering overlay",
+    "Host, Bridge, Protocol, iframe, MessagePort, Snapshot, and Story events remain untouched"
+  ],
+  "options": [
+    { "id": "01", "label": "轨道档案", "desktop": "./status-rail-v4-01-desktop.png", "mobileCollapsed": "./status-rail-v4-01-mobile-collapsed.png", "mobileOpen": "./status-rail-v4-01-mobile-open.png" },
+    { "id": "02", "label": "龙脊星图", "desktop": "./status-rail-v4-02-desktop.png", "mobileCollapsed": "./status-rail-v4-02-mobile-collapsed.png", "mobileOpen": "./status-rail-v4-02-mobile-open.png" },
+    { "id": "03", "label": "角色星座", "desktop": "./status-rail-v4-03-desktop.png", "mobileCollapsed": "./status-rail-v4-03-mobile-collapsed.png", "mobileOpen": "./status-rail-v4-03-mobile-open.png" },
+    { "id": "04", "label": "封印星盘", "desktop": "./status-rail-v4-04-desktop.png", "mobileCollapsed": "./status-rail-v4-04-mobile-collapsed.png", "mobileOpen": "./status-rail-v4-04-mobile-open.png" }
+  ],
+  "interactionContract": { "mobileDefault": "collapsed", "mobileExpanded": "covering overlay", "preserve": ["Host", "Bridge", "Protocol", "iframe", "MessagePort", "all existing Story events"] }
+}

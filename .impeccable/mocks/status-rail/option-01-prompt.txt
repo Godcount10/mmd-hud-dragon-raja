@@ -1,0 +1,14 @@
+Use case: ui-mockup
+Asset type: desktop status rail composition comp for a Dragon Raja Story interface
+Primary request: high-fidelity UI screenshot showing a long-form Story workspace with the right status rail redesigned as an Ember Orrery. The status rail is the visual focus but remains an operational instrument.
+Input image: the supplied Story A desktop comp is a reference image for palette, type character, paper reading sheet, dark stage ledger, and straight-edge component language. Carry over its chrome, palette, typography direction, and material character; do not copy its exact content or layout.
+Scene/backdrop: one desktop browser viewport, wide warm paper narrative column at left, narrow dark tool rail at far left, continuous dark status rail at right.
+Subject: a right-side dark lacquered brass astrolabe embedded in the rail. Use one large concentric brass orrery in the upper-middle, with deterministic notch marks and a single active index pointer. Place a five-row cast ledger above or beside it, then a clearly readable active dossier and native snapshot/status fields below. Keep forum and available-action entries as engraved horizontal divisions, not cards.
+Style/medium: premium editorial UI mockup, physical stage-manager desk, engraved instrument, restrained brass, ember red, cobalt blue, warm paper, crisp Chinese serif and grotesque labels, no glossy 3D chrome.
+Composition/framing: 16:10 desktop UI screenshot at 1536x1024, status rail occupies about 25 percent width and has equal visual weight with the reading area. Show enough narrative text and composer at the bottom to prove this is a working Story surface, not a poster.
+Lighting/mood: dark theatre side light with warm brass highlights, quiet deep charcoal base, small ember accents only around the orrery.
+Color palette: #191719, #242022, #efe5d2, #f8f1e2, #d7952d, #9f641f, #b13d36, #286b7a, #78968a.
+Materials/textures: opaque lacquered panel, fine engraved rules, etched brass rings, subtle printed contour marks, no blur, no glass, no floating shadows.
+Text (verbatim): use short Chinese labels such as “演员谱”, “当前档案”, “原生快照”, “连接”, “模型”, “生成”, “可选行动”; keep labels sparse and legible.
+Constraints: make the status rail read as a real control surface with cast count, one selected character, dossier values, and connection state. Preserve square corners and semantic button-like rows. Suggest mobile collapse with a small brass seal at the rail edge, but do not split the image into a device board.
+Avoid: futuristic technology, cyberpunk, neon, holograms, glassmorphism, generic chat bubbles, floating card stacks, giant hero title, decorative poster, illegible microtype, fake portraits, gradients as the main material.

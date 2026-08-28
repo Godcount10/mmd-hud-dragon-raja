@@ -32,6 +32,8 @@ describe('srcdoc Frame bootstrap', () => {
     expect(srcdoc).toContain('type="module"')
     expect(srcdoc).toContain('cdn.jsdelivr.net')
     expect(srcdoc).not.toContain('bootstrap-test')
+    expect(srcdoc).not.toContain('impeccable')
+    expect(srcdoc).not.toContain('localhost:8400')
   })
 
   it('rejects blob Frame URLs because inline bundles use embedded srcdoc', () => {

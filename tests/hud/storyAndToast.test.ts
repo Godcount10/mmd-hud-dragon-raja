@@ -225,6 +225,63 @@ describe('Dragon Raja status feedback', () => {
 
     wrapper.unmount()
   })
+
+  it('keeps character switching while replacing native facts with peer dossier and forum views', async () => {
+    vi.stubGlobal('matchMedia', vi.fn(() => ({
+      matches: true,
+      addEventListener: vi.fn(),
+      removeEventListener: vi.fn(),
+    })))
+    const snapshot = ref(createTestSnapshot())
+    snapshot.value.messages = [message(
+      'm1',
+      'assistant',
+      '[角色1姓名=楚子航][角色1身份=狮心会会长][角色2姓名=夏弥]'
+      + '[选项1标题=继续调查][选项1=你决定继续调查]'
+      + '[头条1=学院夜间频道][帖子作者=@NIGHT][帖子正文=信号已接入]',
+    )]
+    const wrapper = mount(DragonRajaHud, {
+      global: {
+        provide: { [HUD_CONTEXT_KEY as symbol]: createContext(snapshot) },
+        stubs: {
+          WelcomeSurface: { template: '<button @click="$emit(\'enter\')">进入</button>' },
+          OpeningSurface: { template: '<button @click="$emit(\'cancel\')">跳过</button>' },
+          AlchemyOrbitBackground: true,
+          ForumFaultyTerminal: true,
+          ForumEvilEye: true,
+        },
+      },
+      attachTo: document.body,
+    })
+
+    await wrapper.get('button').trigger('click')
+    await nextTick()
+    await wrapper.get('button').trigger('click')
+    await nextTick()
+
+    expect(wrapper.text()).not.toContain('原生快照')
+    expect(wrapper.text()).not.toContain('演员谱')
+    expect(wrapper.findAll('.dr-cast-row')).toHaveLength(2)
+    expect(wrapper.get('.dr-options button').text()).toBe('继续调查')
+
+    const modeButtons = wrapper.findAll('.dr-rail-modes button')
+    expect(modeButtons).toHaveLength(2)
+    expect(modeButtons[0]?.text()).toContain('角色档案')
+    expect(modeButtons[1]?.text()).toContain('守夜人论坛')
+    await modeButtons[1]!.trigger('click')
+    await nextTick()
+    await nextTick()
+    expect(wrapper.get('.dr-forum').text()).toContain('信号已接入')
+    expect(wrapper.get('#story-status-rail').classes()).toContain('dr-radar--forum')
+
+    await wrapper.findAll('.dr-rail-modes button')[0]!.trigger('click')
+    await nextTick()
+    await nextTick()
+    expect(wrapper.find('.dr-dossier').exists()).toBe(true)
+    expect(wrapper.get('#story-status-rail').classes()).not.toContain('dr-radar--forum')
+
+    wrapper.unmount()
+  })
 })
 
 describe('Dragon Raja feedback toast', () => {

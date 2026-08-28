@@ -1,0 +1,351 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dragon Raja - Status Rail v3</title>
+  <style>
+    :root {
+      --night: #151214;
+      --night-2: #211b1c;
+      --night-3: #2b2221;
+      --paper: #eee4d1;
+      --paper-2: #fbf3e3;
+      --ink: #211b1b;
+      --muted: #a99b8f;
+      --line: rgba(238, 228, 209, .2);
+      --line-dark: rgba(33, 27, 27, .2);
+      --brass: #d79735;
+      --brass-dim: #96621f;
+      --ember: #b33d35;
+      --ember-hot: #ef7650;
+      --orange: #e58a2b;
+      --cobalt: #367987;
+      --sage: #779182;
+      --violet: #756684;
+      --sans: "Segoe UI", "Microsoft YaHei", system-ui, sans-serif;
+      --serif: "Noto Serif CJK SC", "Songti SC", "STSong", Georgia, serif;
+      --mono: Consolas, "SFMono-Regular", monospace;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; min-height: 100%; background: var(--night); }
+    body { color: var(--paper); font-family: var(--sans); }
+    button, textarea { font: inherit; }
+    button { color: inherit; }
+    .stage { min-height: 100vh; display: grid; grid-template-rows: 68px 1fr; background: var(--night); }
+    .topbar { display: grid; grid-template-columns: minmax(230px, 1fr) minmax(320px, 1.25fr) minmax(220px, .8fr); gap: 24px; align-items: center; padding: 0 30px; border-bottom: 1px solid var(--line); background: #151113; }
+    .brand { display: flex; align-items: center; gap: 14px; }
+    .crest { width: 35px; height: 35px; display: grid; place-items: center; flex: none; border: 1px solid var(--brass); transform: rotate(45deg); }
+    .crest svg { width: 21px; height: 21px; transform: rotate(-45deg); fill: none; stroke: var(--brass); stroke-width: 1.1; }
+    .brand-copy strong { display: block; color: var(--paper-2); font: 700 14px var(--serif); letter-spacing: .12em; white-space: nowrap; }
+    .brand-copy small { display: block; margin-top: 5px; color: #b6a79b; font: 9px var(--mono); letter-spacing: .11em; }
+    .scene-marker { display: flex; align-items: baseline; justify-content: center; gap: 13px; min-width: 0; }
+    .scene-marker b { color: var(--brass); font: 700 11px var(--mono); letter-spacing: .15em; white-space: nowrap; }
+    .scene-marker span { overflow: hidden; color: #c7b9ad; font-size: 12px; text-overflow: ellipsis; white-space: nowrap; }
+    .top-actions { display: flex; justify-content: flex-end; gap: 17px; align-items: center; }
+    .top-actions span { color: var(--brass); font: 700 9px var(--mono); letter-spacing: .1em; }
+    .top-actions button, .tool-rail button, .cast-row, .mobile-trigger { border: 0; background: none; cursor: pointer; }
+    .top-actions button { color: #c8b9ac; font-size: 11px; }
+    .top-actions button:hover { color: var(--paper-2); }
+    .stage-body { display: grid; grid-template-columns: 72px minmax(0, 1fr); min-height: 0; }
+    .tool-rail { display: flex; flex-direction: column; justify-content: space-between; align-items: center; padding: 20px 0 17px; border-right: 1px solid var(--line); background: #171315; }
+    .tool-rail nav { display: grid; gap: 17px; width: 100%; }
+    .tool-rail button { display: grid; justify-items: center; gap: 6px; position: relative; width: 100%; padding: 7px 4px; color: #a99c91; }
+    .tool-rail button.active { color: var(--paper-2); }
+    .tool-rail button.active::before { content: ""; position: absolute; left: 0; width: 3px; height: 31px; background: var(--ember); }
+    .tool-rail svg { width: 19px; height: 19px; fill: none; stroke: currentColor; stroke-width: 1.4; }
+    .tool-rail span { font: 9px var(--sans); }
+    .tool-rail .exit { color: var(--brass); font: 9px var(--sans); writing-mode: vertical-rl; letter-spacing: .1em; }
+    .workbench { display: grid; grid-template-columns: minmax(0, 1fr) minmax(360px, 28vw); min-height: calc(100vh - 68px); }
+    .reading-room { position: relative; min-width: 0; padding: 28px clamp(28px, 4.5vw, 72px) 30px; overflow: hidden; color: var(--ink); background: var(--paper); }
+    .reading-room::before { content: ""; position: absolute; inset: 0; pointer-events: none; opacity: .24; background-image: repeating-linear-gradient(0deg, transparent 0 7px, rgba(33, 27, 27, .07) 8px, transparent 9px); }
+    .reading-inner { position: relative; max-width: 900px; margin: 0 auto; }
+    .reading-kicker { display: flex; justify-content: space-between; gap: 20px; padding-bottom: 13px; border-bottom: 1px solid var(--line-dark); color: var(--brass-dim); font: 9px var(--mono); letter-spacing: .1em; }
+    .reading-kicker span:last-child { color: #71635b; }
+    .chapter { display: grid; grid-template-columns: 7px minmax(0, 1fr); gap: 15px; margin: 25px 0 24px; }
+    .chapter-bar { background: var(--ember); }
+    .chapter h1 { margin: 0; color: var(--ink); font: 700 clamp(25px, 3vw, 37px)/1.12 var(--serif); letter-spacing: .02em; }
+    .chapter p { margin: 9px 0 0; color: #665851; font-size: 12px; line-height: 1.7; }
+    .chapter-meta { display: flex; gap: 19px; margin-top: 13px; color: var(--brass-dim); font: 9px var(--mono); }
+    .chapter-meta span + span::before { content: ""; display: inline-block; width: 4px; height: 4px; margin: 0 11px 2px -12px; background: var(--brass); }
+    .message { padding: 22px 0 24px; border-top: 1px solid var(--line-dark); }
+    .message:first-of-type { border-top: 0; }
+    .message-head { display: flex; justify-content: space-between; gap: 15px; align-items: baseline; margin-bottom: 12px; }
+    .speaker { display: inline-flex; align-items: center; gap: 9px; }
+    .speaker i { width: 9px; height: 9px; background: var(--ember); }
+    .message--user .speaker i { background: var(--cobalt); }
+    .speaker strong { color: var(--ink); font: 700 14px var(--serif); }
+    .speaker small, .message time { color: #75675f; font: 9px var(--mono); letter-spacing: .06em; }
+    .message p { max-width: 70ch; margin: 0; color: #302927; font: 15px/1.9 var(--serif); }
+    .message p + p { margin-top: 11px; }
+    .message--user { margin-left: 13px; padding-left: 16px; border-left: 2px solid var(--cobalt); }
+    .message--user p { color: #3e4b4f; font: 13px/1.8 var(--sans); }
+    .composer { position: sticky; bottom: 0; display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 10px; align-items: end; margin: 22px -10px 0; padding: 11px 10px 0; border-top: 1px solid var(--line-dark); background: var(--paper); }
+    .composer button, .composer textarea { border: 1px solid var(--brass-dim); background: var(--paper-2); color: var(--ink); }
+    .composer button { cursor: pointer; }
+    .composer .model { min-height: 47px; padding: 7px 11px; text-align: left; }
+    .composer .model strong, .composer .model small { display: block; }
+    .composer .model strong { font: 700 10px var(--mono); }
+    .composer .model small { margin-top: 4px; color: #6f625a; font-size: 9px; }
+    .composer textarea { min-height: 47px; width: 100%; resize: vertical; padding: 12px 13px; outline: none; border-color: rgba(33, 27, 27, .25); border-bottom: 2px solid var(--brass-dim); font-size: 12px; }
+    .composer textarea::placeholder { color: #86776d; }
+    .composer .send { min-height: 47px; padding: 0 16px; border-color: var(--ember); background: var(--ember); color: #fff5e8; font-weight: 700; }
+    .composer .send span { display: block; font-size: 11px; }
+    .composer .send small { display: block; margin-top: 4px; font: 9px var(--mono); opacity: .84; }
+
+    /* The status rail is one continuous instrument; structure is carried by rules, not card boxes. */
+    .status-room { position: relative; min-width: 0; overflow: hidden; border-left: 1px solid var(--line); background: var(--night-2); }
+    .status-room::before { content: ""; position: absolute; inset: 0; pointer-events: none; background: #211b1c; }
+    .status-bg { position: absolute; inset: 0; width: 100%; height: 100%; opacity: .5; pointer-events: none; }
+    .status-content { position: relative; z-index: 1; height: 100%; overflow: auto; padding: 25px 23px 28px; }
+    .status-head { display: flex; justify-content: space-between; align-items: end; padding-bottom: 14px; border-bottom: 1px solid var(--line); }
+    .status-head h2 { margin: 0; color: var(--paper-2); font: 700 18px var(--serif); }
+    .status-head p { margin: 5px 0 0; color: #b3a398; font: 9px var(--mono); letter-spacing: .08em; }
+    .status-count { color: var(--brass); font: 700 20px var(--mono); }
+    .cast-list { margin-top: 12px; border-top: 1px solid var(--line); }
+    .cast-row { display: grid; grid-template-columns: 10px minmax(0, 1fr) auto; gap: 10px; align-items: center; width: 100%; min-height: 58px; padding: 8px 0; border-bottom: 1px solid var(--line); text-align: left; }
+    .cast-row .lamp { width: 7px; height: 25px; background: var(--sage); }
+    .cast-row:nth-child(2) .lamp { background: var(--ember); }
+    .cast-row:nth-child(3) .lamp { background: var(--brass); }
+    .cast-row:nth-child(4) .lamp { background: var(--cobalt); }
+    .cast-row:nth-child(5) .lamp { background: var(--violet); }
+    .cast-row.active { padding-left: 9px; margin-left: -9px; border-top: 1px solid var(--brass); background: rgba(215, 151, 53, .08); }
+    .cast-row strong { display: block; color: var(--paper-2); font: 700 14px var(--serif); }
+    .cast-row small { display: block; margin-top: 3px; color: #ad9f94; font: 9px var(--mono); }
+    .cast-row em { color: #c6b6a8; font: 9px var(--sans); font-style: normal; text-align: right; }
+
+    .dossier { position: relative; min-height: 299px; margin: 20px -3px 0; padding: 14px 8px 16px; overflow: hidden; border-top: 2px solid var(--brass-dim); border-bottom: 1px solid var(--line); }
+    .dossier-label { display: flex; justify-content: space-between; color: var(--brass); font: 9px var(--mono); letter-spacing: .1em; }
+    .dossier-heading { position: relative; z-index: 2; display: grid; grid-template-columns: 28px minmax(0, 1fr) auto; align-items: center; gap: 9px; margin-top: 11px; }
+    .dossier-index { color: #ae9f93; font: 8px/1.25 var(--mono); letter-spacing: .08em; }
+    .dossier-index b { color: var(--brass); font-size: 16px; font-weight: 500; }
+    .dossier-heading h3 { margin: 0 0 2px; color: var(--paper-2); font: 700 23px/1.05 var(--serif); letter-spacing: .04em; }
+    .dossier-heading .role { color: #b7a89d; font: 9px var(--mono); }
+    .seal { width: 41px; height: 41px; fill: none; stroke: var(--ember-hot); stroke-width: 1.1; overflow: visible; }
+    .dossier-summary { position: relative; z-index: 2; max-width: 31ch; margin: 13px 0 0; color: #d4c7b9; font-size: 11px; line-height: 1.65; }
+    .dossier-fields { position: relative; z-index: 2; display: grid; grid-template-columns: 1fr 1fr; gap: 0 16px; margin-top: 14px; }
+    .field { position: relative; display: grid; grid-template-columns: 37px minmax(0, 1fr); min-height: 48px; align-items: center; border-top: 1px solid rgba(238, 228, 209, .15); }
+    .field dt { color: #a99b90; font: 8px var(--mono); }
+    .field dd { margin: 0; padding-right: 13px; color: var(--paper-2); font: 600 11px var(--serif); }
+    .field-glyph { position: absolute; right: 0; width: 11px; height: 11px; fill: none; stroke: var(--brass); stroke-width: 1; }
+    .field-glyph--bond { stroke: var(--sage); }
+    .field-glyph--place { stroke: var(--cobalt); }
+    .field-glyph--intent { stroke: var(--ember-hot); }
+    .dossier-change { position: relative; z-index: 2; display: flex; justify-content: space-between; gap: 12px; margin-top: 8px; padding-top: 9px; border-top: 1px solid rgba(238, 228, 209, .15); color: #aa9d93; font: 8px var(--mono); }
+    .dossier-change strong { color: var(--ember-hot); font-weight: 500; text-align: right; }
+
+    .foreground { position: absolute; z-index: 1; pointer-events: none; }
+    .foreground svg { display: block; width: 100%; height: 100%; overflow: visible; fill: none; }
+    .foreground-orbit { top: 25px; right: 3px; width: 210px; height: 210px; opacity: .88; }
+    .foreground-contour { top: 84px; right: -7px; width: 235px; height: 210px; opacity: .82; }
+    .foreground-seal { top: 53px; right: 16px; width: 178px; height: 225px; opacity: .85; }
+    .v1, .v2, .v3 { display: none; }
+    .variant-1 .v1, .variant-2 .v2, .variant-3 .v3 { display: block; }
+    .orbit-ring { stroke: var(--brass); stroke-width: 1.1; opacity: .58; }
+    .orbit-ring.dim { stroke: var(--brass-dim); stroke-width: .8; opacity: .55; }
+    .orbit-axis { stroke: var(--ember-hot); stroke-width: 1.3; opacity: .9; }
+    .orbit-node { fill: var(--night-2); stroke: var(--orange); stroke-width: 1.1; }
+    .contour-path { stroke: var(--cobalt); stroke-width: 1.1; stroke-dasharray: 3 8; opacity: .72; }
+    .contour-path.hot { stroke: var(--ember-hot); stroke-width: 1.4; stroke-dasharray: 1 7; opacity: .86; }
+    .contour-node { fill: var(--night-2); stroke: var(--brass); stroke-width: 1; }
+    .seal-loop { stroke: var(--brass); stroke-width: 1; opacity: .72; }
+    .seal-loop.hot { stroke: var(--ember-hot); stroke-width: 1.5; opacity: .9; }
+    .seal-ray { stroke: var(--cobalt); stroke-width: .9; opacity: .7; }
+    .seal-core { fill: var(--ember); stroke: var(--paper-2); stroke-width: 1; opacity: .92; }
+    .foreground-caption { position: absolute; right: 0; bottom: 0; color: var(--brass); font: 8px var(--mono); letter-spacing: .1em; }
+
+    .status-strip { display: grid; grid-template-columns: minmax(0, 1fr) auto 26px; gap: 11px; align-items: center; margin-top: 18px; padding: 12px 8px; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+    .status-strip dl { display: grid; grid-template-columns: auto 1fr; gap: 5px 10px; margin: 0; color: #b3a398; font: 9px var(--mono); }
+    .status-strip dd { margin: 0; color: var(--brass); text-align: right; }
+    .live-mark { width: 9px; height: 9px; border-radius: 50%; background: var(--cobalt); }
+    .signal-glyph { width: 25px; height: 25px; fill: none; stroke: var(--brass); stroke-width: 1; }
+    .signal-glyph .signal-pulse { stroke: var(--ember-hot); stroke-width: 1.4; }
+    .rail-actions { display: grid; gap: 0; margin-top: 16px; }
+    .rail-actions button { display: flex; align-items: center; gap: 10px; min-height: 39px; padding: 0 2px; border: 0; border-top: 1px solid rgba(238, 228, 209, .16); background: none; color: #e4d6c3; font-size: 10px; text-align: left; cursor: pointer; }
+    .rail-actions button:last-child { border-bottom: 1px solid rgba(238, 228, 209, .16); }
+    .rail-actions button:hover { color: var(--paper-2); background: rgba(215, 151, 53, .08); }
+    .rail-actions svg { width: 14px; height: 14px; fill: none; stroke: var(--brass); stroke-width: 1.2; }
+    .mobile-trigger { display: none; }
+
+    /* Variant 2 gives the contour map ownership of the dossier surface. */
+    .variant-2 .dossier { min-height: 320px; border-top-color: var(--cobalt); }
+    .variant-2 .cast-list { display: grid; grid-template-columns: 1fr 1fr; gap: 0 16px; border-top: 0; }
+    .variant-2 .cast-row { min-height: 66px; }
+    .variant-2 .dossier-summary { max-width: 34ch; }
+    .variant-2 .dossier-fields { grid-template-columns: 1fr; gap: 0; max-width: 245px; }
+    .variant-2 .foreground-contour { top: 73px; right: -3px; }
+
+    /* Variant 3 puts one clear seal in front and lets the field rows orbit it. */
+    .variant-3 .dossier { min-height: 318px; border-top-color: var(--ember); }
+    .variant-3 .cast-list { display: grid; grid-template-columns: 1fr 1fr; gap: 0 16px; border-top: 0; }
+    .variant-3 .cast-row { min-height: 66px; }
+    .variant-3 .cast-row.active { grid-column: 1 / -1; }
+    .variant-3 .dossier-summary { max-width: 30ch; }
+    .variant-3 .dossier-fields { margin-top: 17px; }
+
+    @media (max-width: 1060px) {
+      .topbar { grid-template-columns: 1fr auto; }
+      .scene-marker { display: none; }
+      .workbench { grid-template-columns: minmax(0, 1fr) 325px; }
+    }
+    @media (max-width: 760px) {
+      .stage { grid-template-rows: 61px 55px 1fr; }
+      .topbar { grid-template-columns: 1fr auto; padding: 0 15px; }
+      .crest { width: 27px; height: 27px; }
+      .crest svg { width: 17px; height: 17px; }
+      .brand { gap: 10px; }
+      .brand-copy strong { font-size: 12px; }
+      .brand-copy small { font-size: 7px; }
+      .top-actions span, .top-actions button:first-of-type { display: none; }
+      .top-actions { gap: 12px; }
+      .top-actions button { font-size: 10px; }
+      .stage-body { display: contents; }
+      .tool-rail { grid-row: 2; height: 55px; flex-direction: row; padding: 0 8px; border: 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+      .tool-rail nav { display: flex; justify-content: space-around; gap: 0; }
+      .tool-rail button { min-width: 53px; padding: 7px 4px; }
+      .tool-rail button.active::before { left: 0; top: 0; width: 100%; height: 3px; }
+      .tool-rail .exit { display: none; }
+      .workbench { grid-row: 3; display: block; min-height: 0; }
+      .reading-room { min-height: calc(100vh - 116px); padding: 20px 15px 23px; }
+      .reading-kicker { padding-bottom: 11px; font-size: 8px; }
+      .chapter { grid-template-columns: 5px minmax(0, 1fr); gap: 11px; margin: 19px 0 21px; }
+      .chapter h1 { font-size: 26px; }
+      .chapter p { font-size: 11px; }
+      .message { padding: 19px 0 22px; }
+      .message p { max-width: none; font-size: 15px; line-height: 1.9; }
+      .message--user { margin-left: 7px; padding-left: 13px; }
+      .composer { position: static; grid-template-columns: 1fr auto; margin: 21px 0 0; padding: 11px 0 0; }
+      .composer .model { grid-column: 1 / -1; min-height: 0; display: flex; gap: 8px; align-items: baseline; padding: 8px 10px; }
+      .composer .model small { margin-top: 0; }
+      .composer textarea { min-height: 47px; }
+      .composer .send { min-height: 47px; padding: 0 13px; }
+      .status-room { display: none; }
+      .mobile-trigger { display: flex; position: fixed; right: 12px; bottom: 14px; z-index: 5; align-items: center; gap: 9px; min-height: 44px; padding: 0 9px 0 11px; border: 0; border-left: 1px solid var(--brass); background: rgba(33, 27, 28, .94); color: var(--paper-2); }
+      .mobile-trigger svg { width: 15px; height: 15px; fill: none; stroke: var(--brass); stroke-width: 1.4; }
+      .mobile-trigger strong { font: 700 11px var(--serif); }
+      .mobile-trigger span { color: var(--brass); font: 9px var(--mono); }
+      body.mobile-open .status-room { display: block; position: fixed; inset: 61px 0 0; z-index: 20; border: 0; background: var(--night-2); box-shadow: -20px 0 60px rgba(0, 0, 0, .45); }
+      body.mobile-open .status-content { padding: 18px 15px 24px; }
+      body.mobile-open .mobile-trigger { z-index: 22; top: 73px; right: 15px; bottom: auto; width: 40px; height: 40px; min-height: 40px; justify-content: center; padding: 0; border: 0; background: transparent; }
+      body.mobile-open .mobile-trigger strong, body.mobile-open .mobile-trigger span { display: none; }
+      body.mobile-open .mobile-trigger svg { width: 20px; height: 20px; stroke: var(--paper-2); }
+      body.mobile-open .mobile-trigger .trigger-vertical { opacity: 0; }
+      body.mobile-open .mobile-trigger .trigger-horizontal { transform: rotate(45deg); transform-origin: 8px 8px; }
+      .status-head h2 { font-size: 16px; }
+      .status-head p { font-size: 8px; }
+      .status-count { font-size: 18px; }
+      .cast-list, .variant-2 .cast-list, .variant-3 .cast-list { display: flex; gap: 8px; margin-inline: -15px; padding: 0 15px 4px; overflow-x: auto; border-top: 0; scrollbar-width: none; }
+      .cast-list::-webkit-scrollbar { display: none; }
+      .cast-row, .variant-2 .cast-row, .variant-3 .cast-row { flex: 0 0 136px; display: block; min-height: 91px; padding: 10px; border: 0; border-top: 1px solid var(--line); }
+      .cast-row.active, .variant-3 .cast-row.active { grid-column: auto; padding-left: 10px; margin-left: 0; border-top: 1px solid var(--brass); background: transparent; }
+      .cast-row .lamp { display: block; width: 34px; height: 4px; margin-bottom: 9px; }
+      .cast-row em { display: block; margin-top: 7px; text-align: left; }
+      .dossier, .variant-2 .dossier, .variant-3 .dossier { min-height: 300px; margin-top: 18px; }
+      .dossier-heading { grid-template-columns: 24px minmax(0, 1fr) auto; gap: 7px; }
+      .dossier-fields, .variant-2 .dossier-fields { grid-template-columns: 1fr 1fr; gap: 0 12px; max-width: none; }
+      .foreground-orbit { top: 20px; right: -2px; width: 176px; height: 176px; opacity: .72; }
+      .foreground-contour { top: 73px; right: -8px; width: 191px; height: 188px; opacity: .7; }
+      .foreground-seal { top: 49px; right: 3px; width: 148px; height: 192px; opacity: .72; }
+      .dossier-summary { max-width: 29ch; }
+      .status-strip { margin-top: 14px; }
+      .rail-actions { grid-template-columns: 1fr 1fr; gap: 0 14px; }
+      .rail-actions button:last-child { grid-column: 1 / -1; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .foreground, .status-bg { opacity: .55; }
+    }
+  </style>
+</head>
+<body>
+  <div class="stage" id="stage">
+    <header class="topbar">
+      <div class="brand"><span class="crest" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 3 6 7v6c0 3.4 2.1 6.3 6 8 3.9-1.7 6-4.6 6-8V7l-6-4Z"/><path d="m9 12 2 2 4-5"/></svg></span><div class="brand-copy"><strong>卡塞尔学院 · DRAGON RAJA</strong><small>STAGE MANAGER / STORY CHANNEL</small></div></div>
+      <div class="scene-marker"><b>SCENE 07 / 03:17</b><span>雨夜 · 东京分部旧档案库</span></div>
+      <div class="top-actions"><span>稿次 08 · 已同步</span><button type="button">刷新对话</button><button type="button">更多</button></div>
+    </header>
+    <div class="stage-body">
+      <aside class="tool-rail" aria-label="工具">
+        <nav>
+          <button type="button" class="active"><svg viewBox="0 0 24 24"><path d="M5 4h9a4 4 0 0 1 4 4v12H8a3 3 0 0 1-3-3V4Zm3 0v13a3 3 0 0 0-3-3h13M10 9h5M10 13h4"/></svg><span>故事</span></button>
+          <button type="button"><svg viewBox="0 0 24 24"><path d="M12 3 5 7v5c0 4.2 2.7 7.6 7 9 4.3-1.4 7-4.8 7-9V7l-7-4Zm-3 9 2 2 4-5"/></svg><span>判读</span></button>
+          <button type="button"><svg viewBox="0 0 24 24"><path d="m4 6 5-2 6 2 5-2v14l-5 2-6-2-5 2V6Zm5-2v14m6-12v14"/></svg><span>地图</span></button>
+          <button type="button"><svg viewBox="0 0 24 24"><path d="M5 4h6a3 3 0 0 1 3 3v13a3 3 0 0 0-3-3H5V4Zm14 0h-5v16a3 3 0 0 1 3-3h2V4Z"/></svg><span>图鉴</span></button>
+        </nav>
+        <button type="button" class="exit">返回原生界面</button>
+      </aside>
+      <div class="workbench">
+        <main class="reading-room">
+          <div class="reading-inner">
+            <div class="reading-kicker"><span>STORY / SCENE 07</span><span>最后写入 03:17:42</span></div>
+            <section class="chapter"><div class="chapter-bar"></div><div><h1>雨幕后的旧档案库</h1><p>一场尚未落幕的对话。角色状态沿场次脊线记录，变化会回到它发生的段落。</p><div class="chapter-meta"><span>东京分部</span><span>夜雨</span><span>调查中</span></div></div></section>
+            <article class="message"><div class="message-head"><span class="speaker"><i></i><strong>绘梨衣</strong><small>THE RED DRAGON</small></span><time>03:16:58</time></div><p>雨水沿着旧档案库的天窗边缘一滴一滴地落下来。绘梨衣站在门廊的阴影里，红色的伞面没有合上，像是把外面的夜色也留了一小块在这里。</p><p>她没有立刻走近，只是看着你把那张已经泛黄的照片从信封里抽出来。</p></article>
+            <article class="message message--user"><div class="message-head"><span class="speaker"><i></i><strong>你的行动</strong><small>PLAYER CUE</small></span><time>03:17:11</time></div><p>我把照片翻到正面，先确认照片里的人，再问她为什么知道这个档案库。</p></article>
+            <article class="message"><div class="message-head"><span class="speaker"><i></i><strong>绘梨衣</strong><small>THE RED DRAGON</small></span><time>03:17:42</time></div><p>照片上的人站在学院旧礼堂前，身后是一整排还没有亮起的灯。你认出那件校服，却想不起自己在哪里见过这张脸。</p><p>“因为我也来过这里。”她说。声音很轻，几乎要被雨声盖住。</p></article>
+            <form class="composer"><button type="button" class="model"><strong>Claude 3.7 Sonnet</strong><small>原生模型</small></button><textarea aria-label="下一步行动" placeholder="记录下一步行动或回复……"></textarea><button type="button" class="send"><span>提交行动</span><small>CTRL + ENTER</small></button></form>
+          </div>
+        </main>
+        <aside class="status-room" aria-label="演员谱与状态栏">
+          <svg class="status-bg" viewBox="0 0 420 900" preserveAspectRatio="none" aria-hidden="true"><path d="M-20 230C92 146 154 286 274 196s151 11 188-28M-12 348c96-74 153 58 260-4s120-7 189-53M-24 510c105-92 183 34 292-39s111-3 168-38M20 723c77-75 148-17 235-72s125-4 184-52" fill="none" stroke="#b33d35" stroke-width="1" opacity=".4"/><path d="M-4 286c80-43 133 39 226-10s157-28 204-75M-5 570c107-72 170 12 277-42s91 2 153-26" fill="none" stroke="#367987" stroke-width="1" stroke-dasharray="2 10" opacity=".35"/></svg>
+          <div class="status-content">
+            <header class="status-head"><div><h2>演员谱 · 当前场次</h2><p>CAST LEDGER / STATUS CUE</p></div><strong class="status-count">05</strong></header>
+            <div class="cast-list">
+              <button type="button" class="cast-row active"><i class="lamp"></i><span><strong>绘梨衣</strong><small>THE RED DRAGON</small></span><em>对话中</em></button>
+              <button type="button" class="cast-row"><i class="lamp"></i><span><strong>路明非</strong><small>THE FOOL</small></span><em>远处待机</em></button>
+              <button type="button" class="cast-row"><i class="lamp"></i><span><strong>楚子航</strong><small>THE JUDGEMENT</small></span><em>线索追踪</em></button>
+              <button type="button" class="cast-row"><i class="lamp"></i><span><strong>零</strong><small>THE QUEEN</small></span><em>通讯静默</em></button>
+              <button type="button" class="cast-row"><i class="lamp"></i><span><strong>诺诺</strong><small>THE WITCH</small></span><em>外围观察</em></button>
+            </div>
+            <section class="dossier">
+              <div class="dossier-label"><span>当前档案 / ACTIVE DOSSIER</span><span>01 / 05</span></div>
+              <div class="dossier-heading"><span class="dossier-index">DOSS<br><b>01</b></span><div><h3>绘梨衣</h3><div class="role">THE RED DRAGON · 互动对象</div></div><svg class="seal" viewBox="0 0 48 48" aria-hidden="true"><path d="M24 4 40 12v16c0 8.4-6.7 13.6-16 16-9.3-2.4-16-7.6-16-16V12L24 4Z"/><path d="M15 24c3-5 6-7 9-7s6 2 9 7c-3 5-6 7-9 7s-6-2-9-7Z"/><path d="M24 17v14M19 24h10"/></svg></div>
+              <p class="dossier-summary">她已经知道档案库的来历，却仍在等你先说出照片背后的名字。</p>
+              <dl class="dossier-fields"><div class="field"><dt>关系</dt><dd>同行者</dd><svg class="field-glyph field-glyph--bond" viewBox="0 0 12 12"><path d="M2 6h8M6 2v8"/></svg></div><div class="field"><dt>信条</dt><dd>克制 · 警觉</dd><svg class="field-glyph" viewBox="0 0 12 12"><path d="M6 1 11 6 6 11 1 6Z"/></svg></div><div class="field"><dt>位置</dt><dd>旧档案库门廊</dd><svg class="field-glyph field-glyph--place" viewBox="0 0 12 12"><path d="M6 1.5a3 3 0 0 1 3 3c0 2.6-3 6-3 6s-3-3.4-3-6a3 3 0 0 1 3-3Z"/><circle cx="6" cy="4.5" r="1"/></svg></div><div class="field"><dt>意图</dt><dd>等待确认</dd><svg class="field-glyph field-glyph--intent" viewBox="0 0 12 12"><path d="M6 1v5l3 2M6 11a5 5 0 1 0 0-10 5 5 0 0 0 0 10Z"/></svg></div></dl>
+              <div class="dossier-change"><span>最近变化</span><strong>意图 · 等待确认</strong></div>
+              <div class="foreground v1 foreground-orbit" aria-hidden="true"><svg viewBox="0 0 220 220"><g class="orbit-group"><ellipse class="orbit-ring" cx="112" cy="110" rx="83" ry="42"/><ellipse class="orbit-ring dim" cx="112" cy="110" rx="70" ry="28" transform="rotate(52 112 110)"/><circle class="orbit-ring dim" cx="112" cy="110" r="55"/><path class="orbit-axis" d="M28 110h169M112 26v168"/><circle class="orbit-node" cx="172" cy="110" r="4"/><circle class="orbit-node" cx="70" cy="66" r="4"/><circle class="orbit-node" cx="112" cy="55" r="3"/></g><path class="orbit-axis pointer-arm" d="M112 110 180 87"/><circle cx="112" cy="110" r="5" fill="#d79735" stroke="#fbf3e3" stroke-width="1"/><text x="155" y="190" fill="#d79735" stroke="none" font-size="8" font-family="Consolas, monospace" letter-spacing="1">ORRERY / 01</text></svg></div>
+              <div class="foreground v2 foreground-contour" aria-hidden="true"><svg viewBox="0 0 240 220"><path class="contour-path" data-motion-path="1" d="M6 178c27-40 37-66 75-62s39 35 67 28 36-52 86-72"/><path class="contour-path" data-motion-path="2" d="M-2 202c44-50 58-70 90-62s34 40 64 27 47-56 93-73"/><path class="contour-path hot" data-motion-path="3" d="M12 142c24-25 43-48 70-39s40 39 66 21 38-49 78-57"/><path class="contour-path" data-motion-path="4" d="M16 105c26-19 45-25 68-12s35 21 62 5 45-35 80-34"/><circle class="contour-node" cx="81" cy="116" r="4"/><circle class="contour-node" cx="147" cy="143" r="4"/><circle class="contour-node" cx="179" cy="76" r="4"/><text x="106" y="204" fill="#367987" stroke="none" font-size="8" font-family="Consolas, monospace" letter-spacing="1">TOPOGRAPHY / 07</text></svg></div>
+              <div class="foreground v3 foreground-seal" aria-hidden="true"><svg viewBox="0 0 190 240"><g class="seal-group"><circle class="seal-loop" cx="95" cy="100" r="72"/><circle class="seal-loop hot" cx="95" cy="100" r="50"/><path class="seal-ray" d="M95 9v182M4 100h182M31 36l128 128M159 36 31 164"/><path class="seal-loop" d="M95 28c16 22 27 47 27 72s-11 50-27 72c-16-22-27-47-27-72s11-50 27-72Z"/><circle class="seal-core" cx="95" cy="100" r="8"/></g><text x="43" y="215" fill="#ef7650" stroke="none" font-size="8" font-family="Consolas, monospace" letter-spacing="1">SEAL / ACTIVE</text></svg></div>
+            </section>
+            <div class="status-strip"><dl><dt>连接</dt><dd>已同步</dd><dt>生成</dt><dd>待用户行动</dd><dt>最近变化</dt><dd>绘梨衣 · 意图</dd></dl><i class="live-mark" aria-hidden="true"></i><svg class="signal-glyph" viewBox="0 0 26 26" aria-hidden="true"><path d="M13 2 22 7v10l-9 7-9-7V7l9-5Z"/><path class="signal-pulse" d="M7 13h3l2-5 3 10 2-5h2"/></svg></div>
+            <div class="rail-actions"><button type="button"><svg viewBox="0 0 16 16"><path d="M2 4h12M2 8h8M2 12h5"/></svg>查看守夜人讨论区</button><button type="button"><svg viewBox="0 0 16 16"><path d="m10 4-4 4 4 4"/></svg>上一位角色</button><button type="button"><svg viewBox="0 0 16 16"><path d="m6 4 4 4-4 4"/></svg>下一位角色</button></div>
+          </div>
+        </aside>
+      </div>
+    </div>
+    <button type="button" class="mobile-trigger" aria-label="展开状态栏"><svg viewBox="0 0 16 16"><path class="trigger-horizontal" d="M2 8h12"/><path class="trigger-vertical" d="M8 2v12"/></svg><strong>绘梨衣</strong><span>05 / 档案</span></button>
+  </div>
+  <script>
+    const params = new URLSearchParams(location.search)
+    const variant = Math.max(1, Math.min(3, Number(params.get('variant') || 1)))
+    const stage = document.getElementById('stage')
+    stage.classList.add(`variant-${variant}`)
+    if (params.get('mobile') === 'open') document.body.classList.add('mobile-open')
+    const trigger = document.querySelector('.mobile-trigger')
+    trigger.addEventListener('click', () => document.body.classList.toggle('mobile-open'))
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)')
+    const orbit = document.querySelector('.orbit-group')
+    const pointer = document.querySelector('.pointer-arm')
+    const contourPaths = [...document.querySelectorAll('.contour-path')]
+    const sealGroup = document.querySelector('.seal-group')
+    const liveMark = document.querySelector('.live-mark')
+    let ready = false
+    function motion(now) {
+      const seconds = now * 0.001
+      if (!reduced.matches) {
+        if (orbit) {
+          orbit.setAttribute('transform', `rotate(${(seconds * 7) % 360} 112 110)`)
+          pointer.setAttribute('d', `M112 110 ${112 + Math.cos(seconds * 0.7) * 70} ${110 + Math.sin(seconds * 0.7) * 70}`)
+        }
+        contourPaths.forEach((path, index) => {
+          path.style.strokeDashoffset = `${-(seconds * (12 + index * 4)) % 160}px`
+          path.setAttribute('transform', `translate(${Math.sin(seconds * 0.6 + index) * 3} ${Math.cos(seconds * 0.45 + index) * 2})`)
+        })
+        if (sealGroup) sealGroup.setAttribute('transform', `rotate(${Math.sin(seconds * 0.7) * 3} 95 100)`)
+        if (liveMark) liveMark.style.opacity = String(0.45 + (Math.sin(seconds * 2.1) + 1) * 0.25)
+      }
+      if (!ready) { ready = true; window.__compReady = true }
+      requestAnimationFrame(motion)
+    }
+    requestAnimationFrame(motion)
+  </script>
+</body>
+</html>

@@ -1,0 +1,64 @@
+{
+  "title": "Story 状态栏 · 四套星盘方案",
+  "question": "请选择一套新的状态栏构图。四套都使用灰烬 Canvas 背景，星盘节点会随角色等级变化，并以单组 SVG 龙族元素作为前景焦点；方案只改变视觉，不改变任何桥接或交互契约。",
+  "options": [
+    {
+      "id": "01",
+      "label": "轨道档案",
+      "kicker": "01 / ORBIT LEDGER",
+      "lineage": "黄铜轨道 · 角色等级刻度",
+      "thesis": "双环星盘围绕当前角色运转，指针与节点数量直接响应等级。",
+      "palette": ["#151214", "#211b1c", "#eee4d1", "#d79735", "#b33d35", "#367987"],
+      "materials": ["Canvas 灰烬", "SVG 轨道", "龙形贴纸"],
+      "viewport": "桌面右栏以一枚大轨道切入 dossier；移动端覆盖层保留完整轨道与等级切换。",
+      "case": "演员谱维持纵向，星盘只占 dossier 右侧，状态字段仍是规则行，不再堆小卡片。",
+      "risk": "轨道运动最显眼，需要限制半径和透明度以保护长文本扫描。",
+      "comp": ".impeccable/mocks/status-rail-v4/status-rail-v4-01-desktop.png",
+      "board": ".impeccable/mocks/status-rail-v4/status-rail-v4-01-mobile-open.png"
+    },
+    {
+      "id": "02",
+      "label": "龙脊星图",
+      "kicker": "02 / DRAGON SPINE",
+      "lineage": "龙脉路径 · 关系节点",
+      "thesis": "像龙脊一样延展的星图把角色关系、地点和等级节点串成一条路径。",
+      "palette": ["#151214", "#211b1c", "#eee4d1", "#96621f", "#ef7650", "#367987"],
+      "materials": ["Canvas 灰烬", "SVG 龙脊线", "节点贴纸"],
+      "viewport": "桌面路径沿 dossier 右半部穿行；移动端缩为窄幅路径，字段仍保留两列。",
+      "case": "五名角色双列索引适合快速比较，龙脊线只连接当前档案中的关系和位置。",
+      "risk": "路径线密度必须随字段数量封顶，否则会变成无意义背景纹理。",
+      "comp": ".impeccable/mocks/status-rail-v4/status-rail-v4-02-desktop.png",
+      "board": ".impeccable/mocks/status-rail-v4/status-rail-v4-02-mobile-open.png"
+    },
+    {
+      "id": "03",
+      "label": "角色星座",
+      "kicker": "03 / CAST CONSTELLATION",
+      "lineage": "角色连线 · 等级亮星",
+      "thesis": "当前角色成为星座主星，其他节点按等级逐步点亮，关系线保持清晰。",
+      "palette": ["#151214", "#211b1c", "#eee4d1", "#d79735", "#ef7650", "#756684"],
+      "materials": ["Canvas 灰烬", "SVG 星座线", "龙爪贴纸"],
+      "viewport": "桌面星座落在 dossier 右侧，移动端在覆盖层中保持完整的五点关系图。",
+      "case": "当前角色跨列突出，其他演员退为简单规则行；等级切换体现为亮星数量，不增加新字段。",
+      "risk": "线条交叉会影响读取，必须固定节点布局并保持连接数量克制。",
+      "comp": ".impeccable/mocks/status-rail-v4/status-rail-v4-03-desktop.png",
+      "board": ".impeccable/mocks/status-rail-v4/status-rail-v4-03-mobile-open.png"
+    },
+    {
+      "id": "04",
+      "label": "封印星盘",
+      "kicker": "04 / SEAL ORRERY",
+      "lineage": "龙族封印 · 等级环",
+      "thesis": "一枚龙族封印承载星盘，外环刻度和核心脉冲表达角色成长。",
+      "palette": ["#151214", "#211b1c", "#eee4d1", "#e58a2b", "#ef7650", "#367987"],
+      "materials": ["Canvas 灰烬", "SVG 封印", "等级刻度"],
+      "viewport": "桌面封印占据 dossier 上半部；移动端覆盖层仍以单一封印建立视觉焦点。",
+      "case": "演员谱退为低干扰列表，字段按关系、信条、位置、意图固定排列，保留全部原交互。",
+      "risk": "封印的对比度最强，需要确保它不压过 dossier 标题和状态变化文字。",
+      "comp": ".impeccable/mocks/status-rail-v4/status-rail-v4-04-desktop.png",
+      "board": ".impeccable/mocks/status-rail-v4/status-rail-v4-04-mobile-open.png"
+    }
+  ],
+  "steer": true,
+  "buildPath": { "value": "comp", "toggle": false }
+}

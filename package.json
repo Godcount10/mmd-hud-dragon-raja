@@ -5,6 +5,7 @@
   "type": "module",
   "description": "MMD Parent Bridge Host 与独立 iframe Vue HUD",
   "scripts": {
+    "dev:preview": "node scripts/dev-preview.mjs",
     "dev:host": "vite --config vite.host-dev.config.ts",
     "test": "vitest run",
     "test:watch": "vitest",
@@ -18,11 +19,15 @@
     "build:inline": "npm run check && npm run build:host && npm run build:frame && npm run build:inline:rules && npm run verify:release"
   },
   "dependencies": {
+    "@rive-app/canvas": "^2.34.0",
     "gsap": "^3.15.0",
+    "ogl": "^1.0.11",
+    "three": "^0.185.1",
     "vue": "^3.5.13"
   },
   "devDependencies": {
     "@types/node": "^22.10.7",
+    "@types/three": "^0.185.4",
     "@vitejs/plugin-vue": "^5.2.1",
     "@vue/test-utils": "^2.4.11",
     "jsdom": "^26.1.0",

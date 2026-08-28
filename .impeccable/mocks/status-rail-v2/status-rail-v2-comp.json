@@ -1,0 +1,26 @@
+{
+  "surface": "story-status-rail",
+  "mode": "local-html-canvas",
+  "approved": false,
+  "revision": 2,
+  "primaryDirection": "A - Ember Orrery",
+  "secondaryDirection": "C - Dragon Topography",
+  "enhancements": [
+    "Canvas animated brass rings and pointer",
+    "Canvas contour paths and ember flow",
+    "Canvas filigree corner tracery and signal sigil",
+    "Dossier index, seal, fact glyphs, and recent-change line",
+    "Data-bound status glyph for sync and intent"
+  ],
+  "viewport": { "desktop": "1536x1024", "mobile": "390x844" },
+  "options": [
+    { "id": "01", "label": "星盘主焦点", "desktop": "./status-rail-v2-01-desktop.png", "mobileCollapsed": "./status-rail-v2-01-mobile-collapsed.png", "mobileOpen": "./status-rail-v2-01-mobile-open.png" },
+    { "id": "02", "label": "龙脉索引", "desktop": "./status-rail-v2-02-desktop.png", "mobileCollapsed": "./status-rail-v2-02-mobile-collapsed.png", "mobileOpen": "./status-rail-v2-02-mobile-open.png" },
+    { "id": "03", "label": "混合仪器", "desktop": "./status-rail-v2-03-desktop.png", "mobileCollapsed": "./status-rail-v2-03-mobile-collapsed.png", "mobileOpen": "./status-rail-v2-03-mobile-open.png" }
+  ],
+  "interactionContract": {
+    "mobileDefault": "collapsed",
+    "mobileExpanded": "covering overlay",
+    "preserve": ["Host", "Bridge", "Protocol", "iframe", "MessagePort", "all existing Story events"]
+  }
+}

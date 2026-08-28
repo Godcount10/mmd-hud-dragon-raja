@@ -2,7 +2,7 @@
 
 本文面向需要安装依赖、运行 Mock、验证构建或发布产物的开发者和维护者。
 
-系统原理见 [整体架构与实现](ARCHITECTURE.md)，实例规则见 [Theme 实例开发指南](THEME_DEVELOPMENT.md)。
+系统原理见 [整体架构与实现](ARCHITECTURE.md)，实例规则见 [Theme 实例开发指南](THEME_DEVELOPMENT.md)。Live DOM 注入、Frame 缓存和 WebGL canvas 生命周期的专项经验见 [Live 变体与 WebGL 故障复盘](LIVE_PREVIEW_WEBGL_POSTMORTEM.md)。
 
 ---
 

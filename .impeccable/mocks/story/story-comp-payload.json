@@ -1,0 +1,43 @@
+{
+  "title": "确认 Story 的 comp 结构",
+  "question": "三种 comp 共用同一实体舞台监督世界。请选择最终结构，或指出要组合的部分。",
+  "options": [
+    {
+      "id": "story-comp-a",
+      "label": "A · 场次脊线",
+      "kicker": "READING / CUE",
+      "thesis": "正文是连续提示本，红色场次线与蓝色行动线标记叙事节拍；手机先展示演员谱，再进入阅读。",
+      "palette": ["#191719", "#EFE5D2", "#D7952D", "#B13D36", "#286B7A"],
+      "materials": ["布面提示本", "纸张规则线", "珐琅 cue 灯", "场记签"],
+      "viewport": "桌面为宽阅读 sheet + 等权演员谱；手机为演员谱、当前档案、正文、行动输入的连续顺序。",
+      "risk": "场次线必须服务阅读节拍，不能变成装饰性红边。",
+      "comp": ".impeccable/mocks/story/story-a-desktop.png",
+      "board": ".impeccable/mocks/story/story-a-mobile.png"
+    },
+    {
+      "id": "story-comp-b",
+      "label": "B · 演员谱优先",
+      "thesis": "五名角色组成更宽的状态板，适合频繁比较关系与变化；正文仍保持连续纸面阅读。",
+      "palette": ["#191719", "#E8DFD2", "#D7952D", "#B13D36", "#5973A6"],
+      "materials": ["广播排练台", "演员谱面", "拉丝金属夹", "实体色灯"],
+      "viewport": "桌面把状态板扩为两列演员谱；手机保留五人横向谱带和当前档案，再接入正文。",
+      "risk": "状态变强后要避免正文变成附属面板。",
+      "comp": ".impeccable/mocks/story/story-b-desktop.png",
+      "board": ".impeccable/mocks/story/story-b-mobile.png"
+    },
+    {
+      "id": "story-comp-c",
+      "label": "C · 场景长页",
+      "thesis": "阅读面最宽，场次标题用实体红色横条起笔；状态 rail 更克制，适合沉浸长文。",
+      "palette": ["#191719", "#EFE5D2", "#D7952D", "#B13D36", "#286B7A"],
+      "materials": ["印刷场景单", "后台台口", "铜色规则线", "纸张边注"],
+      "viewport": "桌面以长篇叙事为首要纵向路径；手机仍先显示完整状态段，再进入宽松阅读节奏。",
+      "risk": "状态 rail 的对比权重较低，需要用明确的 cue 变化补足存在感。",
+      "comp": ".impeccable/mocks/story/story-c-desktop.png",
+      "board": ".impeccable/mocks/story/story-c-mobile.png"
+    }
+  ],
+  "reroll": false,
+  "steer": false,
+  "canon": false
+}
