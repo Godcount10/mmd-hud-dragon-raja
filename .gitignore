@@ -5,6 +5,10 @@ coverage/
 *.local
 *.tsbuildinfo
 .tmp/
+.impeccable/live/
+.impeccable/review/
+.impeccable/screenshots/
+tmp/
 .claude/worktrees/
 测试结果/
 缓存/
